@@ -70,10 +70,10 @@ Conciliacion disponible: GET /api/v1/reportes/conciliacion/
 - **Hero v4 (final)**: banner 100% limpio — sin título, sin logo, sin texto sobre el centro; overlay solo en zona inferior (transparent→#040404 entre 58%→100%); único contenido visible: botones [ACCESO MIEMBROS] + [CONOCE EL TEAM] en `.home-hero-cta-wrap` posicionados sobre el degradado inferior; stats bar al borde inferior (width:100%, backdrop-filter blur); animaciones: CTAs 0.3s, stats 0.5s
 - **Secciones** (orden): Quiénes Somos → Airsoft → Eventos → Noticias → Galería → Únete
 - **Quiénes somos**: historia + misión + 4 números impacto + grilla valores
-- **Noticias**: 3 tarjetas "exclusivo miembros" con link a login
+- **Noticias**: tarjetas reales desde BD (estado=publicado, visibilidad=publica) o placeholder "exclusivo miembros" si no hay. Requiere `visibilidad='publica'` en el modelo Noticia
 - **Galería**: grid 3x2 con hover overlay y link a galería completa (miembros)
 - **Únete**: lista requisitos + contacto card con logo
-- **Animaciones**: `IntersectionObserver` + clases `.anim`/`.visible`, hover con `translateY`
+- **Animaciones**: `IntersectionObserver` + clases `.anim`/`.visible`, hover con `translateY`. Bug corregido (2026-06-07): observer separado en segundo `useEffect([eventos, noticias, stats])` para observar elementos dinámicos post-fetch; usa selector `.anim:not(.visible)` para no re-observar ya-visibles
 - **Footer**: logo real + nav + copyright + acceso miembros
 - Nav usa logo real (36px) en lugar de SVG crosshair
 - **Identidad NEGRO + ROJO (2026-06-01)**: `.home {}` redefine `--accent-primary/#light/#secondary` a rojo `#cc2222/#e63333/#991111`. Todos los elementos verdes del frontend público reemplazados. `home-section-tag` con línea roja `::before`. `home-section-sub` mejorado a `#777777`.

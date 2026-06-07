@@ -26,20 +26,8 @@ export default function Home() {
   const [noticias,  setNoticias]  = useState([])
   const [stats,     setStats]     = useState({ integrantes_activos: 0 })
 
+  // Fetch data once on mount, then refresh every 60s
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible')
-            observer.unobserve(entry.target)
-          }
-        })
-      },
-      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
-    )
-    document.querySelectorAll('.anim').forEach(el => observer.observe(el))
-
     const cargar = () => {
       fetch('/api/v1/public/stats/')
         .then(r => r.ok ? r.json() : null)
@@ -56,9 +44,26 @@ export default function Home() {
     }
     cargar()
     const interval = setInterval(cargar, 60000)
-
-    return () => { observer.disconnect(); clearInterval(interval) }
+    return () => clearInterval(interval)
   }, [])
+
+  // Re-scan .anim elements after each data change so dynamically-rendered
+  // cards (events, noticias) are observed and can receive the .visible class
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible')
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+    )
+    document.querySelectorAll('.anim:not(.visible)').forEach(el => observer.observe(el))
+    return () => observer.disconnect()
+  }, [eventos, noticias, stats])
 
   const closeMenu = () => setMenuOpen(false)
 
