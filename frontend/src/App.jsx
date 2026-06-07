@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import Layout from './components/Layout/Layout'
 import Home from './pages/Home/Home'
+import NoticiaPublica from './pages/Home/NoticiaPublica'
+import EventoPublico from './pages/Home/EventoPublico'
 import Login from './pages/Login/Login'
 import Dashboard from './pages/Dashboard/Dashboard'
 import Integrantes from './pages/Integrantes/Integrantes'
@@ -37,6 +39,8 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/inicio" element={<Home />} />
+      <Route path="/noticias/:id" element={<NoticiaPublica />} />
+      <Route path="/eventos/:id"  element={<EventoPublico />} />
       <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
       <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
         <Route index element={<Dashboard />} />

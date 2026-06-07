@@ -1,0 +1,286 @@
+/* ══════════════════════════════════════════════════════════════
+   Publica.css — Detalle público de Noticia y Evento
+   Team Mercenarios · Dark theme táctico
+   ══════════════════════════════════════════════════════════════ */
+
+.pub-page {
+  background: #080808;
+  color: #f0f0f0;
+  min-height: 100vh;
+  font-family: 'Rajdhani', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Nav ──────────────────────────────────────────────────────── */
+.pub-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8,8,8,0.96);
+  border-bottom: 1px solid #1e1e1e;
+  backdrop-filter: blur(8px);
+}
+
+.pub-nav-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pub-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.pub-nav-logo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
+.pub-nav-brand-text {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: #f0f0f0;
+  text-transform: uppercase;
+}
+
+.pub-nav-back {
+  background: none;
+  border: 1px solid #333;
+  color: #aaa;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  border-radius: 2px;
+}
+
+.pub-nav-back:hover {
+  color: #cc2222;
+  border-color: #cc2222;
+}
+
+/* ── Main ─────────────────────────────────────────────────────── */
+.pub-main {
+  flex: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 56px 24px 80px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.pub-loading {
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 4px;
+  color: #555;
+  text-align: center;
+  padding: 80px 0;
+  font-size: 13px;
+}
+
+.pub-error {
+  text-align: center;
+  padding: 80px 0;
+  color: #666;
+}
+
+.pub-error p {
+  margin-bottom: 24px;
+}
+
+/* ── Article ──────────────────────────────────────────────────── */
+.pub-article {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.pub-meta-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.pub-tag {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #cc2222;
+  text-transform: uppercase;
+}
+
+.pub-fecha {
+  font-size: 13px;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+.pub-titulo {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #f0f0f0;
+  margin: 0 0 16px;
+  border-left: 3px solid #cc2222;
+  padding-left: 16px;
+}
+
+.pub-resumen {
+  font-size: 16px;
+  color: #aaa;
+  line-height: 1.6;
+  margin: 0 0 32px;
+  font-style: italic;
+}
+
+.pub-imagen-wrap {
+  margin: 32px 0;
+  border: 1px solid #1e1e1e;
+  border-radius: 2px;
+  overflow: hidden;
+  background: #131313;
+}
+
+.pub-imagen {
+  width: 100%;
+  max-height: 480px;
+  object-fit: cover;
+  display: block;
+}
+
+.pub-contenido {
+  color: #ccc;
+  font-size: 15px;
+  line-height: 1.75;
+  margin: 32px 0 48px;
+}
+
+.pub-contenido p {
+  margin: 0 0 16px;
+}
+
+.pub-sin-contenido {
+  color: #555;
+  font-style: italic;
+}
+
+/* ── Evento meta ──────────────────────────────────────────────── */
+.pub-evento-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin: 24px 0 32px;
+  padding: 24px;
+  background: #131313;
+  border: 1px solid #1e1e1e;
+  border-radius: 2px;
+}
+
+.pub-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pub-meta-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #555;
+  text-transform: uppercase;
+}
+
+.pub-meta-value {
+  font-size: 15px;
+  color: #e0e0e0;
+}
+
+.pub-estado {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 3px 10px;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+.pub-estado-programado { background: rgba(61,122,61,0.2); color: #52a852; border: 1px solid #3d7a3d; }
+.pub-estado-realizado  { background: rgba(80,80,80,0.2);  color: #888;    border: 1px solid #444; }
+.pub-estado-cancelado  { background: rgba(150,30,30,0.2); color: #cc4444; border: 1px solid #991111; }
+
+/* ── Footer nav ───────────────────────────────────────────────── */
+.pub-footer-nav {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-top: 32px;
+  border-top: 1px solid #1e1e1e;
+}
+
+.pub-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  border: 1px solid #333;
+  color: #aaa;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-decoration: none;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.pub-btn:hover {
+  color: #f0f0f0;
+  border-color: #555;
+}
+
+.pub-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  background: #cc2222;
+  border: 1px solid #cc2222;
+  color: #fff;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-decoration: none;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+
+.pub-btn-primary:hover {
+  background: #e63333;
+}
+
+/* ── Footer ───────────────────────────────────────────────────── */
+.pub-footer {
+  text-align: center;
+  padding: 20px 24px;
+  border-top: 1px solid #111;
+  font-size: 12px;
+  color: #444;
+  letter-spacing: 1px;
+}

@@ -270,6 +270,7 @@ export default function Home() {
                   <span>📅 {ev.fecha}</span>
                   <span>📍 {ev.lugar || 'Por confirmar'}</span>
                 </div>
+                <Link to={`/eventos/${ev.id}`} className="home-noticia-cta" style={{ marginTop: 12 }}>VER DETALLE →</Link>
               </div>
             ))}
           </div>
@@ -307,7 +308,7 @@ export default function Home() {
                   </div>
                   <h3 className="home-noticia-titulo">{n.titulo}</h3>
                   {n.resumen && <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '6px 0' }}>{n.resumen}</p>}
-                  <Link to="/login" className="home-noticia-cta">LEER COMPLETO →</Link>
+                  <Link to={`/noticias/${n.id}`} className="home-noticia-cta">LEER COMPLETO →</Link>
                 </div>
               ))
               : [

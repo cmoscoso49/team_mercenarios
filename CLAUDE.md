@@ -90,8 +90,18 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 
 - `GET /api/v1/public/stats/` → `{ integrantes_activos, eventos_proximos }`
 - `GET /api/v1/public/eventos/` → próximos 5 eventos programados
+- `GET /api/v1/public/eventos/<id>/` → detalle de evento (cualquier estado)
 - `GET /api/v1/public/noticias/` → últimas 3 noticias estado=publicado visibilidad=publica
+- `GET /api/v1/public/noticias/<id>/` → detalle noticia (solo publicado+publica)
 - Implementado en: `backend/apps/reportes/views_public.py`
+
+## Páginas públicas de detalle (sin auth)
+
+- `/noticias/:id` → `NoticiaPublica.jsx` — título, resumen, contenido completo, imagen, fecha
+- `/eventos/:id`  → `EventoPublico.jsx`  — título, tipo, fecha, hora, lugar, descripción, imagen
+- CSS compartido: `frontend/src/pages/Home/Publica.css` (dark theme, no afecta dashboard)
+- Favicon: `frontend/public/favicon.svg` — crosshair rojo sobre fondo negro
+- Título navegador: "Team Mercenarios" (definido en `frontend/index.html`)
 
 ## Rutas clave
 
