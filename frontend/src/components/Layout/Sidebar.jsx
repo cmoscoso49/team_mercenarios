@@ -13,6 +13,7 @@ const ALL_NAV = [
   { to: '/noticias',       label: 'Noticias',         icon: '▣',               roles: ['administrador','tesorero','capitan','integrante','readonly'] },
   { to: '/galeria',        label: 'Galería',          icon: '▤',               roles: ['administrador','tesorero','capitan','integrante','readonly'] },
   { to: '/reportes',       label: 'Reportes',         icon: '▦',               roles: ['administrador','tesorero'] },
+  { to: '/postulaciones',  label: 'Postulaciones',    icon: '◈',               roles: ['administrador'] },
 ]
 
 export default function Sidebar({ collapsed }) {

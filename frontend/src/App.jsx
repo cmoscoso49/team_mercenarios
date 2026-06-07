@@ -18,6 +18,8 @@ import Noticias from './pages/Noticias/Noticias'
 import NoticiaForm from './pages/Noticias/NoticiaForm'
 import Galeria from './pages/Galeria/Galeria'
 import Reportes from './pages/Reportes/Reportes'
+import Postulacion from './pages/Postulacion/Postulacion'
+import Postulaciones from './pages/Admin/Postulaciones'
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
@@ -39,8 +41,9 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/inicio" element={<Home />} />
-      <Route path="/noticias/:id" element={<NoticiaPublica />} />
-      <Route path="/eventos/:id"  element={<EventoPublico />} />
+      <Route path="/noticias/:id"   element={<NoticiaPublica />} />
+      <Route path="/eventos/:id"    element={<EventoPublico />} />
+      <Route path="/postulacion"    element={<Postulacion />} />
       <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
       <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
         <Route index element={<Dashboard />} />
@@ -58,6 +61,7 @@ function AppRoutes() {
         <Route path="noticias/:id/editar" element={<NoticiaForm />} />
         <Route path="galeria" element={<Galeria />} />
         <Route path="reportes" element={<Reportes />} />
+        <Route path="postulaciones" element={<Postulaciones />} />
       </Route>
       <Route path="*" element={<Navigate to="/inicio" replace />} />
     </Routes>

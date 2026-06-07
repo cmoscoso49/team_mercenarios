@@ -8,6 +8,7 @@ from apps.reportes.views_public import (
     public_stats, public_eventos, public_noticias,
     public_noticia_detail, public_evento_detail,
 )
+from apps.reclutamiento.views import postulacion_publica
 
 urlpatterns = [
     path('api/v1/public/stats/',              public_stats),
@@ -15,6 +16,7 @@ urlpatterns = [
     path('api/v1/public/eventos/<int:pk>/',   public_evento_detail),
     path('api/v1/public/noticias/',           public_noticias),
     path('api/v1/public/noticias/<int:pk>/',  public_noticia_detail),
+    path('api/v1/public/postulacion/',        postulacion_publica),
     path('admin/', admin.site.urls),
     path('api/v1/auth/login/', LoginView.as_view(), name='login'),
     path('api/v1/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -27,4 +29,5 @@ urlpatterns = [
     path('api/v1/reportes/', include('apps.reportes.urls')),
     path('api/v1/dashboard/', include('apps.reportes.urls_dashboard')),
     path('api/v1/importacion/', include('apps.finanzas.urls_importacion')),
+    path('api/v1/reclutamiento/', include('apps.reclutamiento.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

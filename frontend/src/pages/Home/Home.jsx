@@ -83,6 +83,7 @@ export default function Home() {
             <a href="#eventos"  className="home-nav-link" onClick={closeMenu}>EVENTOS</a>
             <a href="#noticias" className="home-nav-link" onClick={closeMenu}>NOTICIAS</a>
             <a href="#galeria"  className="home-nav-link" onClick={closeMenu}>GALERÍA</a>
+            <Link to="/postulacion" className="home-nav-link" onClick={closeMenu}>ÚNETE</Link>
             <Link to="/login" className="home-nav-cta" onClick={closeMenu}>ACCESO MIEMBROS</Link>
           </div>
           <button className="home-nav-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menú">
@@ -98,8 +99,8 @@ export default function Home() {
         <div className="home-hero-scanline" />
 
         <div className="home-hero-cta-wrap">
-          <Link to="/login" className="home-btn-primary home-btn-hero">ACCESO MIEMBROS</Link>
-          <a href="#nosotros" className="home-btn-ghost">CONOCE EL TEAM ↓</a>
+          <Link to="/postulacion" className="home-btn-primary home-btn-hero">ÚNETE AL TEAM</Link>
+          <Link to="/login" className="home-btn-ghost">ACCESO MIEMBROS</Link>
         </div>
 
         <div className="home-hero-stats">
@@ -410,18 +411,20 @@ export default function Home() {
               <div className="home-contacto-logo">
                 <img src={logoImg} alt="Team Mercenarios" className="home-contacto-img" />
               </div>
-              <h3 className="home-contacto-title">INGRESA AL SISTEMA</h3>
+              <h3 className="home-contacto-title">¿LISTO PARA POSTULAR?</h3>
               <p className="home-contacto-desc">
-                Si ya eres miembro del team, accede al sistema de gestión para ver el calendario,
-                finanzas, integrantes y más.
+                Completa nuestro formulario de postulación. Evaluamos cada solicitud
+                personalmente. Te contactaremos a la brevedad.
               </p>
               <div className="home-contacto-sep" />
               <p className="home-contacto-desc" style={{ fontSize: 13 }}>
-                ¿Quieres postular? Contacta a un miembro del team o accede al sistema
-                y coordina con la administración.
+                ¿Ya eres miembro? Accede al sistema de gestión con tus credenciales.
               </p>
-              <Link to="/login" className="home-btn-primary home-btn-large" style={{ marginTop: 24, display: 'inline-flex' }}>
-                ACCESO AL SISTEMA
+              <Link to="/postulacion" className="home-btn-primary home-btn-large" style={{ marginTop: 24, display: 'inline-flex' }}>
+                POSTULAR AHORA →
+              </Link>
+              <Link to="/login" className="home-btn-ghost" style={{ marginTop: 12, display: 'inline-flex', fontSize: '0.8rem' }}>
+                ACCESO MIEMBROS
               </Link>
             </div>
           </div>
@@ -447,7 +450,8 @@ export default function Home() {
               <a href="#galeria"  className="home-footer-navlink">Galería</a>
             </div>
             <div className="home-footer-right">
-              <Link to="/login" className="home-footer-cta">ÁREA DE MIEMBROS →</Link>
+              <Link to="/postulacion" className="home-footer-cta">POSTULAR →</Link>
+              <Link to="/login" className="home-footer-cta" style={{ opacity: 0.6, fontSize: '0.78rem' }}>ÁREA DE MIEMBROS →</Link>
               <p className="home-footer-copy">© 2021–2026 Team Mercenarios</p>
             </div>
           </div>
