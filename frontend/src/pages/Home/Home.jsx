@@ -11,12 +11,6 @@ const VALORES = [
   { icon: '🤝', title: 'RESPETO',    desc: 'Dentro y fuera del campo. Con el equipo, con los rivales y con el deporte. El honor es nuestra marca.' },
 ]
 
-const EVENTOS = [
-  { tipo: 'PARTIDA',    titulo: 'Operativo Campo Táctico',      fecha: 'Próximamente', lugar: 'Campo Sur, Región Metropolitana' },
-  { tipo: 'CAMPEONATO', titulo: 'Torneo Regional de Airsoft',   fecha: 'Próximamente', lugar: 'Santiago, Chile' },
-  { tipo: 'REUNIÓN',    titulo: 'Reunión de Coordinación Team', fecha: 'Próximamente', lugar: 'Sede del Team' },
-]
-
 const REQUISITOS = [
   'Compromiso con el equipo y entrenamientos regulares',
   'Equipamiento básico de airsoft propio',
@@ -27,7 +21,10 @@ const REQUISITOS = [
 ]
 
 export default function Home() {
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [menuOpen,  setMenuOpen]  = useState(false)
+  const [eventos,   setEventos]   = useState([])
+  const [noticias,  setNoticias]  = useState([])
+  const [stats,     setStats]     = useState({ integrantes_activos: 0 })
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -42,7 +39,25 @@ export default function Home() {
       { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
     )
     document.querySelectorAll('.anim').forEach(el => observer.observe(el))
-    return () => observer.disconnect()
+
+    const cargar = () => {
+      fetch('/api/v1/public/stats/')
+        .then(r => r.ok ? r.json() : null)
+        .then(d => { if (d) setStats(d) })
+        .catch(() => {})
+      fetch('/api/v1/public/eventos/')
+        .then(r => r.ok ? r.json() : [])
+        .then(d => { if (Array.isArray(d)) setEventos(d) })
+        .catch(() => {})
+      fetch('/api/v1/public/noticias/')
+        .then(r => r.ok ? r.json() : [])
+        .then(d => { if (Array.isArray(d)) setNoticias(d) })
+        .catch(() => {})
+    }
+    cargar()
+    const interval = setInterval(cargar, 60000)
+
+    return () => { observer.disconnect(); clearInterval(interval) }
   }, [])
 
   const closeMenu = () => setMenuOpen(false)
@@ -84,12 +99,12 @@ export default function Home() {
 
         <div className="home-hero-stats">
           <div className="home-hero-stat">
-            <span className="home-hero-stat-num">31+</span>
+            <span className="home-hero-stat-num">{stats.integrantes_activos > 0 ? `${stats.integrantes_activos}+` : '—'}</span>
             <span className="home-hero-stat-label">Integrantes Activos</span>
           </div>
           <div className="home-hero-stat-div" />
           <div className="home-hero-stat">
-            <span className="home-hero-stat-num">2022</span>
+            <span className="home-hero-stat-num">2021</span>
             <span className="home-hero-stat-label">Año de Fundación</span>
           </div>
           <div className="home-hero-stat-div" />
@@ -117,7 +132,7 @@ export default function Home() {
           <div className="home-nosotros-grid">
             <div className="home-nosotros-text anim">
               <p>
-                Team Mercenarios es un equipo de airsoft fundado en 2022 en Chile. Nacimos con la misión
+                Team Mercenarios es un equipo de airsoft fundado en 2021 en Chile. Nacimos con la misión
                 de crear un espacio serio y competitivo para jugadores apasionados por la táctica, el trabajo
                 en equipo y la superación constante.
               </p>
@@ -137,7 +152,7 @@ export default function Home() {
 
             <div className="home-nosotros-nums anim" style={{ transitionDelay: '0.15s' }}>
               <div className="home-num-card">
-                <span className="home-num-value">31+</span>
+                <span className="home-num-value">{stats.integrantes_activos > 0 ? `${stats.integrantes_activos}+` : '—'}</span>
                 <span className="home-num-label">INTEGRANTES ACTIVOS</span>
               </div>
               <div className="home-num-card">
@@ -234,17 +249,21 @@ export default function Home() {
           </div>
 
           <div className="home-eventos-grid">
-            {EVENTOS.map((ev, i) => (
+            {eventos.length === 0 ? (
+              <p style={{ color: 'var(--text-muted)', gridColumn: '1/-1', textAlign: 'center' }}>
+                Próximos eventos serán anunciados pronto.
+              </p>
+            ) : eventos.map((ev, i) => (
               <div
-                key={i}
-                className={`home-evento-card home-tipo-${ev.tipo.toLowerCase()}-card anim`}
+                key={ev.id || i}
+                className={`home-evento-card home-tipo-${ev.tipo}-card anim`}
                 style={{ transitionDelay: `${i * 0.1}s` }}
               >
-                <span className={`home-evento-tipo home-tipo-${ev.tipo.toLowerCase()}`}>{ev.tipo}</span>
+                <span className={`home-evento-tipo home-tipo-${ev.tipo}`}>{ev.tipo.toUpperCase()}</span>
                 <h3 className="home-evento-title">{ev.titulo}</h3>
                 <div className="home-evento-meta">
                   <span>📅 {ev.fecha}</span>
-                  <span>📍 {ev.lugar}</span>
+                  <span>📍 {ev.lugar || 'Por confirmar'}</span>
                 </div>
               </div>
             ))}
@@ -270,28 +289,44 @@ export default function Home() {
           </div>
 
           <div className="home-noticias-grid">
-            {[
-              { cat: 'OPERATIVO', titulo: 'Resultados del último campo',    dias: 3  },
-              { cat: 'EQUIPO',    titulo: 'Nuevas incorporaciones al team', dias: 7  },
-              { cat: 'CAMPEONATO',titulo: 'Preparación para el torneo',     dias: 12 },
-            ].map((n, i) => (
-              <div
-                key={i}
-                className="home-noticia-card anim"
-                style={{ transitionDelay: `${i * 0.1}s` }}
-              >
-                <div className="home-noticia-header">
-                  <span className="home-noticia-cat">{n.cat}</span>
-                  <span className="home-noticia-dias">hace {n.dias} días</span>
+            {noticias.length > 0
+              ? noticias.map((n, i) => (
+                <div
+                  key={n.id || i}
+                  className="home-noticia-card anim"
+                  style={{ transitionDelay: `${i * 0.1}s` }}
+                >
+                  <div className="home-noticia-header">
+                    <span className="home-noticia-cat">NOTICIA</span>
+                    <span className="home-noticia-dias">{n.fecha_publicacion || ''}</span>
+                  </div>
+                  <h3 className="home-noticia-titulo">{n.titulo}</h3>
+                  {n.resumen && <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '6px 0' }}>{n.resumen}</p>}
+                  <Link to="/login" className="home-noticia-cta">LEER COMPLETO →</Link>
                 </div>
-                <h3 className="home-noticia-titulo">{n.titulo}</h3>
-                <div className="home-noticia-lock">
-                  <span>🔒</span>
-                  <span>Exclusivo para miembros</span>
+              ))
+              : [
+                { id: 'p1', cat: 'EQUIPO',      titulo: 'Noticias exclusivas para miembros' },
+                { id: 'p2', cat: 'OPERATIVO',   titulo: 'Resultados y comunicados internos' },
+                { id: 'p3', cat: 'CAMPEONATO',  titulo: 'Preparación para torneos' },
+              ].map((n, i) => (
+                <div
+                  key={n.id}
+                  className="home-noticia-card anim"
+                  style={{ transitionDelay: `${i * 0.1}s` }}
+                >
+                  <div className="home-noticia-header">
+                    <span className="home-noticia-cat">{n.cat}</span>
+                  </div>
+                  <h3 className="home-noticia-titulo">{n.titulo}</h3>
+                  <div className="home-noticia-lock">
+                    <span>🔒</span>
+                    <span>Exclusivo para miembros</span>
+                  </div>
+                  <Link to="/login" className="home-noticia-cta">LEER COMPLETO →</Link>
                 </div>
-                <Link to="/login" className="home-noticia-cta">LEER COMPLETO →</Link>
-              </div>
-            ))}
+              ))
+            }
           </div>
 
           <div className="home-section-footer anim">
@@ -396,7 +431,7 @@ export default function Home() {
               <img src={logoImg} alt="Team Mercenarios" className="home-footer-logo" />
               <div className="home-footer-brand-text">
                 <span className="home-footer-name">TEAM MERCENARIOS</span>
-                <span className="home-footer-sub">Chile · Airsoft Táctico · Est. 2022</span>
+                <span className="home-footer-sub">Chile · Airsoft Táctico · Est. 2021</span>
               </div>
             </div>
             <div className="home-footer-nav">
@@ -407,7 +442,7 @@ export default function Home() {
             </div>
             <div className="home-footer-right">
               <Link to="/login" className="home-footer-cta">ÁREA DE MIEMBROS →</Link>
-              <p className="home-footer-copy">© 2022–2026 Team Mercenarios</p>
+              <p className="home-footer-copy">© 2021–2026 Team Mercenarios</p>
             </div>
           </div>
         </div>

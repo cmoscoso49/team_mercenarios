@@ -86,6 +86,13 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 - `admin` superusuario debe tener `rol='administrador'` (verificar en Django admin)
 - Usuarios de prueba: `tesorero1/tesorero2026`, `integrante1/integrante2026`
 
+## Endpoints públicos (AllowAny — sin auth)
+
+- `GET /api/v1/public/stats/` → `{ integrantes_activos, eventos_proximos }`
+- `GET /api/v1/public/eventos/` → próximos 5 eventos programados
+- `GET /api/v1/public/noticias/` → últimas 3 noticias estado=publicado visibilidad=publica
+- Implementado en: `backend/apps/reportes/views_public.py`
+
 ## Rutas clave
 
 - Backend: `backend/` — Django project

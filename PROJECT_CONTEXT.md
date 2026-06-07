@@ -16,7 +16,7 @@ Fecha: 2026-06-01 | Migración: 2026-06-01
 | Módulo | Backend | Frontend | Estado |
 |--------|---------|----------|--------|
 | Auth JWT | ✅ | ✅ | Completo |
-| **Home pública** | — | ✅ | Completo — `/inicio`, landing táctica |
+| **Home pública** | ✅ | ✅ | Conectada a BD — stats/eventos/noticias desde API pública (AllowAny) |
 | Integrantes | ✅ | ✅ | Completo — fuente oficial: hoja MENSUALIDADES 2025 |
 | Finanzas (Movimientos) | ✅ | ✅ | Completo |
 | Finanzas (Mensualidades) | ✅ | ✅ | Completo |
