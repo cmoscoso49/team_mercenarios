@@ -32,6 +32,7 @@ Fecha: 2026-06-01 | Migración: 2026-06-01
 | ConfiguracionCuota | ✅ | — | Editable via admin o API |
 | Importación Excel | ✅ | ⚠️ | Backend OK, UI pendiente |
 | Instagram | ✅ modelo | ⚠️ | Solo estructura, sin UI |
+| Reclutamiento | ✅ | ✅ | Formulario público /postulacion + admin /postulaciones |
 
 ## Migración histórica (completada 2026-06-01) + Sincronización 2025 (2026-06-06)
 Comando histórico: `python manage.py importar_excel_historico`
@@ -118,11 +119,14 @@ Modelo Postulacion definido. Endpoints portal personal especificados. Riesgos do
 - [ ] Dashboard bienvenida personalizado por rol
 - [ ] Guards backend DRF para capitan/integrante
 
-### 2B — Reclutamiento público (ALTO · ~1.5 semanas)
-- [ ] App `reclutamiento` + modelo `Postulacion`
-- [ ] Página pública `/postulacion` con formulario completo
-- [ ] CTA "ÚNETE AL TEAM" en hero, nav, footer de `/inicio`
-- [ ] Vista admin de postulaciones recibidas
+### 2B — Reclutamiento público ✅ COMPLETADO (2026-06-07)
+- [x] App `reclutamiento` + modelo `Postulacion` + migración BD
+- [x] Endpoint público POST `/api/v1/public/postulacion/` (AllowAny)
+- [x] Endpoint admin `/api/v1/reclutamiento/postulaciones/` (IsAdmin)
+- [x] Página pública `/postulacion` con formulario completo (dark tactical)
+- [x] CTA "ÚNETE AL TEAM" en hero, nav, footer de `/inicio`
+- [x] Vista admin `/postulaciones` con tabla + modal gestión de estado
+- [x] Sidebar item Postulaciones (solo administrador)
 
 ### 2C — Eventos interactivos (ALTO · ~1 semana)
 - [ ] Confirmación de asistencia desde portal integrante
