@@ -85,6 +85,33 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 - Sidebar filtra items por `user.rol` en `components/Layout/Sidebar.jsx`
 - `admin` superusuario debe tener `rol='administrador'` (verificar en Django admin)
 - Usuarios de prueba: `tesorero1/tesorero2026`, `integrante1/integrante2026`
+- ⚠️ PENDIENTE: `capitan` e `integrante` carecen de guards en backend DRF (solo filtrado frontend)
+- ⚠️ PENDIENTE: No existe FK `Integrante.usuario` — bloquea portal personal
+
+## Próximas etapas (Roadmap post-auditoría 2026-06-07)
+
+### ETAPA 2A — Portal del Integrante (CRÍTICO)
+- Agregar `usuario = OneToOneField(AUTH_USER_MODEL, null=True)` a modelo Integrante + migración
+- Página "Mi Perfil" (nick, estado, foto, equipo)
+- Página "Mis Cuotas" (mensualidades propias + deudas)
+- Dashboard personalizado por rol (sin mensaje "no tienes permisos")
+- Guards de API backend para roles capitan/integrante
+
+### ETAPA 2B — Reclutamiento público
+- Nueva app `reclutamiento` + modelo `Postulacion`
+- Ruta pública `/postulacion` con formulario completo
+- CTA "ÚNETE AL TEAM" en hero, nav y footer de `/inicio`
+- Vista admin para gestionar postulaciones
+
+### ETAPA 2C — Eventos + confirmación asistencia
+- `POST /api/v1/eventos/:id/confirmar/` (integrante confirma asistencia)
+- Vista de confirmados/convocados en detalle evento
+
+### ETAPA 2D — UX premium
+- Toast notifications globales (éxito/error en CRUD)
+- Modal confirmación antes de eliminar
+- Skeleton loaders en lugar de "Cargando..."
+- Tablas responsivas en móvil
 
 ## Endpoints públicos (AllowAny — sin auth)
 

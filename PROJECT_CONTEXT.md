@@ -91,20 +91,54 @@ Conciliacion disponible: GET /api/v1/reportes/conciliacion/
 - **Back link hover**: `#cc2222`
 - **Archivo**: `frontend/src/pages/Login/Login.css` (solo CSS, JSX sin cambios)
 
-## Pendiente Etapa 2
-- [ ] Crear movimientos de ingreso desde mensualidades pagadas (cuadrar saldo)
-- [ ] UI para importación de Excel con previsualización
-- [ ] Upload de imágenes en integrantes, eventos, noticias
-- [ ] Vista de galería con fotos reales
-- [ ] Paginación en frontend (hoy carga todos los resultados)
-- [ ] Filtro de fechas en movimientos
+## Auditoría completada (2026-06-07)
+
+Estado actual auditado por roles: Arquitecto · UX Senior · Product Owner · Consultor Airsoft.
+
+**Gaps críticos identificados:**
+1. No existe FK `Integrante.usuario` → integrante no tiene portal personal (cuotas, perfil)
+2. No existe formulario de postulación público → reclutamiento por WhatsApp
+3. CTA "ÚNETE" ausente en página pública
+4. Guards de API para rol `capitan`/`integrante` solo en frontend, no en backend DRF
+5. Dashboard integrante muestra "sin permisos" — mala bienvenida
+
+## Roadmap Etapa 2 (priorizado post-auditoría)
+
+### 2A — Portal del Integrante (CRÍTICO · ~1.5 semanas)
+- [ ] FK `Integrante.usuario = OneToOneField(null=True)` + migración
+- [ ] Página "Mi Perfil" para integrante
+- [ ] Página "Mis Cuotas" (mensualidades + deudas propias)
+- [ ] Dashboard bienvenida personalizado por rol
+- [ ] Guards backend DRF para capitan/integrante
+
+### 2B — Reclutamiento público (ALTO · ~1.5 semanas)
+- [ ] App `reclutamiento` + modelo `Postulacion`
+- [ ] Página pública `/postulacion` con formulario completo
+- [ ] CTA "ÚNETE AL TEAM" en hero, nav, footer de `/inicio`
+- [ ] Vista admin de postulaciones recibidas
+
+### 2C — Eventos interactivos (ALTO · ~1 semana)
+- [ ] Confirmación de asistencia desde portal integrante
+- [ ] Indicador confirmados/convocados en detalle evento
+
+### 2D — UX premium (MEDIO · ~1 semana)
+- [ ] Toast notifications globales (éxito/error CRUD)
+- [ ] Modal confirmación antes de eliminar
+- [ ] Skeleton loaders
+- [ ] Tablas responsivas en móvil
+- [ ] Paginación en frontend (backend ya tiene 20/página)
+
+### Etapa 3 — Funcionalidades avanzadas (post-validación)
+- [ ] Ranking anual de participación
+- [ ] Ficha Táctica por integrante (estadísticas históricas)
+- [ ] Galería con upload real de fotos
+- [ ] Calendario visual interactivo
 - [ ] Exportar reportes a PDF/Excel
-- [ ] Módulo de Instagram (planificación publicaciones)
-- [x] ~~Migración de datos desde el Excel histórico~~ — COMPLETADO
-- [ ] Deploy en servidor (cambiar SQLite a PostgreSQL)
-- [ ] Sistema de roles con permisos granulares
+- [ ] Crear movimientos de ingreso desde mensualidades
+- [ ] Deploy en servidor (SQLite → PostgreSQL)
+- [ ] Módulo Instagram (Etapa 2 del módulo ya modelado)
 - [ ] Notificaciones de deudas vencidas
-- [ ] Calendario visual interactivo en React
+- [ ] Mapa de campos de Airsoft (Arica + Chile)
 
 ## Variables de entorno críticas
 - `SECRET_KEY`: clave Django (cambiar en producción)
