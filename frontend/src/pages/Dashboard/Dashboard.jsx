@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { getDashboard } from '../../api/reportes'
 import { useAuth } from '../../context/AuthContext'
 import StatCard from '../../components/common/StatCard'
@@ -8,6 +8,7 @@ import '../../components/common/common.css'
 import './Dashboard.css'
 
 const ROLES_FINANCIEROS = ['administrador', 'tesorero']
+const ROLES_PORTAL_ONLY = ['integrante', 'readonly']
 
 export default function Dashboard() {
   const [data, setData] = useState(null)
@@ -15,6 +16,10 @@ export default function Dashboard() {
   const [error, setError] = useState('')
   const { user } = useAuth()
   const tieneAccesoFinanciero = ROLES_FINANCIEROS.includes(user?.rol)
+
+  if (ROLES_PORTAL_ONLY.includes(user?.rol)) {
+    return <Navigate to="/portal" replace />
+  }
 
   useEffect(() => {
     getDashboard()

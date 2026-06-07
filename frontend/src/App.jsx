@@ -20,6 +20,26 @@ import Galeria from './pages/Galeria/Galeria'
 import Reportes from './pages/Reportes/Reportes'
 import Postulacion from './pages/Postulacion/Postulacion'
 import Postulaciones from './pages/Admin/Postulaciones'
+import PortalLayout from './pages/Portal/PortalLayout'
+import PortalDashboard from './pages/Portal/PortalDashboard'
+import MisCuotas from './pages/Portal/MisCuotas'
+import MisEventos from './pages/Portal/MisEventos'
+import MiPerfil from './pages/Portal/MiPerfil'
+
+function PortalRoute({ children }) {
+  const { user, loading } = useAuth()
+  if (loading) return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      height: '100vh', background: '#080808', color: '#cc2222',
+      fontSize: 14, fontFamily: "'Oswald', sans-serif",
+      letterSpacing: 4, textTransform: 'uppercase'
+    }}>
+      Cargando...
+    </div>
+  )
+  return user ? children : <Navigate to="/login" replace />
+}
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
@@ -45,6 +65,12 @@ function AppRoutes() {
       <Route path="/eventos/:id"    element={<EventoPublico />} />
       <Route path="/postulacion"    element={<Postulacion />} />
       <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/portal" element={<PortalRoute><PortalLayout /></PortalRoute>}>
+        <Route index element={<PortalDashboard />} />
+        <Route path="mis-cuotas"  element={<MisCuotas />} />
+        <Route path="mis-eventos" element={<MisEventos />} />
+        <Route path="mi-perfil"   element={<MiPerfil />} />
+      </Route>
       <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
         <Route index element={<Dashboard />} />
         <Route path="integrantes" element={<Integrantes />} />

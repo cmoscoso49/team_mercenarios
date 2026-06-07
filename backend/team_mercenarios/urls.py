@@ -9,6 +9,7 @@ from apps.reportes.views_public import (
     public_noticia_detail, public_evento_detail,
 )
 from apps.reclutamiento.views import postulacion_publica
+from apps.integrantes.views_portal import portal_me, portal_mis_cuotas, portal_mis_eventos
 
 urlpatterns = [
     path('api/v1/public/stats/',              public_stats),
@@ -30,4 +31,7 @@ urlpatterns = [
     path('api/v1/dashboard/', include('apps.reportes.urls_dashboard')),
     path('api/v1/importacion/', include('apps.finanzas.urls_importacion')),
     path('api/v1/reclutamiento/', include('apps.reclutamiento.urls')),
+    path('api/v1/portal/me/',          portal_me),
+    path('api/v1/portal/mis-cuotas/',  portal_mis_cuotas),
+    path('api/v1/portal/mis-eventos/', portal_mis_eventos),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

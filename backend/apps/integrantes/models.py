@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Integrante(models.Model):
@@ -22,6 +23,13 @@ class Integrante(models.Model):
         ('L', 'L'), ('XL', 'XL'), ('XXL', 'XXL'),
     ]
 
+    usuario = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='integrante',
+        verbose_name='Usuario del sistema',
+    )
     nombre = models.CharField(max_length=150)
     rut = models.CharField(max_length=12, unique=True, blank=True, null=True)
     nick = models.CharField(max_length=50, blank=True)
