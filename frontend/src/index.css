@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-primary:     #080808;
+  --bg-secondary:   #0d0d0d;
+  --bg-card:        #131313;
+  --bg-hover:       #1c1c1c;
+  --bg-input:       #181818;
+
+  --accent-primary:   #3d7a3d;
+  --accent-secondary: #2a5a2a;
+  --accent-light:     #52a852;
+  --accent-red:       #cc2222;
+  --accent-red-light: #e63333;
+  --accent-gold:      #b8952a;
+  --accent-graphite:  #3a3a3a;
+
+  --text-primary:   #f0f0f0;
+  --text-secondary: #888888;
+  --text-muted:     #505050;
+
+  --border-color:  #1e1e1e;
+  --border-accent: #2a5a2a;
+
+  --success: #3d7a3d;
+  --danger:  #cc2222;
+  --warning: #b8952a;
+  --info:    #2980b9;
+
+  --shadow:    0 2px 10px rgba(0,0,0,0.6);
+  --shadow-lg: 0 4px 24px rgba(0,0,0,0.8);
+  --glow-green: 0 0 20px rgba(82,168,82,0.12);
+  --glow-red:   0 0 20px rgba(204,34,34,0.12);
+
+  --radius:    2px;
+  --radius-lg: 4px;
+
+  --font:         'Rajdhani', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-display: 'Oswald', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root { height: 100%; }
+
+a {
+  color: var(--accent-light);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--accent-light);
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font);
+}
+
+input, select, textarea {
+  font-family: var(--font);
+  font-size: 14px;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: #252525; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-secondary); }
