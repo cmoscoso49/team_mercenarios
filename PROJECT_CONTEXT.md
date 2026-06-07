@@ -96,28 +96,32 @@ Conciliacion disponible: GET /api/v1/reportes/conciliacion/
 
 Estado actual auditado por roles: Arquitecto · UX Senior · Product Owner · Consultor Airsoft.
 
-**Gaps críticos identificados:**
-1. No existe FK `Integrante.usuario` → integrante no tiene portal personal (cuotas, perfil)
-2. No existe formulario de postulación público → reclutamiento por WhatsApp
-3. CTA "ÚNETE" ausente en página pública
-4. Guards de API para rol `capitan`/`integrante` solo en frontend, no en backend DRF
-5. Dashboard integrante muestra "sin permisos" — mala bienvenida
+**Gaps críticos — estado actual:**
+1. ~~No existe FK Integrante.usuario~~ → ✅ Resuelto Sprint 3
+2. ~~No existe formulario de postulación público~~ → ✅ Resuelto Sprint 2
+3. ~~CTA "ÚNETE" ausente en página pública~~ → ✅ Resuelto Sprint 2
+4. Guards de API para `capitan` solo en frontend → ✅ IsCapitanOrAdmin creado (aplicar en eventos/noticias ViewSets es siguiente paso)
+5. ~~Dashboard integrante muestra "sin permisos"~~ → ✅ Redirige al portal
 
-## Propuesta arquitectónica v2 completada (2026-06-07)
+## Arquitectura v2 implementada (2026-06-07)
 
-Sprints definidos. Primera implementación: SPRINT 2 (Reclutamiento) por impacto/riesgo.
-Estructura de rutas v2: PUBLIC `/inicio /postulacion /noticias/:id /eventos/:id` |
-PORTAL INTEGRANTE `/portal/*` (PortalLayout separado) | ADMIN `/` (Layout actual).
-Modelo Postulacion definido. Endpoints portal personal especificados. Riesgos documentados.
+Estructura de rutas: PUBLIC `/inicio /postulacion /noticias/:id /eventos/:id` |
+PORTAL INTEGRANTE `/portal` (PortalLayout — nav táctica sin sidebar admin) | ADMIN `/` (Layout actual).
+Para activar portal: Admin Django → Integrante → campo "Usuario del sistema" → vincular.
 
 ## Roadmap Etapa 2 (priorizado post-auditoría)
 
-### 2A — Portal del Integrante (CRÍTICO · ~1.5 semanas)
-- [ ] FK `Integrante.usuario = OneToOneField(null=True)` + migración
-- [ ] Página "Mi Perfil" para integrante
-- [ ] Página "Mis Cuotas" (mensualidades + deudas propias)
-- [ ] Dashboard bienvenida personalizado por rol
-- [ ] Guards backend DRF para capitan/integrante
+### 2A — Portal del Integrante ✅ COMPLETADO (2026-06-07)
+- [x] FK `Integrante.usuario = OneToOneField(null=True)` + migración 0003
+- [x] Guards DRF: IsCapitanOrAdmin, IsIntegrante, IsPropioIntegranteOrAdmin
+- [x] Endpoints: GET/PATCH /api/v1/portal/me/, GET /portal/mis-cuotas/, GET /portal/mis-eventos/
+- [x] PortalLayout.jsx — nav táctica separada del sidebar admin
+- [x] PortalDashboard.jsx — bienvenida + stats cuotas + ficha + deudas
+- [x] MisCuotas.jsx — grid visual meses + tabla deudas + selector año
+- [x] MisEventos.jsx — próximos eventos + historial participación
+- [x] MiPerfil.jsx — editar nick y teléfono
+- [x] Dashboard admin: integrante/readonly redirigen a portal automáticamente
+- VINCULAR: Admin Django → Integrante → campo "Usuario del sistema"
 
 ### 2B — Reclutamiento público ✅ COMPLETADO (2026-06-07)
 - [x] App `reclutamiento` + modelo `Postulacion` + migración BD
