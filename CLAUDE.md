@@ -88,30 +88,65 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 - ⚠️ PENDIENTE: `capitan` e `integrante` carecen de guards en backend DRF (solo filtrado frontend)
 - ⚠️ PENDIENTE: No existe FK `Integrante.usuario` — bloquea portal personal
 
-## Próximas etapas (Roadmap post-auditoría 2026-06-07)
+## Arquitectura v2 — Decisiones clave (2026-06-07)
 
-### ETAPA 2A — Portal del Integrante (CRÍTICO)
-- Agregar `usuario = OneToOneField(AUTH_USER_MODEL, null=True)` a modelo Integrante + migración
-- Página "Mi Perfil" (nick, estado, foto, equipo)
-- Página "Mis Cuotas" (mensualidades propias + deudas)
-- Dashboard personalizado por rol (sin mensaje "no tienes permisos")
-- Guards de API backend para roles capitan/integrante
+### Estructura de rutas v2
+- PUBLIC: `/inicio`, `/postulacion`, `/noticias/:id`, `/eventos/:id`, `/login`
+- PORTAL INTEGRANTE: `/portal/*` — PortalLayout separado (sin sidebar admin)
+- PORTAL ADMIN: `/` — Layout actual (administrador, tesorero, capitan)
 
-### ETAPA 2B — Reclutamiento público
-- Nueva app `reclutamiento` + modelo `Postulacion`
-- Ruta pública `/postulacion` con formulario completo
-- CTA "ÚNETE AL TEAM" en hero, nav y footer de `/inicio`
-- Vista admin para gestionar postulaciones
+### Guards DRF a implementar
+- `IsCapitanOrAdmin` → eventos CRUD, participaciones, noticias CRUD
+- `IsIntegrante` → endpoints `/api/v1/portal/*` (cualquier rol autenticado)
+- `IsPropioIntegrante` → object-level: solo ver datos propios
 
-### ETAPA 2C — Eventos + confirmación asistencia
-- `POST /api/v1/eventos/:id/confirmar/` (integrante confirma asistencia)
-- Vista de confirmados/convocados en detalle evento
+### Endpoints portal personal (nuevos)
+- `GET /api/v1/portal/me/` → ficha del integrante autenticado
+- `GET /api/v1/portal/mis-cuotas/` → mensualidades + deudas propias
+- `GET /api/v1/portal/mis-eventos/` → próximos + historial propios
+- `POST /api/v1/portal/eventos/:id/confirmar/` → confirmar asistencia
+- `POST /api/v1/public/postulacion/` → enviar postulación (AllowAny)
+- `GET /api/v1/admin/postulaciones/` → lista (IsAdmin)
 
-### ETAPA 2D — UX premium
-- Toast notifications globales (éxito/error en CRUD)
-- Modal confirmación antes de eliminar
-- Skeleton loaders en lugar de "Cargando..."
-- Tablas responsivas en móvil
+### Decisiones confirmadas pendientes
+- Portal integrante en `/portal/*` separado (recomendado)
+- Integrante edita: nick, foto, teléfono — no nombre ni estado
+- Formulario postulación: solo BD (sin email por ahora)
+- Galería pública: fotos desde BD (admin las sube)
+
+## Roadmap v2 priorizado (post-propuesta-arquitectónica 2026-06-07)
+
+### SPRINT 1 — Base estructural (3-5 días)
+- FK `Integrante.usuario = OneToOneField(null=True)` + migración
+- `PortalRoute` en App.jsx (wrapper sin Layout admin)
+- Guards DRF: `IsCapitanOrAdmin`, `IsIntegrante`, `IsPropioIntegrante`
+
+### SPRINT 2 — Reclutamiento público (3-4 días) ← PRIMERA IMPLEMENTACIÓN
+- App `reclutamiento` + modelo `Postulacion` + migración
+- Endpoint `POST /api/v1/public/postulacion/` (AllowAny + rate limit)
+- Página `/postulacion`: hero, beneficios, requisitos, timeline, FAQ, formulario
+- CTA "ÚNETE AL TEAM" en hero + nav + footer de `/inicio`
+- Vista admin de postulaciones en Sidebar (solo administrador)
+
+### SPRINT 3 — Portal del Integrante (5-7 días)
+- `PortalLayout.jsx` — nav táctica sin sidebar admin
+- `PortalDashboard.jsx` — bienvenida + stats propias + cuotas pendientes
+- `MiPerfil.jsx` — editar nick, foto, teléfono
+- `MisCuotas.jsx` — mensualidades propias + deudas
+- `EventosPortal.jsx` — confirmar asistencia a eventos
+
+### SPRINT 4 — UX Premium (2-3 días)
+- Toast notifications globales
+- Modal confirmación eliminar
+- Skeleton loaders
+- Tablas responsivas móvil
+- Paginación frontend
+
+### SPRINT 5 — Visual avanzado (3-5 días)
+- Galería pública con fotos reales
+- Línea de tiempo histórica en `/inicio`
+- Estadísticas públicas ampliadas (campeonatos, años)
+- Foto perfil en sidebar
 
 ## Endpoints públicos (AllowAny — sin auth)
 

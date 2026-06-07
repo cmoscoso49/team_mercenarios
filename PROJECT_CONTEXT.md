@@ -102,6 +102,13 @@ Estado actual auditado por roles: Arquitecto · UX Senior · Product Owner · Co
 4. Guards de API para rol `capitan`/`integrante` solo en frontend, no en backend DRF
 5. Dashboard integrante muestra "sin permisos" — mala bienvenida
 
+## Propuesta arquitectónica v2 completada (2026-06-07)
+
+Sprints definidos. Primera implementación: SPRINT 2 (Reclutamiento) por impacto/riesgo.
+Estructura de rutas v2: PUBLIC `/inicio /postulacion /noticias/:id /eventos/:id` |
+PORTAL INTEGRANTE `/portal/*` (PortalLayout separado) | ADMIN `/` (Layout actual).
+Modelo Postulacion definido. Endpoints portal personal especificados. Riesgos documentados.
+
 ## Roadmap Etapa 2 (priorizado post-auditoría)
 
 ### 2A — Portal del Integrante (CRÍTICO · ~1.5 semanas)
