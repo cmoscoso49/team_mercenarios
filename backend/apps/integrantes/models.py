@@ -12,11 +12,14 @@ class Integrante(models.Model):
         ('honorario', 'Honorario'),
     ]
     ROL_CHOICES = [
-        ('capitan', 'Capitán'),
-        ('tesorero', 'Tesorero'),
-        ('integrante', 'Integrante'),
+        ('TL',         'Team Leader'),
+        ('presidente', 'Presidente'),
+        ('vice',       'Vice Presidente'),
+        ('secretario', 'Secretario'),
+        ('tesorero',   'Tesorero'),
+        ('player',     'Player'),
         ('postulante', 'Postulante'),
-        ('invitado', 'Invitado'),
+        ('invitado',   'Invitado'),
     ]
     TALLA_CHOICES = [
         ('XS', 'XS'), ('S', 'S'), ('M', 'M'),

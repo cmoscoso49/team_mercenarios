@@ -1,25 +1,27 @@
 import React from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import CrosshairLogo from '../common/CrosshairLogo'
 import './Sidebar.css'
 
+const LIDERAZGO = ['admin', 'TL', 'presidente', 'vice', 'secretario', 'tesorero']
+
 const ALL_NAV = [
-  { to: '/',               label: 'Dashboard',       icon: '◈', exact: true,  roles: ['administrador','tesorero','capitan','integrante','readonly'] },
-  { to: '/integrantes',    label: 'Integrantes',      icon: '◉',               roles: ['administrador','tesorero','capitan'] },
-  { to: '/finanzas',       label: 'Finanzas',         icon: '◆',               roles: ['administrador','tesorero'] },
-  { to: '/eventos',        label: 'Eventos',          icon: '◎',               roles: ['administrador','tesorero','capitan','integrante','readonly'] },
-  { to: '/participaciones',label: 'Participaciones',  icon: '◇',               roles: ['administrador','tesorero','capitan','integrante'] },
-  { to: '/noticias',       label: 'Noticias',         icon: '▣',               roles: ['administrador','tesorero','capitan','integrante','readonly'] },
-  { to: '/galeria',        label: 'Galería',          icon: '▤',               roles: ['administrador','tesorero','capitan','integrante','readonly'] },
-  { to: '/reportes',       label: 'Reportes',         icon: '▦',               roles: ['administrador','tesorero'] },
-  { to: '/postulaciones',  label: 'Postulaciones',    icon: '◈',               roles: ['administrador'] },
+  { to: '/',                label: 'Dashboard',      icon: '◈', exact: true, roles: LIDERAZGO },
+  { to: '/integrantes',     label: 'Integrantes',    icon: '◉',              roles: LIDERAZGO },
+  { to: '/finanzas',        label: 'Finanzas',       icon: '◆',              roles: LIDERAZGO },
+  { to: '/eventos',         label: 'Eventos',        icon: '◎',              roles: LIDERAZGO },
+  { to: '/participaciones', label: 'Participaciones',icon: '◇',              roles: LIDERAZGO },
+  { to: '/noticias',        label: 'Noticias',       icon: '▣',              roles: LIDERAZGO },
+  { to: '/galeria',         label: 'Galería',        icon: '▤',              roles: LIDERAZGO },
+  { to: '/reportes',        label: 'Reportes',       icon: '▦',              roles: LIDERAZGO },
+  { to: '/postulaciones',   label: 'Postulaciones',  icon: '◈',              roles: ['admin'] },
 ]
 
 export default function Sidebar({ collapsed }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
-  const rol = user?.rol || 'readonly'
+  const rol = user?.rol || ''
   const navItems = ALL_NAV.filter(item => item.roles.includes(rol))
 
   const handleLogout = () => {
@@ -49,6 +51,18 @@ export default function Sidebar({ collapsed }) {
             {!collapsed && <span className="sidebar-label">{item.label}</span>}
           </NavLink>
         ))}
+
+        {/* Mi Cuenta — acceso al portal personal para todos los roles de liderazgo */}
+        {LIDERAZGO.includes(rol) && (
+          <Link
+            to="/portal"
+            className="sidebar-link sidebar-link-portal"
+            title={collapsed ? 'Mi Cuenta' : undefined}
+          >
+            <span className="sidebar-icon">▽</span>
+            {!collapsed && <span className="sidebar-label">Mi Cuenta</span>}
+          </Link>
+        )}
       </nav>
 
       <div className="sidebar-footer">

@@ -100,14 +100,25 @@ Estado actual auditado por roles: Arquitecto · UX Senior · Product Owner · Co
 1. ~~No existe FK Integrante.usuario~~ → ✅ Resuelto Sprint 3
 2. ~~No existe formulario de postulación público~~ → ✅ Resuelto Sprint 2
 3. ~~CTA "ÚNETE" ausente en página pública~~ → ✅ Resuelto Sprint 2
-4. Guards de API para `capitan` solo en frontend → ✅ IsCapitanOrAdmin creado (aplicar en eventos/noticias ViewSets es siguiente paso)
-5. ~~Dashboard integrante muestra "sin permisos"~~ → ✅ Redirige al portal
+4. ~~Guards de API solo en frontend~~ → ✅ IsLiderazgo/IsAdmin en todos los ViewSets (Sprint 4)
+5. ~~Dashboard integrante muestra "sin permisos"~~ → ✅ Redirige al portal (player → /portal)
+6. ~~Roles desactualizados~~ → ✅ Nuevo esquema v2 (2026-06-07): admin/TL/presidente/vice/secretario/tesorero/player
 
 ## Arquitectura v2 implementada (2026-06-07)
 
 Estructura de rutas: PUBLIC `/inicio /postulacion /noticias/:id /eventos/:id` |
-PORTAL INTEGRANTE `/portal` (PortalLayout — nav táctica sin sidebar admin) | ADMIN `/` (Layout actual).
+PORTAL `/portal` (todos los roles — player exclusivo, liderazgo via "Mi Cuenta" en sidebar) | ADMIN `/` (liderazgo).
 Para activar portal: Admin Django → Integrante → campo "Usuario del sistema" → vincular.
+
+### Esquema de roles v2 (2026-06-07)
+- `admin` = Administrador (todos los permisos, solo admin puede gestionar postulaciones)
+- `TL` = Team Leader (ex-capitan) — panel + portal + finanzas
+- `presidente`, `vice`, `secretario` — mismos permisos que TL
+- `tesorero` — mismos permisos que TL (ya no permisos financieros exclusivos)
+- `player` = Player (ex-integrante) — solo portal personal
+- Todos pagan cuotas → todos tienen portal personal con sus estados de cuenta
+- `IsLiderazgo` reemplaza a IsAdminOrTesorero/IsRolCompleto/IsCapitanOrAdmin (aliases activos)
+- Usuarios de prueba: `tesorero1/tesorero2026`, `style/mercenarios2026@` (TL), `corvo/mercenarios2026@` (player)
 
 ## Roadmap Etapa 2 (priorizado post-auditoría)
 

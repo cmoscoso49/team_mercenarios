@@ -7,15 +7,15 @@ import Badge from '../../components/common/Badge'
 import '../../components/common/common.css'
 import './Dashboard.css'
 
-const ROLES_FINANCIEROS = ['administrador', 'tesorero']
-const ROLES_PORTAL_ONLY = ['integrante', 'readonly']
+const ROLES_LIDERAZGO   = ['admin', 'TL', 'presidente', 'vice', 'secretario', 'tesorero']
+const ROLES_PORTAL_ONLY = ['player']
 
 export default function Dashboard() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const { user } = useAuth()
-  const tieneAccesoFinanciero = ROLES_FINANCIEROS.includes(user?.rol)
+  const tieneAccesoFinanciero = ROLES_LIDERAZGO.includes(user?.rol)
 
   if (ROLES_PORTAL_ONLY.includes(user?.rol)) {
     return <Navigate to="/portal" replace />

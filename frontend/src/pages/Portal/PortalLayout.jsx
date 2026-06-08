@@ -1,10 +1,13 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './PortalLayout.css';
+
+const ROLES_LIDERAZGO = ['admin', 'TL', 'presidente', 'vice', 'secretario', 'tesorero'];
 
 export default function PortalLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const esLiderazgo = ROLES_LIDERAZGO.includes(user?.rol);
 
   function handleLogout() {
     logout();
@@ -15,7 +18,13 @@ export default function PortalLayout() {
     <div className="portal-wrap">
       <nav className="portal-nav">
         <div className="portal-nav-inner">
-          <span className="portal-nav-brand">Team Mercenarios</span>
+          {esLiderazgo ? (
+            <Link to="/" className="portal-nav-brand" style={{ textDecoration: 'none' }}>
+              ← Panel
+            </Link>
+          ) : (
+            <span className="portal-nav-brand">Team Mercenarios</span>
+          )}
 
           <NavLink to="/portal" end className={({ isActive }) => `portal-nav-link${isActive ? ' active' : ''}`}>
             Inicio

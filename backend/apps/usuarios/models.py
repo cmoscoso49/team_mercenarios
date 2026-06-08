@@ -4,13 +4,15 @@ from django.db import models
 
 class Usuario(AbstractUser):
     ROL_CHOICES = [
-        ('administrador', 'Administrador'),
-        ('tesorero', 'Tesorero'),
-        ('capitan', 'Capitán'),
-        ('integrante', 'Integrante'),
-        ('readonly', 'Solo Lectura'),
+        ('admin',       'Administrador'),
+        ('TL',          'Team Leader'),
+        ('presidente',  'Presidente'),
+        ('vice',        'Vice Presidente'),
+        ('secretario',  'Secretario'),
+        ('tesorero',    'Tesorero'),
+        ('player',      'Player'),
     ]
-    rol = models.CharField(max_length=20, choices=ROL_CHOICES, default='integrante')
+    rol = models.CharField(max_length=20, choices=ROL_CHOICES, default='player')
     telefono = models.CharField(max_length=20, blank=True)
 
     class Meta:

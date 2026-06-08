@@ -78,27 +78,38 @@ Plataforma integral para Team Mercenarios que combine:
 
 Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes deportivos profesionales.
 
-## Roles y permisos
+## Roles y permisos (v2 — 2026-06-07)
 
-- Permisos en `apps/usuarios/permissions.py`: `IsAdminOrTesorero`, `IsAdmin`
-- ROLES_FINANCIEROS = {administrador, tesorero} — acceso a finanzas, dashboard financiero, reportes
-- Sidebar filtra items por `user.rol` en `components/Layout/Sidebar.jsx`
-- `admin` superusuario debe tener `rol='administrador'` (verificar en Django admin)
-- Usuarios de prueba: `tesorero1/tesorero2026`, `integrante1/integrante2026`
-- ⚠️ PENDIENTE: `capitan` e `integrante` carecen de guards en backend DRF (solo filtrado frontend)
-- ⚠️ PENDIENTE: No existe FK `Integrante.usuario` — bloquea portal personal
+| Rol sistema  | Cargo real        | Panel admin | Portal | Finanzas |
+|-------------|-------------------|-------------|--------|----------|
+| `admin`      | Administrador     | SI (total)  | SI     | SI       |
+| `TL`         | Team Leader       | SI          | SI     | SI       |
+| `presidente` | Presidente        | SI          | SI     | SI       |
+| `vice`       | Vice Presidente   | SI          | SI     | SI       |
+| `secretario` | Secretario        | SI          | SI     | SI       |
+| `tesorero`   | Tesorero          | SI          | SI     | SI       |
+| `player`     | Player/Integrante | NO (portal) | SI     | —        |
+
+- Permisos en `apps/usuarios/permissions.py`: `IsAdmin`, `IsLiderazgo`, `IsIntegrante`, `IsPropioIntegranteOrAdmin`
+- `ROLES_LIDERAZGO = {'admin','TL','presidente','vice','secretario','tesorero'}` — panel + finanzas
+- `IsAdminOrTesorero`, `IsRolCompleto`, `IsCapitanOrAdmin` son aliases de `IsLiderazgo` (compatibilidad backward)
+- `player` redirigido al portal al hacer login (ROLES_PORTAL_ONLY = ['player'])
+- Liderazgo: panel admin + "Mi Cuenta" en sidebar + boton Panel en portal
+- Todos los roles pagan cuotas y ven su estado de cuenta en el portal personal
+- Usuarios de prueba: `tesorero1/tesorero2026`, `integrante1/integrante2026`, `style/mercenarios2026@` (TL), `corvo/mercenarios2026@` (player)
 
 ## Arquitectura v2 — Decisiones clave (2026-06-07)
 
-### Estructura de rutas v2
+### Estructura de rutas v2 (implementada)
 - PUBLIC: `/inicio`, `/postulacion`, `/noticias/:id`, `/eventos/:id`, `/login`
-- PORTAL INTEGRANTE: `/portal/*` — PortalLayout separado (sin sidebar admin)
-- PORTAL ADMIN: `/` — Layout actual (administrador, tesorero, capitan)
+- PORTAL: `/portal/*` — PortalLayout separado (todos los roles — player exclusivo, liderazgo via sidebar "Mi Cuenta")
+- PANEL ADMIN: `/` — Layout actual (solo liderazgo: admin, TL, presidente, vice, secretario, tesorero)
 
-### Guards DRF a implementar
-- `IsCapitanOrAdmin` → eventos CRUD, participaciones, noticias CRUD
-- `IsIntegrante` → endpoints `/api/v1/portal/*` (cualquier rol autenticado)
-- `IsPropioIntegrante` → object-level: solo ver datos propios
+### Guards DRF (implementados)
+- `IsLiderazgo` → todos los endpoints de gestión (integrantes, eventos, noticias, finanzas, reportes)
+- `IsAdmin` → postulaciones, operaciones admin puras
+- `IsIntegrante` → endpoints `/api/v1/portal/*` (todos los roles)
+- `IsPropioIntegranteOrAdmin` → object-level: solo datos propios o admin
 
 ### Endpoints portal personal (nuevos)
 - `GET /api/v1/portal/me/` → ficha del integrante autenticado

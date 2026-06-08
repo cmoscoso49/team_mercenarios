@@ -1,24 +1,16 @@
 from rest_framework.permissions import BasePermission
 
-ROLES_FINANCIEROS   = {'administrador', 'tesorero'}
-ROLES_ADMIN         = {'administrador'}
-ROLES_COMPLETOS     = {'administrador', 'capitan', 'tesorero'}
-ROLES_CAPITAN_ADMIN = {'administrador', 'capitan'}
-ROLES_AUTENTICADOS  = {'administrador', 'tesorero', 'capitan', 'integrante', 'readonly'}
+# Roles con acceso al panel de gestión (todos pagan cuotas y ven portal)
+ROLES_LIDERAZGO  = {'admin', 'TL', 'presidente', 'vice', 'secretario', 'tesorero'}
+ROLES_ADMIN      = {'admin'}
+ROLES_TODOS      = {'admin', 'TL', 'presidente', 'vice', 'secretario', 'tesorero', 'player'}
 
-
-class IsAdminOrTesorero(BasePermission):
-    """Solo administrador y tesorero pueden ver info financiera."""
-    message = 'No tienes permisos para ver la informacion financiera del Team.'
-
-    def has_permission(self, request, view):
-        return bool(
-            request.user and request.user.is_authenticated
-            and getattr(request.user, 'rol', None) in ROLES_FINANCIEROS
-        )
+# Alias semántico: todos los roles de liderazgo ven finanzas
+ROLES_FINANCIEROS = ROLES_LIDERAZGO
 
 
 class IsAdmin(BasePermission):
+    """Solo admin (superusuario del sistema)."""
     def has_permission(self, request, view):
         return bool(
             request.user and request.user.is_authenticated
@@ -26,35 +18,26 @@ class IsAdmin(BasePermission):
         )
 
 
-class IsRolCompleto(BasePermission):
-    """Administrador, tesorero y capitán — acceso al panel de gestión."""
+class IsLiderazgo(BasePermission):
+    """TL, Presidente, Vice, Secretario, Tesorero y Admin — acceso al panel de gestión."""
     def has_permission(self, request, view):
         return bool(
             request.user and request.user.is_authenticated
-            and getattr(request.user, 'rol', None) in ROLES_COMPLETOS
-        )
-
-
-class IsCapitanOrAdmin(BasePermission):
-    """Capitán y administrador pueden gestionar eventos, noticias y participaciones."""
-    def has_permission(self, request, view):
-        return bool(
-            request.user and request.user.is_authenticated
-            and getattr(request.user, 'rol', None) in ROLES_CAPITAN_ADMIN
+            and getattr(request.user, 'rol', None) in ROLES_LIDERAZGO
         )
 
 
 class IsIntegrante(BasePermission):
-    """Cualquier usuario autenticado con rol válido puede acceder al portal."""
+    """Cualquier usuario autenticado con rol válido — acceso al portal personal."""
     def has_permission(self, request, view):
         return bool(
             request.user and request.user.is_authenticated
-            and getattr(request.user, 'rol', None) in ROLES_AUTENTICADOS
+            and getattr(request.user, 'rol', None) in ROLES_TODOS
         )
 
 
 class IsPropioIntegranteOrAdmin(BasePermission):
-    """Object-level: solo el propio integrante o administrador."""
+    """Object-level: solo el propio integrante o admin."""
     def has_permission(self, request, view):
         return bool(request.user and request.user.is_authenticated)
 
@@ -65,3 +48,9 @@ class IsPropioIntegranteOrAdmin(BasePermission):
             return obj == request.user.integrante
         except Exception:
             return False
+
+
+# ── Aliases de compatibilidad (apuntan a IsLiderazgo) ──────────────
+IsAdminOrTesorero = IsLiderazgo
+IsRolCompleto     = IsLiderazgo
+IsCapitanOrAdmin  = IsLiderazgo
