@@ -12,7 +12,7 @@ def reporte_financiero(request):
     from apps.finanzas.models import Movimiento, Mensualidad, Deuda, Categoria
     from apps.finanzas.serializers import MovimientoSerializer
 
-    anio = int(request.GET.get('anio', timezone.now().year))
+    anio = int(request.GET.get('anio', 2025))
 
     ingresos_por_mes = []
     egresos_por_mes = []
@@ -59,7 +59,7 @@ def reporte_integrantes(request):
     from apps.finanzas.models import Mensualidad, Deuda
     from apps.eventos.models import Participacion
 
-    anio = int(request.GET.get('anio', timezone.now().year))
+    anio = int(request.GET.get('anio', 2025))
 
     integrantes = Integrante.objects.all()
     resultado = []

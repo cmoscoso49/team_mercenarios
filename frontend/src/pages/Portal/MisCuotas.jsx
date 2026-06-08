@@ -4,8 +4,8 @@ import apiClient from '../../api/client';
 const MESES = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
 export default function MisCuotas() {
-  const anioActual = new Date().getFullYear();
-  const [anio, setAnio] = useState(anioActual);
+  const ANIO_MAX = 2025;
+  const [anio, setAnio] = useState(ANIO_MAX);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [noVinculado, setNoVinculado] = useState(false);
@@ -20,7 +20,7 @@ export default function MisCuotas() {
       });
   }, [anio]);
 
-  const anios = Array.from({ length: 5 }, (_, i) => anioActual - i);
+  const anios = [2025, 2024, 2023, 2022];
 
   if (loading) return <div className="portal-loading">Cargando cuotas...</div>;
 

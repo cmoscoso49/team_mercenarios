@@ -49,11 +49,12 @@ def portal_mis_cuotas(request):
             status=status.HTTP_404_NOT_FOUND
         )
 
-    anio = request.query_params.get('anio', timezone.now().year)
+    ANIO_MAX = 2025
+    anio = request.query_params.get('anio', ANIO_MAX)
     try:
-        anio = int(anio)
+        anio = min(int(anio), ANIO_MAX)
     except (ValueError, TypeError):
-        anio = timezone.now().year
+        anio = ANIO_MAX
 
     mensualidades = integrante.mensualidades.filter(anio=anio).order_by('mes')
     deudas_pendientes = integrante.deudas.exclude(estado='pagada').exclude(estado='condonada')

@@ -154,7 +154,7 @@ function MovimientosTab() {
 function MensualidadesTab() {
   const [mensualidades, setMensualidades] = useState([])
   const [loading, setLoading] = useState(true)
-  const [filtros, setFiltros] = useState({ anio: new Date().getFullYear(), estado: '' })
+  const [filtros, setFiltros] = useState({ anio: 2025, estado: '' })
 
   useEffect(() => {
     getMensualidades(filtros).then(r => setMensualidades(r.data.results || r.data)).finally(() => setLoading(false))

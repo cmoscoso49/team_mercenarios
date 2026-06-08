@@ -258,7 +258,6 @@ class Command(BaseCommand):
             'MENSUALIDADES 2023': 2023,
             'MENSUALIDADES 2024': 2024,
             'MENSUALIDADES 2025': 2025,
-            'MENSUALIDADES 2026': 2026,
         }
 
         total_creadas = 0

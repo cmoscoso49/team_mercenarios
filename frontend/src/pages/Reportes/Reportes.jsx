@@ -159,7 +159,7 @@ function ReporteParticipaciones({ anio }) {
 
 export default function Reportes() {
   const [tab, setTab] = useState('financiero')
-  const [anio, setAnio] = useState(new Date().getFullYear())
+  const [anio, setAnio] = useState(2025)
 
   return (
     <div>
