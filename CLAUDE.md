@@ -212,15 +212,34 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 ## API Base URL
 
 - **Local (dev):** `http://localhost:8001/api/v1/` — Vite proxy redirige `/api` → `localhost:8001`
-- **Producción:** `https://api.mercenarios.cl/api/v1` — variable `VITE_API_BASE_URL` en `.env.production`
+- **Producción:** `https://TU_USUARIO.pythonanywhere.com/api/v1` (free) o `https://api.mercenarios.cl/api/v1` (con CF Worker)
 - `client.js` usa `import.meta.env.VITE_API_BASE_URL || '/api/v1'` — fallback local automático
 
-## Deploy Frontend (Cloudflare Pages)
+## Deploy — Arquitectura gratuita (implementada)
 
+| Capa | Servicio | URL |
+|------|----------|-----|
+| Frontend | Cloudflare Pages (free) | https://mercenarios.cl |
+| Backend | PythonAnywhere (free) | https://TU_USUARIO.pythonanywhere.com |
+| BD | SQLite en PythonAnywhere | — |
+
+### Frontend (Cloudflare Pages)
 - Build: `cd frontend && npm run build` → genera `frontend/dist/`
-- Env var requerida en Cloudflare Pages: `VITE_API_BASE_URL=https://api.mercenarios.cl/api/v1`
-- Archivo local: `frontend/.env.production` (no subir a git — contiene URL pública)
-- Referencia: `frontend/.env.example` (sí subir a git)
+- Root directory: `frontend` | Build command: `npm run build` | Output: `dist`
+- Env var en Cloudflare dashboard: `VITE_API_BASE_URL=https://TU_USUARIO.pythonanywhere.com/api/v1`
+- Guía completa: `docs/CLOUDFLARE_PAGES.md`
+
+### Backend (PythonAnywhere)
+- settings.py: CORS/CSRF configurables por env var (python-decouple)
+- Whitenoise activo en MIDDLEWARE para staticfiles
+- `python manage.py check` → 0 issues ✅
+- Guía completa: `docs/PYTHONANYWHERE.md`
+- WSGI: manual configuration → apuntar a `backend/team_mercenarios/wsgi.py`
+
+### ⚠️ PythonAnywhere free NO soporta custom domains
+- La API queda en `TU_USUARIO.pythonanywhere.com/api/v1`
+- Para usar `api.mercenarios.cl`: Plan Hacker ($5/mes) O Cloudflare Worker proxy
+- Detalles: `docs/DEPLOY_GRATIS.md`
 
 ## Datos reales (migración completada)
 

@@ -181,9 +181,13 @@ Para activar portal: Admin Django → Integrante → campo "Usuario del sistema"
 ## Variables de entorno críticas
 - `SECRET_KEY`: clave Django (cambiar en producción)
 - `DEBUG`: False en producción
-- `VITE_API_BASE_URL`: URL base API para frontend en producción — `https://api.mercenarios.cl/api/v1`
-  - Definida en `frontend/.env.production` (local) y en Cloudflare Pages → Settings → Variables
+- `VITE_API_BASE_URL`: URL base API para frontend en producción
+  - Free tier: `https://TU_USUARIO.pythonanywhere.com/api/v1`
+  - Con custom domain: `https://api.mercenarios.cl/api/v1` (requiere CF Worker o PA Hacker)
+  - Definida en `frontend/.env.production` (local, en .gitignore) y en Cloudflare Pages → Settings → Variables
   - En dev local no se requiere — el proxy Vite redirige `/api` → `localhost:8001` automáticamente
+- `CORS_ALLOWED_ORIGINS`: orígenes permitidos — configurable via .env en PythonAnywhere
+- `CSRF_TRUSTED_ORIGINS`: dominios de confianza para CSRF — configurable via .env
 - Credenciales bancarias: NUNCA guardar en código ni .env
 - Instagram tokens: pendiente para Etapa futura — si la cuenta se convierte a Business/Creator, se puede integrar Instagram Graph API (token en variable de entorno INSTAGRAM_ACCESS_TOKEN). La arquitectura actual (PublicacionInstagram + endpoint público) ya es compatible con esa integración sin cambios de modelo.
 
