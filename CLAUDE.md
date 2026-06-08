@@ -211,7 +211,16 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 
 ## API Base URL
 
-`http://localhost:8001/api/v1/` (puerto 8001 — 8000 ocupado por otro proyecto)
+- **Local (dev):** `http://localhost:8001/api/v1/` — Vite proxy redirige `/api` → `localhost:8001`
+- **Producción:** `https://api.mercenarios.cl/api/v1` — variable `VITE_API_BASE_URL` en `.env.production`
+- `client.js` usa `import.meta.env.VITE_API_BASE_URL || '/api/v1'` — fallback local automático
+
+## Deploy Frontend (Cloudflare Pages)
+
+- Build: `cd frontend && npm run build` → genera `frontend/dist/`
+- Env var requerida en Cloudflare Pages: `VITE_API_BASE_URL=https://api.mercenarios.cl/api/v1`
+- Archivo local: `frontend/.env.production` (no subir a git — contiene URL pública)
+- Referencia: `frontend/.env.example` (sí subir a git)
 
 ## Datos reales (migración completada)
 

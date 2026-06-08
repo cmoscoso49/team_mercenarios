@@ -23,6 +23,8 @@ backend/.env
 node_modules/
 frontend/dist/
 frontend/.env
+frontend/.env.production
+frontend/.env.local
 
 # OS
 .DS_Store
