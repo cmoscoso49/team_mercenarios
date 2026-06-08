@@ -205,6 +205,7 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 - `IntegranteFicha`: muestra 2024 y 2025 por separado; no genera cajas para años sin datos
 - `resumen` action: totales históricos 2022-2025 solamente
 - `reincorporacion` action: calcula pendientes hasta 2025-12, no extiende a 2026
+- **Ene-May 2025 condonados**: los meses 1-5 del 2025 fueron perdonados por el team — estado `exento` en BD, no cuentan como deuda en ningún cálculo
 - Dashboard KPIs cuotas: `ANIO_MIN=2024, ANIO_MAX=2025`, solo integrantes activos (`integrante__estado='activo'`), evita negativos por deudas históricas de inactivos
 - Integrantes list: filtro por defecto = activo (botones Activos | Inactivos | Todos)
 

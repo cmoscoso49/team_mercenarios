@@ -184,6 +184,10 @@ class Command(BaseCommand):
                 else:
                     estado = 'pendiente'
 
+                # Ene-May 2025 fueron condonados por el team (regla de negocio)
+                if anio == 2025 and mes in (1, 2, 3, 4, 5) and estado == 'pendiente':
+                    estado = 'exento'
+
                 try:
                     monto = int(float(cell_val.replace('.', '').replace(',', ''))) if estado == 'pagada' else 5000
                 except (ValueError, AttributeError):
