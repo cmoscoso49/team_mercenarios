@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getIntegrantes, deleteIntegrante } from '../../api/integrantes'
+import { getIntegrantes, darDeBaja, reactivarIntegrante } from '../../api/integrantes'
+import { useToast } from '../../components/common/ToastProvider'
+import { useConfirm } from '../../components/common/ConfirmModal'
 import Badge from '../../components/common/Badge'
 import '../../components/common/common.css'
 
@@ -9,13 +11,15 @@ export default function Integrantes() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [filters, setFilters] = useState({ search: '', estado: '', rol: '' })
+  const toast   = useToast()
+  const confirm = useConfirm()
 
   const cargar = () => {
     setLoading(true)
     const params = {}
     if (filters.search) params.search = filters.search
     if (filters.estado) params.estado = filters.estado
-    if (filters.rol) params.rol = filters.rol
+    if (filters.rol)    params.rol    = filters.rol
     getIntegrantes(params)
       .then((r) => setIntegrantes(r.data.results || r.data))
       .catch(() => setError('Error al cargar integrantes'))
@@ -24,12 +28,39 @@ export default function Integrantes() {
 
   useEffect(() => { cargar() }, [filters])
 
-  const handleDelete = async (id, nombre) => {
-    if (!window.confirm(`¿Eliminar a ${nombre}?`)) return
-    try {
-      await deleteIntegrante(id)
-      cargar()
-    } catch { alert('Error al eliminar') }
+  const handleDarDeBaja = (id, nombre) => {
+    confirm({
+      title: 'Dar de baja',
+      message: `¿Dar de baja a ${nombre}? El integrante quedará inactivo y no se le cobrarán cuotas. Su historial se conserva y puede ser reactivado en cualquier momento.`,
+      confirmLabel: 'Dar de baja',
+      onConfirm: async () => {
+        try {
+          await darDeBaja(id)
+          toast.success(`${nombre} fue dado de baja. Su historial queda conservado.`)
+          cargar()
+        } catch {
+          toast.error(`No se pudo dar de baja a ${nombre}.`)
+        }
+      },
+    })
+  }
+
+  const handleReactivar = (id, nombre) => {
+    confirm({
+      title: 'Reactivar integrante',
+      message: `¿Reactivar a ${nombre}? Volverá a estado activo y se le cobrarán cuotas mensualmente.`,
+      confirmLabel: 'Reactivar',
+      confirmDanger: false,
+      onConfirm: async () => {
+        try {
+          await reactivarIntegrante(id)
+          toast.success(`${nombre} fue reactivado correctamente.`)
+          cargar()
+        } catch {
+          toast.error(`No se pudo reactivar a ${nombre}.`)
+        }
+      },
+    })
   }
 
   return (
@@ -107,15 +138,26 @@ export default function Integrantes() {
                     <td style={{ color: 'var(--text-muted)' }}>{i.talla_polera || '—'}</td>
                     <td style={{ color: 'var(--text-secondary)' }}>{i.telefono || '—'}</td>
                     <td>
-                      <div style={{ display: 'flex', gap: 6 }}>
+                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                         <Link to={`/integrantes/${i.id}`} className="btn btn-secondary btn-sm">Ver</Link>
                         <Link to={`/integrantes/${i.id}/editar`} className="btn btn-secondary btn-sm">Editar</Link>
-                        <button
-                          className="btn btn-danger btn-sm"
-                          onClick={() => handleDelete(i.id, i.nombre)}
-                        >
-                          Eliminar
-                        </button>
+                        {i.estado === 'inactivo' ? (
+                          <button
+                            className="btn btn-sm"
+                            style={{ background: 'rgba(61,122,61,0.15)', color: '#52a852', border: '1px solid rgba(61,122,61,0.3)' }}
+                            onClick={() => handleReactivar(i.id, i.nombre)}
+                          >
+                            Reactivar
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn-sm"
+                            style={{ background: 'rgba(184,149,42,0.12)', color: '#b8952a', border: '1px solid rgba(184,149,42,0.3)' }}
+                            onClick={() => handleDarDeBaja(i.id, i.nombre)}
+                          >
+                            Dar de baja
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

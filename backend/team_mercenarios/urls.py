@@ -9,7 +9,7 @@ from apps.reportes.views_public import (
     public_noticia_detail, public_evento_detail,
 )
 from apps.reclutamiento.views import postulacion_publica
-from apps.integrantes.views_portal import portal_me, portal_mis_cuotas, portal_mis_eventos
+from apps.integrantes.views_portal import portal_me, portal_mis_cuotas, portal_mis_eventos, portal_confirmar_asistencia
 
 urlpatterns = [
     path('api/v1/public/stats/',              public_stats),
@@ -34,4 +34,5 @@ urlpatterns = [
     path('api/v1/portal/me/',          portal_me),
     path('api/v1/portal/mis-cuotas/',  portal_mis_cuotas),
     path('api/v1/portal/mis-eventos/', portal_mis_eventos),
+    path('api/v1/portal/eventos/<int:evento_id>/confirmar/', portal_confirmar_asistencia),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from apps.usuarios.permissions import IsRolCompleto, IsCapitanOrAdmin
 from .models import Noticia
 from .serializers import NoticiaSerializer, NoticiaListSerializer
 
@@ -13,6 +14,11 @@ class NoticiaViewSet(viewsets.ModelViewSet):
     search_fields = ['titulo', 'resumen', 'contenido']
     ordering_fields = ['fecha_creacion', 'fecha_publicacion']
     ordering = ['-fecha_creacion']
+
+    def get_permissions(self):
+        if self.request.method in ('GET', 'HEAD', 'OPTIONS'):
+            return [IsRolCompleto()]
+        return [IsCapitanOrAdmin()]
 
     def get_serializer_class(self):
         if self.action == 'list':

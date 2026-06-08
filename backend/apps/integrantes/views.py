@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from apps.usuarios.permissions import IsAdmin, IsRolCompleto, IsCapitanOrAdmin
 from .models import Integrante
 from .serializers import IntegranteSerializer, IntegranteListSerializer
 
@@ -16,10 +17,41 @@ class IntegranteViewSet(viewsets.ModelViewSet):
     ordering_fields = ['nombre', 'fecha_ingreso', 'estado']
     ordering = ['nombre']
 
+    def get_permissions(self):
+        if self.request.method in ('GET', 'HEAD', 'OPTIONS'):
+            return [IsRolCompleto()]
+        if self.request.method == 'PATCH':
+            return [IsCapitanOrAdmin()]
+        return [IsAdmin()]
+
+    def destroy(self, request, *args, **kwargs):
+        return Response(
+            {'detail': 'No se puede eliminar un integrante. Usa "Dar de baja" para marcarlo como inactivo.'},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
     def get_serializer_class(self):
         if self.action == 'list':
             return IntegranteListSerializer
         return IntegranteSerializer
+
+    @action(detail=True, methods=['patch'], url_path='dar-de-baja')
+    def dar_de_baja(self, request, pk=None):
+        integrante = self.get_object()
+        if integrante.estado == 'inactivo':
+            return Response({'detail': 'El integrante ya está inactivo.'}, status=status.HTTP_400_BAD_REQUEST)
+        integrante.estado = 'inactivo'
+        integrante.save(update_fields=['estado', 'fecha_actualizacion'])
+        return Response({'detail': f'{integrante.nombre} fue dado de baja correctamente.', 'estado': 'inactivo'})
+
+    @action(detail=True, methods=['patch'], url_path='reactivar')
+    def reactivar(self, request, pk=None):
+        integrante = self.get_object()
+        if integrante.estado == 'activo':
+            return Response({'detail': 'El integrante ya está activo.'}, status=status.HTTP_400_BAD_REQUEST)
+        integrante.estado = 'activo'
+        integrante.save(update_fields=['estado', 'fecha_actualizacion'])
+        return Response({'detail': f'{integrante.nombre} fue reactivado correctamente.', 'estado': 'activo'})
 
     @action(detail=True, methods=['get'])
     def mensualidades(self, request, pk=None):

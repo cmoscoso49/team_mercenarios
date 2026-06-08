@@ -2,12 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getEventos, deleteEvento } from '../../api/eventos'
 import Badge from '../../components/common/Badge'
+import { useToast } from '../../components/common/ToastProvider'
+import { useConfirm } from '../../components/common/ConfirmModal'
 import '../../components/common/common.css'
 
 export default function Eventos() {
   const [eventos, setEventos] = useState([])
   const [loading, setLoading] = useState(true)
   const [filtros, setFiltros] = useState({ tipo: '', estado: '' })
+  const toast   = useToast()
+  const confirm = useConfirm()
 
   const cargar = () => {
     setLoading(true)
@@ -19,10 +23,21 @@ export default function Eventos() {
 
   useEffect(() => { cargar() }, [filtros])
 
-  const handleDelete = async (id, titulo) => {
-    if (!window.confirm(`¿Eliminar "${titulo}"?`)) return
-    await deleteEvento(id)
-    cargar()
+  const handleDelete = (id, titulo) => {
+    confirm({
+      title: 'Eliminar evento',
+      message: `¿Eliminar "${titulo}"? Esta acción no se puede deshacer.`,
+      confirmLabel: 'Eliminar',
+      onConfirm: async () => {
+        try {
+          await deleteEvento(id)
+          toast.success(`Evento "${titulo}" eliminado.`)
+          cargar()
+        } catch {
+          toast.error(`No se pudo eliminar "${titulo}".`)
+        }
+      },
+    })
   }
 
   return (

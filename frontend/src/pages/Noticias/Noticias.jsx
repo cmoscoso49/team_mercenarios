@@ -2,12 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getNoticias, deleteNoticia } from '../../api/noticias'
 import Badge from '../../components/common/Badge'
+import { useToast } from '../../components/common/ToastProvider'
+import { useConfirm } from '../../components/common/ConfirmModal'
 import '../../components/common/common.css'
 
 export default function Noticias() {
   const [noticias, setNoticias] = useState([])
   const [loading, setLoading] = useState(true)
   const [filtros, setFiltros] = useState({ estado: '', visibilidad: '' })
+  const toast   = useToast()
+  const confirm = useConfirm()
 
   const cargar = () => {
     setLoading(true)
@@ -19,10 +23,21 @@ export default function Noticias() {
 
   useEffect(() => { cargar() }, [filtros])
 
-  const handleDelete = async (id, titulo) => {
-    if (!window.confirm(`¿Eliminar "${titulo}"?`)) return
-    await deleteNoticia(id)
-    cargar()
+  const handleDelete = (id, titulo) => {
+    confirm({
+      title: 'Eliminar noticia',
+      message: `¿Eliminar "${titulo}"? Esta acción no se puede deshacer.`,
+      confirmLabel: 'Eliminar',
+      onConfirm: async () => {
+        try {
+          await deleteNoticia(id)
+          toast.success(`Noticia "${titulo}" eliminada.`)
+          cargar()
+        } catch {
+          toast.error(`No se pudo eliminar "${titulo}".`)
+        }
+      },
+    })
   }
 
   return (

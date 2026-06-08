@@ -5,6 +5,8 @@ import {
 } from '../../api/finanzas'
 import Badge from '../../components/common/Badge'
 import StatCard from '../../components/common/StatCard'
+import { useToast } from '../../components/common/ToastProvider'
+import { useConfirm } from '../../components/common/ConfirmModal'
 import '../../components/common/common.css'
 
 function MovimientosTab() {
@@ -15,6 +17,8 @@ function MovimientosTab() {
   const [filtros, setFiltros] = useState({ tipo: '', search: '' })
   const [form, setForm] = useState({ tipo: 'egreso', monto: '', descripcion: '', fecha: '', categoria: '', es_caja_chica: false, observaciones: '' })
   const [saving, setSaving] = useState(false)
+  const toast   = useToast()
+  const confirm = useConfirm()
 
   const cargar = () => {
     const params = {}
@@ -35,15 +39,27 @@ function MovimientosTab() {
       await createMovimiento({ ...form, monto: Number(form.monto) })
       setShowForm(false)
       setForm({ tipo: 'egreso', monto: '', descripcion: '', fecha: '', categoria: '', es_caja_chica: false, observaciones: '' })
+      toast.success('Movimiento registrado correctamente.')
       cargar()
-    } catch { alert('Error al guardar') }
+    } catch { toast.error('Error al guardar el movimiento.') }
     finally { setSaving(false) }
   }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('¿Eliminar este movimiento?')) return
-    await deleteMovimiento(id)
-    cargar()
+  const handleDelete = (id) => {
+    confirm({
+      title: 'Eliminar movimiento',
+      message: '¿Eliminar este movimiento? Esta acción no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      onConfirm: async () => {
+        try {
+          await deleteMovimiento(id)
+          toast.success('Movimiento eliminado.')
+          cargar()
+        } catch {
+          toast.error('No se pudo eliminar el movimiento.')
+        }
+      },
+    })
   }
 
   return (

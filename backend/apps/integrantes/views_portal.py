@@ -1,5 +1,4 @@
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils import timezone
@@ -140,7 +139,63 @@ def portal_mis_eventos(request):
             d['asistio'] = part.asistio if part else None
         return d
 
+    # Marcar cuáles tienen confirmación del integrante
+    confirmados_ids = set(
+        integrante.participaciones.filter(evento__in=proximos).values_list('evento_id', flat=True)
+    )
+
+    def evento_dict_proximo(ev):
+        d = evento_dict(ev)
+        part = integrante.participaciones.filter(evento=ev).first()
+        d['confirmado'] = part.asistio if part else None
+        return d
+
     return Response({
-        'proximos': [evento_dict(ev) for ev in proximos],
+        'proximos': [evento_dict_proximo(ev) for ev in proximos],
         'historial': [evento_dict(ev, con_participacion=True) for ev in historial],
     })
+
+
+@api_view(['POST'])
+@permission_classes([IsIntegrante])
+def portal_confirmar_asistencia(request, evento_id):
+    integrante = _get_integrante(request.user)
+    if not integrante:
+        return Response(
+            {'detail': 'Cuenta no vinculada. Contacta al administrador.'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    from apps.eventos.models import Evento, Participacion
+
+    try:
+        evento = Evento.objects.get(pk=evento_id, estado='programado')
+    except Evento.DoesNotExist:
+        return Response(
+            {'detail': 'Evento no disponible para confirmación.'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    hoy = timezone.now().date()
+    if evento.fecha < hoy:
+        return Response(
+            {'detail': 'No se puede confirmar asistencia a un evento ya pasado.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    confirmado = request.data.get('confirmado', True)
+    participacion, created = Participacion.objects.get_or_create(
+        integrante=integrante,
+        evento=evento,
+        defaults={'asistio': confirmado, 'observaciones': 'Confirmado desde portal'},
+    )
+    if not created:
+        participacion.asistio = confirmado
+        participacion.save(update_fields=['asistio'])
+
+    accion = 'confirmada' if confirmado else 'rechazada'
+    return Response({
+        'detail': f'Asistencia {accion} para {evento.titulo}.',
+        'confirmado': confirmado,
+        'evento_id': evento.id,
+    }, status=status.HTTP_200_OK)

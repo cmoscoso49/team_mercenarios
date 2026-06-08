@@ -26,6 +26,15 @@ class IsAdmin(BasePermission):
         )
 
 
+class IsRolCompleto(BasePermission):
+    """Administrador, tesorero y capitán — acceso al panel de gestión."""
+    def has_permission(self, request, view):
+        return bool(
+            request.user and request.user.is_authenticated
+            and getattr(request.user, 'rol', None) in ROLES_COMPLETOS
+        )
+
+
 class IsCapitanOrAdmin(BasePermission):
     """Capitán y administrador pueden gestionar eventos, noticias y participaciones."""
     def has_permission(self, request, view):

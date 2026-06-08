@@ -1,6 +1,8 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import ToastProvider from './components/common/ToastProvider'
+import ConfirmProvider from './components/common/ConfirmModal'
 import Layout from './components/Layout/Layout'
 import Home from './pages/Home/Home'
 import NoticiaPublica from './pages/Home/NoticiaPublica'
@@ -97,9 +99,13 @@ function AppRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <ToastProvider>
+        <ConfirmProvider>
+          <AuthProvider>
+            <AppRoutes />
+          </AuthProvider>
+        </ConfirmProvider>
+      </ToastProvider>
     </BrowserRouter>
   )
 }

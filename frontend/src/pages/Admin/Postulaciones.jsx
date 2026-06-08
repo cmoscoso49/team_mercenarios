@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import apiClient from '../../api/client';
+import { useToast } from '../../components/common/ToastProvider';
 
 const ESTADO_LABELS = {
   pendiente:  { label: 'Pendiente',          color: '#b8952a' },
@@ -20,6 +21,7 @@ export default function Postulaciones() {
   const [guardando, setGuardando] = useState(false);
   const [notasEdit, setNotasEdit] = useState('');
   const [estadoEdit, setEstadoEdit] = useState('');
+  const toast = useToast();
 
   const cargar = useCallback(async () => {
     setLoading(true);
@@ -54,6 +56,9 @@ export default function Postulaciones() {
       });
       setSelected(res.data);
       setItems(prev => prev.map(i => i.id === res.data.id ? res.data : i));
+      toast.success('Postulación actualizada correctamente.');
+    } catch {
+      toast.error('Error al guardar los cambios.');
     } finally {
       setGuardando(false);
     }

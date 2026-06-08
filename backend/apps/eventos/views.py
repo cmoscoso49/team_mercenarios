@@ -1,9 +1,10 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django.utils import timezone
+from apps.usuarios.permissions import IsRolCompleto, IsCapitanOrAdmin
 from .models import Evento, Participacion
 from .serializers import EventoSerializer, EventoListSerializer, ParticipacionSerializer
 
@@ -16,6 +17,11 @@ class EventoViewSet(viewsets.ModelViewSet):
     search_fields = ['titulo', 'lugar', 'descripcion']
     ordering_fields = ['fecha', 'tipo', 'estado']
     ordering = ['-fecha']
+
+    def get_permissions(self):
+        if self.request.method in ('GET', 'HEAD', 'OPTIONS'):
+            return [IsRolCompleto()]
+        return [IsCapitanOrAdmin()]
 
     def get_serializer_class(self):
         if self.action == 'list':
