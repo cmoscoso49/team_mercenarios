@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import bannerImg  from '../../assets/banner/banner.png'
 import logoImg    from '../../assets/logo/logo_mercenarios.png'
+import InstagramSection from '../../components/common/InstagramSection'
 import './Home.css'
 
 const VALORES = [
@@ -22,9 +23,11 @@ const REQUISITOS = [
 
 export default function Home() {
   const [menuOpen,  setMenuOpen]  = useState(false)
-  const [eventos,   setEventos]   = useState([])
-  const [noticias,  setNoticias]  = useState([])
-  const [stats,     setStats]     = useState({ integrantes_activos: 0 })
+  const [eventos,      setEventos]      = useState([])
+  const [noticias,     setNoticias]     = useState([])
+  const [stats,        setStats]        = useState({ integrantes_activos: 0 })
+  const [instagram,    setInstagram]    = useState([])
+  const [igLoading,    setIgLoading]    = useState(true)
 
   // Fetch data once on mount, then refresh every 60s
   useEffect(() => {
@@ -41,6 +44,11 @@ export default function Home() {
         .then(r => r.ok ? r.json() : [])
         .then(d => { if (Array.isArray(d)) setNoticias(d) })
         .catch(() => {})
+      fetch('/api/v1/public/instagram/')
+        .then(r => r.ok ? r.json() : [])
+        .then(d => { if (Array.isArray(d)) setInstagram(d) })
+        .catch(() => {})
+        .finally(() => setIgLoading(false))
     }
     cargar()
     const interval = setInterval(cargar, 60000)
@@ -373,6 +381,13 @@ export default function Home() {
             ))}
           </div>
 
+        </div>
+      </section>
+
+      {/* ── INSTAGRAM ───────────────────────────────────────────── */}
+      <section className="home-section home-section-alt ig-section" id="instagram">
+        <div className="home-container">
+          <InstagramSection publicaciones={instagram} loading={igLoading} />
         </div>
       </section>
 

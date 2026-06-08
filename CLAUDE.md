@@ -259,6 +259,18 @@ npm run dev
 - Dashboard: `GET /api/v1/dashboard/` retorna todo en una llamada
 - Reportes: `GET /api/v1/reportes/{financiero|integrantes|participaciones}/?anio=YYYY`
 
+## Módulo Instagram (2026-06-07)
+
+- Modelo: `PublicacionInstagram` en `apps/galeria/models.py` — campos: titulo, texto, imagen, estado (borrador/lista/publicada/error), destacado, url_publicacion, fecha_creacion
+- `estado='publicada'` = visible públicamente. `destacado=True` = aparece primero en el grid.
+- Endpoint público: `GET /api/v1/public/instagram/` (AllowAny) — devuelve hasta 9 publicadas, orden `-destacado, -fecha_creacion`
+- CRUD admin: `GET/POST/PATCH/DELETE /api/v1/galeria/instagram/` (IsLiderazgo)
+- Frontend público: `InstagramSection.jsx` en `components/common/` — grid 3 cols, hover overlay rojo, CTA si vacío
+- Frontend admin: `/instagram` (lista), `/instagram/nueva`, `/instagram/:id/editar`
+- Handle por defecto: `@team_mercenarios` — constante en `InstagramSection.jsx`
+- Futura integración Instagram Graph API: usar `INSTAGRAM_ACCESS_TOKEN` en variables de entorno. Arquitectura ya compatible sin cambio de modelo.
+- NO usar scraping, NO Meta API sin token, NO mocks en frontend
+
 ## Seguridad
 
 - JWT en header `Authorization: Bearer <token>`

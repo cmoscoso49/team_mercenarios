@@ -57,6 +57,7 @@ class PublicacionInstagram(models.Model):
     texto = models.TextField()
     imagen = models.ImageField(upload_to='instagram/', null=True, blank=True)
     estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='borrador')
+    destacado = models.BooleanField(default=False)
     fecha_programada = models.DateTimeField(null=True, blank=True)
     url_publicacion = models.URLField(blank=True)
     noticia_origen = models.ForeignKey(
@@ -68,7 +69,7 @@ class PublicacionInstagram(models.Model):
     class Meta:
         verbose_name = 'Publicación Instagram'
         verbose_name_plural = 'Publicaciones Instagram'
-        ordering = ['-fecha_creacion']
+        ordering = ['-destacado', '-fecha_creacion']
 
     def __str__(self):
         return f"{self.titulo} ({self.get_estado_display()})"

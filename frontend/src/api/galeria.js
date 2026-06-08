@@ -12,3 +12,12 @@ export const uploadFoto = (formData) =>
     headers: { 'Content-Type': 'multipart/form-data' },
   })
 export const deleteFoto = (id) => client.delete(`/galeria/fotos/${id}/`)
+
+// Instagram admin (requiere auth)
+export const getInstagram = (params) => client.get('/galeria/instagram/', { params })
+export const getInstagramItem = (id) => client.get(`/galeria/instagram/${id}/`)
+export const createInstagram = (formData) =>
+  client.post('/galeria/instagram/', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+export const updateInstagram = (id, formData) =>
+  client.patch(`/galeria/instagram/${id}/`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+export const deleteInstagram = (id) => client.delete(`/galeria/instagram/${id}/`)

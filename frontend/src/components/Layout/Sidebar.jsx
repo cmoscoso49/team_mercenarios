@@ -14,6 +14,7 @@ const ALL_NAV = [
   { to: '/participaciones', label: 'Participaciones',icon: '◇',              roles: LIDERAZGO },
   { to: '/noticias',        label: 'Noticias',       icon: '▣',              roles: LIDERAZGO },
   { to: '/galeria',         label: 'Galería',        icon: '▤',              roles: LIDERAZGO },
+  { to: '/instagram',       label: 'Instagram',      icon: '◉',              roles: LIDERAZGO },
   { to: '/reportes',        label: 'Reportes',       icon: '▦',              roles: LIDERAZGO },
   { to: '/postulaciones',   label: 'Postulaciones',  icon: '◈',              roles: ['admin'] },
 ]

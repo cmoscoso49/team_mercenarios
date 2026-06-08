@@ -3,6 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from .models import Album, Foto, PublicacionInstagram
 from .serializers import AlbumSerializer, AlbumListSerializer, FotoSerializer, PublicacionInstagramSerializer
+from apps.usuarios.permissions import IsLiderazgo
 
 
 class AlbumViewSet(viewsets.ModelViewSet):
@@ -30,6 +31,8 @@ class FotoViewSet(viewsets.ModelViewSet):
 class PublicacionInstagramViewSet(viewsets.ModelViewSet):
     queryset = PublicacionInstagram.objects.all()
     serializer_class = PublicacionInstagramSerializer
+    permission_classes = [IsLiderazgo]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['estado']
-    ordering = ['-fecha_creacion']
+    filterset_fields = ['estado', 'destacado']
+    ordering_fields = ['destacado', 'fecha_creacion', 'titulo']
+    ordering = ['-destacado', '-fecha_creacion']

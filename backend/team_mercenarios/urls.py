@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from apps.usuarios.views import LoginView, MeView
 from apps.reportes.views_public import (
     public_stats, public_eventos, public_noticias,
-    public_noticia_detail, public_evento_detail,
+    public_noticia_detail, public_evento_detail, public_instagram,
 )
 from apps.reclutamiento.views import postulacion_publica
 from apps.integrantes.views_portal import (
@@ -21,6 +21,7 @@ urlpatterns = [
     path('api/v1/public/noticias/',           public_noticias),
     path('api/v1/public/noticias/<int:pk>/',  public_noticia_detail),
     path('api/v1/public/postulacion/',        postulacion_publica),
+    path('api/v1/public/instagram/',          public_instagram),
     path('admin/', admin.site.urls),
     path('api/v1/auth/login/', LoginView.as_view(), name='login'),
     path('api/v1/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

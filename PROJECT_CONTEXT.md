@@ -31,7 +31,7 @@ Fecha: 2026-06-01 | Migración: 2026-06-01
 | Reincorporacion | ✅ | ✅ | Calculo cuotas pendientes en ficha integrante |
 | ConfiguracionCuota | ✅ | — | Editable via admin o API |
 | Importación Excel | ✅ | ⚠️ | Backend OK, UI pendiente |
-| Instagram | ✅ modelo | ⚠️ | Solo estructura, sin UI |
+| Instagram | ✅ | ✅ | Grid público en /inicio y /galeria + CRUD admin en /instagram |
 | Reclutamiento | ✅ | ✅ | Formulario público /postulacion + admin /postulaciones |
 
 ## Migración histórica (completada 2026-06-01) + Sincronización 2025 (2026-06-06)
@@ -182,7 +182,7 @@ Para activar portal: Admin Django → Integrante → campo "Usuario del sistema"
 - `SECRET_KEY`: clave Django (cambiar en producción)
 - `DEBUG`: False en producción
 - Credenciales bancarias: NUNCA guardar en código ni .env
-- Instagram tokens: pendiente para Etapa 2, usar variables de entorno
+- Instagram tokens: pendiente para Etapa futura — si la cuenta se convierte a Business/Creator, se puede integrar Instagram Graph API (token en variable de entorno INSTAGRAM_ACCESS_TOKEN). La arquitectura actual (PublicacionInstagram + endpoint público) ya es compatible con esa integración sin cambios de modelo.
 
 ## Modelo de datos (relaciones clave)
 ```

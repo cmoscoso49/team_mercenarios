@@ -62,6 +62,28 @@ def public_noticia_detail(request, pk):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
+def public_instagram(request):
+    from apps.galeria.models import PublicacionInstagram
+    qs = PublicacionInstagram.objects.filter(
+        estado='publicada'
+    ).order_by('-destacado', '-fecha_creacion')[:9]
+    data = []
+    for p in qs:
+        imagen_url = request.build_absolute_uri(p.imagen.url) if p.imagen else None
+        data.append({
+            'id': p.id,
+            'titulo': p.titulo,
+            'texto': p.texto,
+            'imagen': imagen_url,
+            'url_publicacion': p.url_publicacion,
+            'destacado': p.destacado,
+            'fecha_creacion': p.fecha_creacion,
+        })
+    return Response(data)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def public_evento_detail(request, pk):
     from apps.eventos.models import Evento
     try:

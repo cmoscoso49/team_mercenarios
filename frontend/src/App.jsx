@@ -28,6 +28,8 @@ import MisCuotas from './pages/Portal/MisCuotas'
 import MisEventos from './pages/Portal/MisEventos'
 import MiPerfil from './pages/Portal/MiPerfil'
 import CambiarPassword from './pages/Portal/CambiarPassword'
+import Instagram from './pages/Instagram/Instagram'
+import InstagramForm from './pages/Instagram/InstagramForm'
 
 function PortalRoute({ children }) {
   const { user, loading } = useAuth()
@@ -90,6 +92,9 @@ function AppRoutes() {
         <Route path="noticias/nueva" element={<NoticiaForm />} />
         <Route path="noticias/:id/editar" element={<NoticiaForm />} />
         <Route path="galeria" element={<Galeria />} />
+        <Route path="instagram" element={<Instagram />} />
+        <Route path="instagram/nueva" element={<InstagramForm />} />
+        <Route path="instagram/:id/editar" element={<InstagramForm />} />
         <Route path="reportes" element={<Reportes />} />
         <Route path="postulaciones" element={<Postulaciones />} />
       </Route>

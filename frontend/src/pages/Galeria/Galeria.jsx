@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { getAlbums, createAlbum, deleteAlbum } from '../../api/galeria'
+import { Link } from 'react-router-dom'
+import { getAlbums, createAlbum, deleteAlbum, getInstagram } from '../../api/galeria'
+import InstagramSection from '../../components/common/InstagramSection'
 import '../../components/common/common.css'
+import '../../components/common/Instagram.css'
 
 export default function Galeria() {
   const [albums, setAlbums] = useState([])
@@ -8,13 +11,21 @@ export default function Galeria() {
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ titulo: '', descripcion: '' })
   const [saving, setSaving] = useState(false)
+  const [instagram, setInstagram] = useState([])
+  const [igLoading, setIgLoading] = useState(true)
 
   const cargar = () => {
     setLoading(true)
     getAlbums().then(r => setAlbums(r.data.results || r.data)).finally(() => setLoading(false))
   }
 
-  useEffect(() => { cargar() }, [])
+  useEffect(() => {
+    cargar()
+    getInstagram({ estado: 'publicada' })
+      .then(r => setInstagram(r.data.results || r.data))
+      .catch(() => {})
+      .finally(() => setIgLoading(false))
+  }, [])
 
   const handleCreate = async (e) => {
     e.preventDefault()
@@ -62,6 +73,17 @@ export default function Galeria() {
           </div>
         </div>
       )}
+
+      {/* Sección Instagram */}
+      <div style={{ marginBottom: 40, padding: '32px 0', borderBottom: '1px solid #1e1e1e' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <h3 style={{ fontFamily: 'Oswald', fontSize: 16, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0 }}>
+            // Instagram del Team
+          </h3>
+          <Link to="/instagram" className="btn btn-secondary btn-sm">Administrar</Link>
+        </div>
+        <InstagramSection publicaciones={instagram} loading={igLoading} />
+      </div>
 
       {loading ? <div className="loading">Cargando...</div> : albums.length === 0 ? (
         <div className="empty-state">No hay álbumes creados</div>
