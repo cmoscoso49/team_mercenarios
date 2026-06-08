@@ -132,16 +132,23 @@ Para activar portal: Admin Django → Integrante → campo "Usuario del sistema"
 - [x] Vista admin `/postulaciones` con tabla + modal gestión de estado
 - [x] Sidebar item Postulaciones (solo administrador)
 
-### 2C — Eventos interactivos (ALTO · ~1 semana)
-- [ ] Confirmación de asistencia desde portal integrante
-- [ ] Indicador confirmados/convocados en detalle evento
+### 2C — Sprint 4: Seguridad aplicada + UX Premium ✅ COMPLETADO (2026-06-07)
+- [x] IsRolCompleto permission (admin+tesorero+capitan)
+- [x] IntegranteViewSet: destroy bloqueado (405), acciones `dar-de-baja` y `reactivar`
+- [x] EventoViewSet + NoticiaViewSet: guards por método HTTP (IsCapitanOrAdmin para mutaciones)
+- [x] Endpoint portal: confirmar asistencia a evento (`POST /portal/eventos/:id/confirmar/`)
+- [x] ToastProvider + useToast: notificaciones globales (4 tipos, auto-dismiss, max 3)
+- [x] ConfirmModal + useConfirm: diálogo confirmación reutilizable (rojo/verde)
+- [x] Integrantes.jsx: Dar de baja / Reactivar con confirmación (sin eliminar)
+- [x] MisEventos.jsx: botones confirmar asistencia con estado reactivo
+- [x] Eventos, Noticias, Finanzas, Postulaciones: toast en operaciones CRUD
+- [x] common.css: media queries mobile (600px breakpoint, tablas responsivas)
+- REGLA DE NEGOCIO: Admin NO puede eliminar integrantes, solo dar de baja (estado inactivo)
 
-### 2D — UX premium (MEDIO · ~1 semana)
-- [ ] Toast notifications globales (éxito/error CRUD)
-- [ ] Modal confirmación antes de eliminar
+### 2D — Pendiente (MEDIO)
 - [ ] Skeleton loaders
-- [ ] Tablas responsivas en móvil
 - [ ] Paginación en frontend (backend ya tiene 20/página)
+- [ ] Indicador confirmados/convocados en detalle evento
 
 ### Etapa 3 — Funcionalidades avanzadas (post-validación)
 - [ ] Ranking anual de participación
