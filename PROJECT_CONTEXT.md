@@ -37,17 +37,18 @@ Fecha: 2026-06-01 | Migración: 2026-06-01
 ## Migración histórica (completada 2026-06-01) + Sincronización 2025 (2026-06-06)
 Comando histórico: `python manage.py importar_excel_historico`
 Comando integrantes actuales: `python manage.py sincronizar_integrantes_2025`
+Comando reimportar 2024-2025: `python manage.py reimportar_mensualidades` (unicode-norm, exact matching, idempotente)
 Excel: `datos team Actualizada 2022-2025 REVISADO POR ESTEBAN TL (4).xlsx`
 Fuente oficial de integrantes actuales: hoja **MENSUALIDADES 2025** (col C=nombre, D=nick, E=estado)
 Estado pos_natal agregado a ESTADO_CHOICES (migración 0002_add_pos_natal_estado)
 
 | Dato | Cantidad |
 |------|----------|
-| Integrantes en BD | 52 (36 activos, 15 inactivos, 1 pos natal) |
-| Mensualidades 2022-2025 | ~695 registros (2026 eliminados — no se cobran) |
+| Integrantes en BD | 52 (21 activos, 15 inactivos, resto pos natal/otros) |
+| Mensualidades 2022-2025 | 1091 registros (548 pagadas, 517 pendientes, 26 exentos — 2026 excluidos) |
 | Movimientos financieros | 151 (de H.CONTABLE + GASTOS Y CAJA CHIK) |
 | Participaciones | 41 (partidas + campeonato + reunión) |
-| Errores (nicks no encontrados) | 74 — exintegrantes en mensualidades sin ficha en datos del team |
+| Errores nicks 2024 (exintegrantes) | 9 — Thelmo/Walls/Arkaess/Y tu/Caronte/Ron/F.B.I/hugo/Shalox |
 
 **Regla de negocio 2026:** Mensualidades 2026 NO se generan ni importan. El año base máximo es 2025. El importador histórico fue actualizado para excluir la hoja MENSUALIDADES 2026.
 

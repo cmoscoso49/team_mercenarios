@@ -56,13 +56,14 @@ def dashboard(request):
         ultimos_movimientos = Movimiento.objects.select_related('categoria').order_by('-fecha', '-fecha_creacion')[:10]
         ultimos_movimientos_data = MovimientoSerializer(ultimos_movimientos, many=True).data
 
-    # KPIs de cuotas 2024+2025 (sin 2026)
+    # KPIs de cuotas 2024-2025: solo integrantes activos, solo años recientes
     from apps.finanzas.models import Mensualidad
     from django.db.models import Sum as DSum
-    ANIO_MAX = 2025
+    ANIO_MIN, ANIO_MAX = 2024, 2025
     integrantes_con_deuda = (
         Mensualidad.objects
-        .filter(anio__lte=ANIO_MAX, estado='pendiente')
+        .filter(anio__gte=ANIO_MIN, anio__lte=ANIO_MAX, estado='pendiente',
+                integrante__estado='activo')
         .values('integrante')
         .distinct()
         .count()
@@ -70,7 +71,8 @@ def dashboard(request):
     integrantes_al_dia = integrantes_activos - max(0, integrantes_con_deuda)
     deuda_mensualidades = (
         Mensualidad.objects
-        .filter(anio__lte=ANIO_MAX, estado='pendiente')
+        .filter(anio__gte=ANIO_MIN, anio__lte=ANIO_MAX, estado='pendiente',
+                integrante__estado='activo')
         .aggregate(t=DSum('monto'))['t'] or 0
     )
 

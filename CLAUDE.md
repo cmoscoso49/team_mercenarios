@@ -200,11 +200,12 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 
 - **ANIO_MAX = 2025** — ningún endpoint ni frontend genera o muestra deudas de 2026
 - Importador histórico excluye hoja MENSUALIDADES 2026
+- **reimportar_mensualidades**: comando para reimportar 2024-2025 con unicode-normalization; usa nick_exacto + nombre_exacto (sin partial matching); idempotente (`update_or_create`); `--dry-run` y `--solo-anio` disponibles
 - `portal_mis_cuotas`: tope máximo de año = 2025 (backend + frontend)
 - `IntegranteFicha`: muestra 2024 y 2025 por separado; no genera cajas para años sin datos
 - `resumen` action: totales históricos 2022-2025 solamente
 - `reincorporacion` action: calcula pendientes hasta 2025-12, no extiende a 2026
-- Dashboard: muestra `integrantes_al_dia`, `integrantes_con_deuda`, `deuda_mensualidades` (solo 2024-2025)
+- Dashboard KPIs cuotas: `ANIO_MIN=2024, ANIO_MAX=2025`, solo integrantes activos (`integrante__estado='activo'`), evita negativos por deudas históricas de inactivos
 - Integrantes list: filtro por defecto = activo (botones Activos | Inactivos | Todos)
 
 ## API Base URL
