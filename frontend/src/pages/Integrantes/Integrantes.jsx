@@ -99,9 +99,12 @@ export default function Integrantes() {
           onChange={(e) => setFilters({ ...filters, rol: e.target.value })}
         >
           <option value="">Todos los roles</option>
-          <option value="capitan">Capitán</option>
+          <option value="TL">Team Leader</option>
+          <option value="presidente">Presidente</option>
+          <option value="vice">Vice Presidente</option>
+          <option value="secretario">Secretario</option>
           <option value="tesorero">Tesorero</option>
-          <option value="integrante">Integrante</option>
+          <option value="player">Player</option>
           <option value="postulante">Postulante</option>
           <option value="invitado">Invitado</option>
         </select>

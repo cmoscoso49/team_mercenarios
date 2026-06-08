@@ -6,7 +6,7 @@ import '../../components/common/common.css'
 const INITIAL = {
   nombre: '', rut: '', nick: '', telefono: '', email: '',
   fecha_nacimiento: '', fecha_ingreso: '',
-  estado: 'activo', rol: 'integrante', talla_polera: '', observaciones: '',
+  estado: 'activo', rol: 'player', talla_polera: '', observaciones: '',
 }
 
 export default function IntegranteForm() {
@@ -25,7 +25,7 @@ export default function IntegranteForm() {
           nombre: d.nombre || '', rut: d.rut || '', nick: d.nick || '',
           telefono: d.telefono || '', email: d.email || '',
           fecha_nacimiento: d.fecha_nacimiento || '', fecha_ingreso: d.fecha_ingreso || '',
-          estado: d.estado || 'activo', rol: d.rol || 'integrante',
+          estado: d.estado || 'activo', rol: d.rol || 'player',
           talla_polera: d.talla_polera || '', observaciones: d.observaciones || '',
         })
       })
@@ -107,9 +107,12 @@ export default function IntegranteForm() {
             <div className="form-group">
               <label className="form-label">Rol</label>
               <select name="rol" className="form-control" value={form.rol} onChange={handleChange}>
-                <option value="capitan">Capitán</option>
+                <option value="TL">Team Leader</option>
+                <option value="presidente">Presidente</option>
+                <option value="vice">Vice Presidente</option>
+                <option value="secretario">Secretario</option>
                 <option value="tesorero">Tesorero</option>
-                <option value="integrante">Integrante</option>
+                <option value="player">Player</option>
                 <option value="postulante">Postulante</option>
                 <option value="invitado">Invitado</option>
               </select>
