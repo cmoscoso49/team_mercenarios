@@ -62,10 +62,12 @@ Contenido (reemplaza los valores):
 ```
 SECRET_KEY=genera-una-clave-aqui-minimo-50-caracteres-random
 DEBUG=False
-ALLOWED_HOSTS=TU_USUARIO.pythonanywhere.com
-CORS_ALLOWED_ORIGINS=https://mercenarios.cl,https://www.mercenarios.cl
-CSRF_TRUSTED_ORIGINS=https://TU_USUARIO.pythonanywhere.com,https://mercenarios.cl
+ALLOWED_HOSTS=mercenarios.pythonanywhere.com
+CORS_ALLOWED_ORIGINS=https://team-mercenarios.pages.dev,https://mercenarios.cl,https://www.mercenarios.cl
+CSRF_TRUSTED_ORIGINS=https://mercenarios.pythonanywhere.com,https://mercenarios.cl,https://www.mercenarios.cl
 ```
+
+> **⚠️ CORS importante:** incluir la URL de Cloudflare Pages (`team-mercenarios.pages.dev`) mientras el dominio custom no esté activo. Sin esto el login falla silenciosamente — el browser bloquea la respuesta y el frontend muestra "Credenciales incorrectas" sin llegar a autenticar.
 
 Para generar SECRET_KEY en Python:
 ```bash

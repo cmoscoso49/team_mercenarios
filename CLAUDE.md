@@ -212,7 +212,7 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 ## API Base URL
 
 - **Local (dev):** `http://localhost:8001/api/v1/` — Vite proxy redirige `/api` → `localhost:8001`
-- **Producción:** `https://TU_USUARIO.pythonanywhere.com/api/v1` (free) o `https://api.mercenarios.cl/api/v1` (con CF Worker)
+- **Producción:** `https://mercenarios.pythonanywhere.com/api/v1` (free) o `https://api.mercenarios.cl/api/v1` (con CF Worker)
 - `client.js` usa `import.meta.env.VITE_API_BASE_URL || '/api/v1'` — fallback local automático
 
 ## Deploy — Arquitectura gratuita (implementada)
@@ -220,13 +220,13 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 | Capa | Servicio | URL |
 |------|----------|-----|
 | Frontend | Cloudflare Pages (free) | https://mercenarios.cl |
-| Backend | PythonAnywhere (free) | https://TU_USUARIO.pythonanywhere.com |
+| Backend | PythonAnywhere (free) | https://mercenarios.pythonanywhere.com |
 | BD | SQLite en PythonAnywhere | — |
 
 ### Frontend (Cloudflare Pages)
 - Build: `cd frontend && npm run build` → genera `frontend/dist/`
 - Root directory: `frontend` | Build command: `npm run build` | Output: `dist`
-- Env var en Cloudflare dashboard: `VITE_API_BASE_URL=https://TU_USUARIO.pythonanywhere.com/api/v1`
+- Env var en Cloudflare dashboard: `VITE_API_BASE_URL=https://mercenarios.pythonanywhere.com/api/v1`
 - Guía completa: `docs/CLOUDFLARE_PAGES.md`
 
 ### Backend (PythonAnywhere)
@@ -235,9 +235,13 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 - `python manage.py check` → 0 issues ✅
 - Guía completa: `docs/PYTHONANYWHERE.md`
 - WSGI: manual configuration → apuntar a `backend/team_mercenarios/wsgi.py`
+- `.env` producción **debe** incluir:
+  - `CORS_ALLOWED_ORIGINS=https://team-mercenarios.pages.dev,https://mercenarios.cl,https://www.mercenarios.cl`
+  - `CSRF_TRUSTED_ORIGINS=https://mercenarios.pythonanywhere.com,https://mercenarios.cl,https://www.mercenarios.cl`
+  - Sin CORS el login falla silenciosamente: el browser bloquea la respuesta y el frontend muestra el fallback JS "Credenciales incorrectas" en lugar del error real
 
 ### ⚠️ PythonAnywhere free NO soporta custom domains
-- La API queda en `TU_USUARIO.pythonanywhere.com/api/v1`
+- La API queda en `mercenarios.pythonanywhere.com/api/v1`
 - Para usar `api.mercenarios.cl`: Plan Hacker ($5/mes) O Cloudflare Worker proxy
 - Detalles: `docs/DEPLOY_GRATIS.md`
 

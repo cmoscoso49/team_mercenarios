@@ -4,12 +4,12 @@
 
 ```
 [Usuario] → https://mercenarios.cl  → Cloudflare Pages (frontend React)
-[Usuario] → https://TU_USUARIO.pythonanywhere.com/api/v1 → PythonAnywhere (backend Django)
+[Usuario] → https://mercenarios.pythonanywhere.com/api/v1 → PythonAnywhere (backend Django)
 ```
 
 > **Nota sobre api.mercenarios.cl:**
 > PythonAnywhere **free tier no soporta custom domains**.
-> La API queda en `TU_USUARIO.pythonanywhere.com/api/v1`.
+> La API queda en `mercenarios.pythonanywhere.com/api/v1`.
 > Para usar `api.mercenarios.cl` necesitas:
 > - Plan Hacker de PythonAnywhere (~$5 USD/mes), O
 > - Cloudflare Worker que actúe como proxy (ver sección avanzada abajo)
@@ -41,14 +41,14 @@
 ```
 SECRET_KEY=clave-aleatoria-50-chars
 DEBUG=False
-ALLOWED_HOSTS=TU_USUARIO.pythonanywhere.com
+ALLOWED_HOSTS=mercenarios.pythonanywhere.com
 CORS_ALLOWED_ORIGINS=https://mercenarios.cl,https://www.mercenarios.cl
-CSRF_TRUSTED_ORIGINS=https://TU_USUARIO.pythonanywhere.com,https://mercenarios.cl
+CSRF_TRUSTED_ORIGINS=https://mercenarios.pythonanywhere.com,https://mercenarios.cl
 ```
 
 ### Cloudflare Pages (Settings → Environment Variables)
 ```
-VITE_API_BASE_URL=https://TU_USUARIO.pythonanywhere.com/api/v1
+VITE_API_BASE_URL=https://mercenarios.pythonanywhere.com/api/v1
 ```
 
 ---
@@ -57,14 +57,14 @@ VITE_API_BASE_URL=https://TU_USUARIO.pythonanywhere.com/api/v1
 
 Si quieres que la API responda en `api.mercenarios.cl` sin pagar PythonAnywhere Hacker:
 
-1. En Cloudflare DNS: agregar `api` CNAME → `TU_USUARIO.pythonanywhere.com` (proxy ON)
+1. En Cloudflare DNS: agregar `api` CNAME → `mercenarios.pythonanywhere.com` (proxy ON)
 2. Crear un Cloudflare Worker con este código:
 
 ```javascript
 export default {
   async fetch(request) {
     const url = new URL(request.url)
-    url.hostname = 'TU_USUARIO.pythonanywhere.com'
+    url.hostname = 'mercenarios.pythonanywhere.com'
     const newRequest = new Request(url.toString(), {
       method: request.method,
       headers: request.headers,

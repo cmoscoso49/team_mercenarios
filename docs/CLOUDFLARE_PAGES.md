@@ -4,7 +4,7 @@
 - Cuenta en Cloudflare (gratis)
 - Repositorio en GitHub: github.com/cmoscoso49/team_mercenarios
 - Dominio mercenarios.cl ya apuntando a Cloudflare (o listo para transferir)
-- Backend Django corriendo en PythonAnywhere (`TU_USUARIO.pythonanywhere.com`)
+- Backend Django corriendo en PythonAnywhere (`mercenarios.pythonanywhere.com`)
 
 ---
 
@@ -40,7 +40,7 @@ En la misma pantalla, sección **Environment variables** → **Add variable**:
 
 | Variable | Value (Production) |
 |----------|--------------------|
-| `VITE_API_BASE_URL` | `https://TU_USUARIO.pythonanywhere.com/api/v1` |
+| `VITE_API_BASE_URL` | `https://mercenarios.pythonanywhere.com/api/v1` |
 
 > Si usas Cloudflare Worker para `api.mercenarios.cl`, usar:
 > `VITE_API_BASE_URL=https://api.mercenarios.cl/api/v1`
