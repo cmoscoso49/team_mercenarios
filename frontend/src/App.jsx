@@ -27,6 +27,7 @@ import PortalDashboard from './pages/Portal/PortalDashboard'
 import MisCuotas from './pages/Portal/MisCuotas'
 import MisEventos from './pages/Portal/MisEventos'
 import MiPerfil from './pages/Portal/MiPerfil'
+import CambiarPassword from './pages/Portal/CambiarPassword'
 
 function PortalRoute({ children }) {
   const { user, loading } = useAuth()
@@ -71,7 +72,8 @@ function AppRoutes() {
         <Route index element={<PortalDashboard />} />
         <Route path="mis-cuotas"  element={<MisCuotas />} />
         <Route path="mis-eventos" element={<MisEventos />} />
-        <Route path="mi-perfil"   element={<MiPerfil />} />
+        <Route path="mi-perfil"        element={<MiPerfil />} />
+        <Route path="cambiar-password" element={<CambiarPassword />} />
       </Route>
       <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
         <Route index element={<Dashboard />} />

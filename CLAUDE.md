@@ -111,13 +111,14 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 - `IsIntegrante` → endpoints `/api/v1/portal/*` (todos los roles)
 - `IsPropioIntegranteOrAdmin` → object-level: solo datos propios o admin
 
-### Endpoints portal personal (nuevos)
-- `GET /api/v1/portal/me/` → ficha del integrante autenticado
+### Endpoints portal personal
+- `GET/PATCH /api/v1/portal/me/` → ficha del integrante autenticado (edita nick/telefono/foto)
 - `GET /api/v1/portal/mis-cuotas/` → mensualidades + deudas propias
 - `GET /api/v1/portal/mis-eventos/` → próximos + historial propios
 - `POST /api/v1/portal/eventos/:id/confirmar/` → confirmar asistencia
+- `POST /api/v1/portal/cambiar-password/` → cambio de contraseña propia (IsIntegrante — todos los roles)
 - `POST /api/v1/public/postulacion/` → enviar postulación (AllowAny)
-- `GET /api/v1/admin/postulaciones/` → lista (IsAdmin)
+- `GET /api/v1/reclutamiento/postulaciones/` → lista admin (IsAdmin)
 
 ### Decisiones confirmadas pendientes
 - Portal integrante en `/portal/*` separado (recomendado)

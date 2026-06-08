@@ -199,3 +199,30 @@ def portal_confirmar_asistencia(request, evento_id):
         'confirmado': confirmado,
         'evento_id': evento.id,
     }, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsIntegrante])
+def portal_cambiar_password(request):
+    """Permite a cualquier usuario autenticado cambiar su propia contraseña."""
+    user = request.user
+    password_actual    = request.data.get('password_actual', '').strip()
+    password_nuevo     = request.data.get('password_nuevo', '').strip()
+    password_confirmar = request.data.get('password_confirmar', '').strip()
+
+    if not password_actual:
+        return Response({'detail': 'Debes ingresar tu contraseña actual.'}, status=status.HTTP_400_BAD_REQUEST)
+    if not password_nuevo:
+        return Response({'detail': 'Debes ingresar una nueva contraseña.'}, status=status.HTTP_400_BAD_REQUEST)
+    if not user.check_password(password_actual):
+        return Response({'detail': 'La contraseña actual es incorrecta.'}, status=status.HTTP_400_BAD_REQUEST)
+    if password_nuevo != password_confirmar:
+        return Response({'detail': 'La nueva contraseña y la confirmación no coinciden.'}, status=status.HTTP_400_BAD_REQUEST)
+    if len(password_nuevo) < 8:
+        return Response({'detail': 'La nueva contraseña debe tener al menos 8 caracteres.'}, status=status.HTTP_400_BAD_REQUEST)
+    if password_nuevo == password_actual:
+        return Response({'detail': 'La nueva contraseña debe ser diferente a la actual.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user.set_password(password_nuevo)
+    user.save(update_fields=['password'])
+    return Response({'detail': 'Tu contraseña fue actualizada correctamente.'}, status=status.HTTP_200_OK)

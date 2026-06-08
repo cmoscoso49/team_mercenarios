@@ -124,11 +124,13 @@ Para activar portal: Admin Django → Integrante → campo "Usuario del sistema"
 
 ### 2A — Portal del Integrante ✅ COMPLETADO (2026-06-07)
 - [x] FK `Integrante.usuario = OneToOneField(null=True)` + migración 0003
-- [x] Guards DRF: IsCapitanOrAdmin, IsIntegrante, IsPropioIntegranteOrAdmin
-- [x] Endpoints: GET/PATCH /api/v1/portal/me/, GET /portal/mis-cuotas/, GET /portal/mis-eventos/
-- [x] PortalLayout.jsx — nav táctica separada del sidebar admin
+- [x] Guards DRF: IsLiderazgo, IsIntegrante, IsPropioIntegranteOrAdmin
+- [x] Endpoints: GET/PATCH portal/me/, GET portal/mis-cuotas/, GET portal/mis-eventos/
+- [x] POST portal/cambiar-password/ — cambio contraseña propia (todos los roles)
+- [x] PortalLayout.jsx — nav táctica separada del sidebar admin + link Contraseña
 - [x] PortalDashboard.jsx — bienvenida + stats cuotas + ficha + deudas
 - [x] MisCuotas.jsx — grid visual meses + tabla deudas + selector año
+- [x] CambiarPassword.jsx — formulario con validaciones y toast de confirmacion
 - [x] MisEventos.jsx — próximos eventos + historial participación
 - [x] MiPerfil.jsx — editar nick y teléfono
 - [x] Dashboard admin: integrante/readonly redirigen a portal automáticamente

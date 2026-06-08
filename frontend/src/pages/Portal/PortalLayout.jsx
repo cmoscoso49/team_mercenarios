@@ -38,6 +38,9 @@ export default function PortalLayout() {
           <NavLink to="/portal/mi-perfil" className={({ isActive }) => `portal-nav-link${isActive ? ' active' : ''}`}>
             Mi Perfil
           </NavLink>
+          <NavLink to="/portal/cambiar-password" className={({ isActive }) => `portal-nav-link${isActive ? ' active' : ''}`}>
+            Contraseña
+          </NavLink>
 
           <div className="portal-nav-user">
             <span className="portal-nav-nick">{user?.username}</span>
