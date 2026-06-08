@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import './Instagram.css'
 
-const HANDLE = '@team_mercenarios'
-const IG_URL = 'https://instagram.com/team_mercenarios'
+const HANDLE = '@team_mercenarios_arica'
+const IG_URL = 'https://instagram.com/team_mercenarios_arica'
 
 export default function InstagramSection({ publicaciones = [], loading = false }) {
   const hayPublicaciones = publicaciones.length > 0

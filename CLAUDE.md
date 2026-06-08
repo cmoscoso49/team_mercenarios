@@ -267,7 +267,7 @@ npm run dev
 - CRUD admin: `GET/POST/PATCH/DELETE /api/v1/galeria/instagram/` (IsLiderazgo)
 - Frontend público: `InstagramSection.jsx` en `components/common/` — grid 3 cols, hover overlay rojo, CTA si vacío
 - Frontend admin: `/instagram` (lista), `/instagram/nueva`, `/instagram/:id/editar`
-- Handle por defecto: `@team_mercenarios` — constante en `InstagramSection.jsx`
+- Handle por defecto: `@team_mercenarios_arica` — constante en `InstagramSection.jsx`
 - Futura integración Instagram Graph API: usar `INSTAGRAM_ACCESS_TOKEN` en variables de entorno. Arquitectura ya compatible sin cambio de modelo.
 - NO usar scraping, NO Meta API sin token, NO mocks en frontend
 

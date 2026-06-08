@@ -90,7 +90,8 @@ export default function Home() {
             <a href="#airsoft"  className="home-nav-link" onClick={closeMenu}>AIRSOFT</a>
             <a href="#eventos"  className="home-nav-link" onClick={closeMenu}>EVENTOS</a>
             <a href="#noticias" className="home-nav-link" onClick={closeMenu}>NOTICIAS</a>
-            <a href="#galeria"  className="home-nav-link" onClick={closeMenu}>GALERÍA</a>
+            <a href="#galeria"   className="home-nav-link" onClick={closeMenu}>GALERÍA</a>
+            <a href="#instagram" className="home-nav-link" onClick={closeMenu}>INSTAGRAM</a>
             <Link to="/postulacion" className="home-nav-link" onClick={closeMenu}>ÚNETE</Link>
             <Link to="/login" className="home-nav-cta" onClick={closeMenu}>ACCESO MIEMBROS</Link>
           </div>
