@@ -107,6 +107,7 @@ export default function IntegranteForm() {
             <div className="form-group">
               <label className="form-label">Rol</label>
               <select name="rol" className="form-control" value={form.rol} onChange={handleChange}>
+                <option value="admin">Admin</option>
                 <option value="TL">Team Leader</option>
                 <option value="presidente">Presidente</option>
                 <option value="vice">Vice Presidente</option>

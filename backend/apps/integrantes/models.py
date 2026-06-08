@@ -12,6 +12,7 @@ class Integrante(models.Model):
         ('honorario', 'Honorario'),
     ]
     ROL_CHOICES = [
+        ('admin',      'Admin'),
         ('TL',         'Team Leader'),
         ('presidente', 'Presidente'),
         ('vice',       'Vice Presidente'),
