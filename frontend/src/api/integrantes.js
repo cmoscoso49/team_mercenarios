@@ -10,3 +10,4 @@ export const getMensualidadesIntegrante = (id) => client.get(`/integrantes/${id}
 export const getParticipacionesIntegrante = (id) => client.get(`/integrantes/${id}/participaciones/`)
 export const getDeudasIntegrante = (id) => client.get(`/integrantes/${id}/deudas/`)
 export const getResumenIntegrante = (id) => client.get(`/integrantes/${id}/resumen/`)
+export const patchMensualidad = (mensualidadId, data) => client.patch(`/finanzas/mensualidades/${mensualidadId}/`, data)

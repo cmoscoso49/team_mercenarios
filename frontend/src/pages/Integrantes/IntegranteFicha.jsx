@@ -2,17 +2,24 @@ import React, { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import {
   getIntegrante, getMensualidadesIntegrante,
-  getParticipacionesIntegrante, getDeudasIntegrante, getResumenIntegrante
+  getParticipacionesIntegrante, getDeudasIntegrante,
+  getResumenIntegrante, patchMensualidad,
 } from '../../api/integrantes'
+import { useAuth } from '../../context/AuthContext'
+import { useToast } from '../../components/common/ToastProvider'
 import client from '../../api/client'
 import Badge from '../../components/common/Badge'
 import '../../components/common/common.css'
 
 const MESES = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+const MESES_LARGO = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 const ANIOS_ACTIVOS = [2025, 2024]
+const ROLES_EDITAR_CUOTAS = ['admin', 'tesorero']
 
 export default function IntegranteFicha() {
   const { id } = useParams()
+  const { user } = useAuth()
+  const toast = useToast()
   const [tab, setTab] = useState('mensualidades')
   const [integrante, setIntegrante] = useState(null)
   const [mensualidades, setMensualidades] = useState([])
@@ -20,6 +27,17 @@ export default function IntegranteFicha() {
   const [deudas, setDeudas] = useState([])
   const [resumen, setResumen] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [editando, setEditando] = useState(null)
+
+  const canEdit = ROLES_EDITAR_CUOTAS.includes(user?.rol)
+
+  const cargarMensualidades = () =>
+    Promise.all([getMensualidadesIntegrante(id), getResumenIntegrante(id)])
+      .then(([ms, rs]) => {
+        const todas = ms.data.results || ms.data
+        setMensualidades(todas.filter(m => m.anio <= 2025))
+        setResumen(rs.data)
+      })
 
   useEffect(() => {
     Promise.all([
@@ -38,11 +56,30 @@ export default function IntegranteFicha() {
     }).finally(() => setLoading(false))
   }, [id])
 
+  const handleGuardarMensualidad = async (mensualidadId, datos) => {
+    try {
+      await patchMensualidad(mensualidadId, datos)
+      await cargarMensualidades()
+      setEditando(null)
+      toast.success('Mensualidad actualizada correctamente.')
+    } catch {
+      toast.error('Error al actualizar la mensualidad.')
+    }
+  }
+
   if (loading) return <div className="loading">Cargando ficha...</div>
   if (!integrante) return <div className="error-msg">Integrante no encontrado</div>
 
   return (
     <div>
+      {editando && (
+        <ModalEditarMensualidad
+          mensualidad={editando}
+          onSave={handleGuardarMensualidad}
+          onClose={() => setEditando(null)}
+        />
+      )}
+
       <div className="page-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <Link to="/integrantes" style={{ color: 'var(--text-muted)', fontSize: 12 }}>← Integrantes</Link>
@@ -111,7 +148,11 @@ export default function IntegranteFicha() {
           </div>
 
           {tab === 'mensualidades' && (
-            <MensualidadesTab mensualidades={mensualidades} />
+            <MensualidadesTab
+              mensualidades={mensualidades}
+              canEdit={canEdit}
+              onEdit={setEditando}
+            />
           )}
 
           {tab === 'participaciones' && (
@@ -176,17 +217,22 @@ function ResumenRow({ label, value, color }) {
   )
 }
 
-function MensualidadesTab({ mensualidades }) {
+function MensualidadesTab({ mensualidades, canEdit, onEdit }) {
   const porAnio = (anio) => mensualidades.filter(m => m.anio === anio)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {canEdit && (
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', padding: '6px 12px', background: 'rgba(61,122,61,0.08)', border: '1px solid rgba(61,122,61,0.2)', borderRadius: 4 }}>
+          Haz clic en cualquier mes para editar su estado.
+        </div>
+      )}
       {ANIOS_ACTIVOS.map(anio => {
         const meses = porAnio(anio)
-        const pagadas   = meses.filter(m => m.estado === 'pagada').length
+        const pagadas    = meses.filter(m => m.estado === 'pagada').length
         const pendientes = meses.filter(m => m.estado === 'pendiente').length
-        const exentos   = meses.filter(m => m.estado === 'exento').length
-        const totalPagado   = meses.filter(m => m.estado === 'pagada').reduce((s, m) => s + Number(m.monto), 0)
+        const exentos    = meses.filter(m => m.estado === 'exento').length
+        const totalPagado    = meses.filter(m => m.estado === 'pagada').reduce((s, m) => s + Number(m.monto), 0)
         const totalPendiente = meses.filter(m => m.estado === 'pendiente').reduce((s, m) => s + Number(m.monto), 0)
 
         return (
@@ -217,16 +263,30 @@ function MensualidadesTab({ mensualidades }) {
                     </div>
                   )
                   const e = m.estado
+                  const editable = canEdit
                   return (
-                    <div key={mes} style={{
-                      padding: '10px 8px', borderRadius: 4, textAlign: 'center',
-                      background: e === 'pagada' ? 'rgba(61,122,61,0.22)' : e === 'exento' ? 'rgba(150,150,150,0.10)' : 'rgba(204,34,34,0.14)',
-                      border: `1px solid ${e === 'pagada' ? 'rgba(61,122,61,0.45)' : e === 'exento' ? 'rgba(150,150,150,0.22)' : 'rgba(204,34,34,0.35)'}`,
-                    }}>
+                    <div
+                      key={mes}
+                      onClick={editable ? () => onEdit(m) : undefined}
+                      title={editable ? `Editar ${MESES_LARGO[mes]} ${anio}` : undefined}
+                      style={{
+                        padding: '10px 8px', borderRadius: 4, textAlign: 'center',
+                        background: e === 'pagada' ? 'rgba(61,122,61,0.22)' : e === 'exento' ? 'rgba(150,150,150,0.10)' : 'rgba(204,34,34,0.14)',
+                        border: `1px solid ${e === 'pagada' ? 'rgba(61,122,61,0.45)' : e === 'exento' ? 'rgba(150,150,150,0.22)' : 'rgba(204,34,34,0.35)'}`,
+                        cursor: editable ? 'pointer' : 'default',
+                        transition: 'opacity 0.15s',
+                        position: 'relative',
+                      }}
+                      onMouseEnter={editable ? e2 => { e2.currentTarget.style.opacity = '0.75' } : undefined}
+                      onMouseLeave={editable ? e2 => { e2.currentTarget.style.opacity = '1' } : undefined}
+                    >
                       <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>{MESES[mes]}</div>
                       <div style={{ fontSize: 11, fontWeight: 700, color: e === 'pagada' ? 'var(--accent-light)' : e === 'exento' ? 'var(--text-muted)' : 'var(--danger)' }}>
                         {e === 'pagada' ? '✓' : e === 'exento' ? '—' : '✕'}
                       </div>
+                      {editable && (
+                        <div style={{ position: 'absolute', top: 3, right: 4, fontSize: 9, color: 'var(--text-muted)', opacity: 0.5 }}>✎</div>
+                      )}
                     </div>
                   )
                 })}
@@ -248,6 +308,78 @@ function MensualidadesTab({ mensualidades }) {
           </div>
         )
       })}
+    </div>
+  )
+}
+
+function ModalEditarMensualidad({ mensualidad, onSave, onClose }) {
+  const [estado, setEstado] = useState(mensualidad.estado)
+  const [monto, setMonto] = useState(String(mensualidad.monto || 5000))
+  const [saving, setSaving] = useState(false)
+
+  const mesLabel = `${MESES_LARGO[mensualidad.mes]} ${mensualidad.anio}`
+
+  const handleSave = async () => {
+    setSaving(true)
+    await onSave(mensualidad.id, {
+      estado,
+      monto: estado === 'pagada' ? parseInt(monto, 10) || 5000 : mensualidad.monto,
+    })
+    setSaving(false)
+  }
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+    }} onClick={onClose}>
+      <div style={{
+        background: 'var(--card-bg)', border: '1px solid var(--border)',
+        borderRadius: 4, padding: 28, width: 340, maxWidth: '90vw',
+      }} onClick={e => e.stopPropagation()}>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>
+          Editar mensualidad
+        </div>
+        <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: 'var(--text-primary)' }}>
+          {mesLabel}
+        </div>
+
+        <div className="form-group" style={{ marginBottom: 16 }}>
+          <label className="form-label">Estado</label>
+          <select
+            className="form-control"
+            value={estado}
+            onChange={e => setEstado(e.target.value)}
+          >
+            <option value="pagada">Pagada</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="exento">Exento</option>
+          </select>
+        </div>
+
+        {estado === 'pagada' && (
+          <div className="form-group" style={{ marginBottom: 20 }}>
+            <label className="form-label">Monto ($)</label>
+            <input
+              type="number"
+              className="form-control"
+              value={monto}
+              onChange={e => setMonto(e.target.value)}
+              min={0}
+              step={500}
+            />
+          </div>
+        )}
+
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
+          <button className="btn btn-secondary btn-sm" onClick={onClose} disabled={saving}>
+            Cancelar
+          </button>
+          <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={saving}>
+            {saving ? 'Guardando...' : 'Guardar'}
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
