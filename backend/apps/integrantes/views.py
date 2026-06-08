@@ -84,22 +84,32 @@ class IntegranteViewSet(viewsets.ModelViewSet):
     def resumen(self, request, pk=None):
         from apps.finanzas.models import Mensualidad, Deuda
         from apps.eventos.models import Participacion
-        from django.db.models import Sum, Count
+        from django.db.models import Sum
+        ANIO_MAX = 2025
         integrante = self.get_object()
-        anio_actual = __import__('datetime').date.today().year
 
-        mensualidades_pagadas = Mensualidad.objects.filter(
-            integrante=integrante, anio=anio_actual, estado='pagada'
-        ).count()
+        mens = Mensualidad.objects.filter(integrante=integrante, anio__lte=ANIO_MAX)
+        cuotas_pagadas   = mens.filter(estado='pagada').count()
+        cuotas_pendientes = mens.filter(estado='pendiente').count()
+        total_pagado    = mens.filter(estado='pagada').aggregate(t=Sum('monto'))['t'] or 0
+        total_pendiente = mens.filter(estado='pendiente').aggregate(t=Sum('monto'))['t'] or 0
+
+        ultima = mens.filter(estado='pagada').order_by('-anio', '-mes').first()
+        ultimo_pago = f'{ultima.anio}-{ultima.mes:02d}' if ultima else None
+
         total_participaciones = Participacion.objects.filter(integrante=integrante, asistio=True).count()
-        deudas_pendientes = Deuda.objects.filter(
+        deudas_extra = Deuda.objects.filter(
             integrante=integrante, estado__in=['pendiente', 'parcial']
-        ).aggregate(total=Sum('monto_total'))['total'] or 0
+        ).aggregate(t=Sum('monto_total'))['t'] or 0
 
         return Response({
-            'mensualidades_pagadas_anio': mensualidades_pagadas,
+            'cuotas_pagadas': cuotas_pagadas,
+            'cuotas_pendientes': cuotas_pendientes,
+            'total_pagado': total_pagado,
+            'total_pendiente': total_pendiente,
+            'ultimo_pago': ultimo_pago,
             'total_participaciones': total_participaciones,
-            'deudas_pendientes': deudas_pendientes,
+            'deudas_extra': deudas_extra,
         })
 
     @action(detail=True, methods=['get'])
@@ -119,11 +129,12 @@ class IntegranteViewSet(viewsets.ModelViewSet):
         )
 
         valor_cuota = int(ConfiguracionCuota.valor_vigente())
+        ANIO_CAP, MES_CAP = 2025, 12  # no cobrar 2026
 
         if not ultima_pagada:
             cuotas_pendientes = 0
             ultimo_pago_str = None
-            desde_anio, desde_mes = hoy.year, hoy.month
+            desde_anio, desde_mes = ANIO_CAP, MES_CAP
         else:
             ultimo_pago_str = f'{ultima_pagada.anio}-{ultima_pagada.mes:02d}'
             desde_anio = ultima_pagada.anio
@@ -131,7 +142,7 @@ class IntegranteViewSet(viewsets.ModelViewSet):
             if desde_mes > 12:
                 desde_mes = 1
                 desde_anio += 1
-            meses_transcurridos = (hoy.year - desde_anio) * 12 + (hoy.month - desde_mes) + 1
+            meses_transcurridos = (ANIO_CAP - desde_anio) * 12 + (MES_CAP - desde_mes) + 1
             cuotas_pendientes = max(0, meses_transcurridos)
 
         monto_total = cuotas_pendientes * valor_cuota
@@ -149,6 +160,6 @@ class IntegranteViewSet(viewsets.ModelViewSet):
             'observaciones': (
                 'Sin pagos previos registrados.' if not ultima_pagada
                 else f'Ultima mensualidad pagada: {ultimo_pago_str}. '
-                     f'{cuotas_pendientes} cuotas pendientes hasta {hoy.year}-{hoy.month:02d}.'
+                     f'{cuotas_pendientes} cuotas pendientes hasta {ANIO_CAP}-{MES_CAP:02d}.'
             ),
         })

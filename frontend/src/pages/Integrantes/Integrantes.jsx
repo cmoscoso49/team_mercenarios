@@ -10,7 +10,7 @@ export default function Integrantes() {
   const [integrantes, setIntegrantes] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [filters, setFilters] = useState({ search: '', estado: '', rol: '' })
+  const [filters, setFilters] = useState({ search: '', estado: 'activo', rol: '' })
   const toast   = useToast()
   const confirm = useConfirm()
 
@@ -68,6 +68,26 @@ export default function Integrantes() {
       <div className="page-header">
         <h2 className="page-title">Integrantes del Team</h2>
         <Link to="/integrantes/nuevo" className="btn btn-primary">+ Nuevo Integrante</Link>
+      </div>
+
+      <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+        {[['activo', 'Activos'], ['inactivo', 'Inactivos'], ['', 'Todos']].map(([val, label]) => (
+          <button
+            key={label}
+            onClick={() => setFilters(f => ({ ...f, estado: val }))}
+            style={{
+              fontFamily: 'Oswald, sans-serif', fontSize: '0.72rem', fontWeight: 600,
+              letterSpacing: '0.1em', textTransform: 'uppercase', padding: '5px 14px',
+              border: '1px solid',
+              borderColor: filters.estado === val ? 'var(--accent)' : '#2a2a2a',
+              background: filters.estado === val ? 'rgba(61,122,61,0.18)' : 'transparent',
+              color: filters.estado === val ? 'var(--accent-light)' : 'var(--text-muted)',
+              cursor: 'pointer', transition: 'all 0.15s',
+            }}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       <div className="filters-row">

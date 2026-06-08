@@ -44,10 +44,12 @@ Estado pos_natal agregado a ESTADO_CHOICES (migración 0002_add_pos_natal_estado
 | Dato | Cantidad |
 |------|----------|
 | Integrantes en BD | 52 (36 activos, 15 inactivos, 1 pos natal) |
-| Mensualidades 2022-2026 | 1310 registros |
+| Mensualidades 2022-2025 | ~695 registros (2026 eliminados — no se cobran) |
 | Movimientos financieros | 151 (de H.CONTABLE + GASTOS Y CAJA CHIK) |
 | Participaciones | 41 (partidas + campeonato + reunión) |
 | Errores (nicks no encontrados) | 74 — exintegrantes en mensualidades sin ficha en datos del team |
+
+**Regla de negocio 2026:** Mensualidades 2026 NO se generan ni importan. El año base máximo es 2025. El importador histórico fue actualizado para excluir la hoja MENSUALIDADES 2026.
 
 **Saldo real Excel:** $310.176 | **Saldo sistema:** -$3.189.394 | **Diferencia:** $3.499.570
 Formula: H.CONTABLE!P7(1053070) + P10(428000) - P13(3835894) + L47(21000) + M2023!S34(830000) + RIFA!N36(320000) + M2024!S41(1064000) + M2025!S35(430000) = 310.176

@@ -196,6 +196,17 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 - `ConciliacionExcel` — saldo real del Excel, `/api/v1/reportes/conciliacion/`
 - Endpoint reincorporacion: `GET /api/v1/integrantes/{id}/reincorporacion/`
 
+## Reglas de negocio — Mensualidades (2026-06-07)
+
+- **ANIO_MAX = 2025** — ningún endpoint ni frontend genera o muestra deudas de 2026
+- Importador histórico excluye hoja MENSUALIDADES 2026
+- `portal_mis_cuotas`: tope máximo de año = 2025 (backend + frontend)
+- `IntegranteFicha`: muestra 2024 y 2025 por separado; no genera cajas para años sin datos
+- `resumen` action: totales históricos 2022-2025 solamente
+- `reincorporacion` action: calcula pendientes hasta 2025-12, no extiende a 2026
+- Dashboard: muestra `integrantes_al_dia`, `integrantes_con_deuda`, `deuda_mensualidades` (solo 2024-2025)
+- Integrantes list: filtro por defecto = activo (botones Activos | Inactivos | Todos)
+
 ## API Base URL
 
 `http://localhost:8001/api/v1/` (puerto 8001 — 8000 ocupado por otro proyecto)

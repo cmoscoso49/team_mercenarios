@@ -9,6 +9,7 @@ import Badge from '../../components/common/Badge'
 import '../../components/common/common.css'
 
 const MESES = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+const ANIOS_ACTIVOS = [2025, 2024]
 
 export default function IntegranteFicha() {
   const { id } = useParams()
@@ -29,7 +30,8 @@ export default function IntegranteFicha() {
       getResumenIntegrante(id),
     ]).then(([ig, ms, ps, ds, rs]) => {
       setIntegrante(ig.data)
-      setMensualidades(ms.data.results || ms.data)
+      const todas = ms.data.results || ms.data
+      setMensualidades(todas.filter(m => m.anio <= 2025))
       setParticipaciones(ps.data.results || ps.data)
       setDeudas(ds.data.results || ds.data)
       setResumen(rs.data)
@@ -38,9 +40,6 @@ export default function IntegranteFicha() {
 
   if (loading) return <div className="loading">Cargando ficha...</div>
   if (!integrante) return <div className="error-msg">Integrante no encontrado</div>
-
-  const anioActual = new Date().getFullYear()
-  const mensActual = mensualidades.filter(m => m.anio === anioActual)
 
   return (
     <div>
@@ -56,6 +55,7 @@ export default function IntegranteFicha() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: 20 }}>
+        {/* Sidebar */}
         <div>
           <div className="card" style={{ marginBottom: 16 }}>
             <div style={{ textAlign: 'center', marginBottom: 16 }}>
@@ -68,8 +68,8 @@ export default function IntegranteFicha() {
             </div>
             <dl style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 12 }}>
               {[
-                ['RUT', integrante.rut],
                 ['Rol', integrante.rol],
+                ['RUT', integrante.rut],
                 ['Teléfono', integrante.telefono],
                 ['Email', integrante.email],
                 ['Talla', integrante.talla_polera],
@@ -82,29 +82,27 @@ export default function IntegranteFicha() {
               ) : null)}
             </dl>
           </div>
+
           {resumen && (
             <div className="card">
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>Resumen {anioActual}</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Mensualidades pagadas</span>
-                  <span style={{ color: 'var(--accent-light)', fontWeight: 700 }}>{resumen.mensualidades_pagadas_anio}/12</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Participaciones</span>
-                  <span style={{ fontWeight: 700 }}>{resumen.total_participaciones}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Deuda pendiente</span>
-                  <span style={{ color: resumen.deudas_pendientes > 0 ? 'var(--danger)' : 'var(--accent-light)', fontWeight: 700 }}>
-                    ${Number(resumen.deudas_pendientes).toLocaleString('es-CL')}
-                  </span>
-                </div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
+                Resumen histórico 2024-2025
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 13 }}>
+                <ResumenRow label="Cuotas pagadas"   value={resumen.cuotas_pagadas}   color="var(--accent-light)" />
+                <ResumenRow label="Cuotas pendientes" value={resumen.cuotas_pendientes} color={resumen.cuotas_pendientes > 0 ? 'var(--danger)' : 'var(--accent-light)'} />
+                <div style={{ height: 1, background: '#1e1e1e', margin: '2px 0' }} />
+                <ResumenRow label="Total pagado"    value={`$${Number(resumen.total_pagado).toLocaleString('es-CL')}`}    color="var(--accent-light)" />
+                <ResumenRow label="Total adeudado"  value={`$${Number(resumen.total_pendiente).toLocaleString('es-CL')}`}  color={resumen.total_pendiente > 0 ? 'var(--danger)' : 'var(--accent-light)'} />
+                <div style={{ height: 1, background: '#1e1e1e', margin: '2px 0' }} />
+                <ResumenRow label="Participaciones"  value={resumen.total_participaciones} />
+                <ResumenRow label="Último pago"      value={resumen.ultimo_pago || '—'} color="var(--text-secondary)" />
               </div>
             </div>
           )}
         </div>
 
+        {/* Contenido */}
         <div>
           <div className="tabs">
             {[['mensualidades', 'Mensualidades'], ['participaciones', 'Participaciones'], ['deudas', 'Deudas'], ['reincorporacion', 'Reincorporacion']].map(([k, l]) => (
@@ -113,29 +111,7 @@ export default function IntegranteFicha() {
           </div>
 
           {tab === 'mensualidades' && (
-            <div className="card">
-              <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 14 }}>
-                Mensualidades {anioActual}
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8 }}>
-                {Array.from({ length: 12 }, (_, i) => i + 1).map((mes) => {
-                  const m = mensActual.find(x => x.mes === mes)
-                  const estado = m?.estado || 'pendiente'
-                  return (
-                    <div key={mes} style={{
-                      padding: '10px 8px', borderRadius: 4, textAlign: 'center',
-                      background: estado === 'pagada' ? 'rgba(61,122,61,0.22)' : estado === 'exento' ? 'rgba(150,150,150,0.10)' : 'rgba(204,34,34,0.14)',
-                      border: `1px solid ${estado === 'pagada' ? 'rgba(61,122,61,0.45)' : estado === 'exento' ? 'rgba(150,150,150,0.22)' : 'rgba(204,34,34,0.35)'}`,
-                    }}>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>{MESES[mes]}</div>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: estado === 'pagada' ? 'var(--accent-light)' : estado === 'exento' ? 'var(--text-muted)' : 'var(--danger)' }}>
-                        {estado === 'pagada' ? '✓' : estado === 'exento' ? '—' : '✕'}
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
+            <MensualidadesTab mensualidades={mensualidades} />
           )}
 
           {tab === 'participaciones' && (
@@ -162,7 +138,7 @@ export default function IntegranteFicha() {
           {tab === 'deudas' && (
             <div className="card" style={{ padding: 0 }}>
               {deudas.length === 0 ? (
-                <div className="empty-state">Sin deudas registradas</div>
+                <div className="empty-state">Sin deudas adicionales registradas</div>
               ) : (
                 <table>
                   <thead><tr><th>Descripcion</th><th>Total</th><th>Pagado</th><th>Pendiente</th><th>Estado</th></tr></thead>
@@ -191,6 +167,91 @@ export default function IntegranteFicha() {
   )
 }
 
+function ResumenRow({ label, value, color }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <span style={{ color: 'var(--text-muted)' }}>{label}</span>
+      <span style={{ fontWeight: 700, color: color || 'var(--text-primary)' }}>{value}</span>
+    </div>
+  )
+}
+
+function MensualidadesTab({ mensualidades }) {
+  const porAnio = (anio) => mensualidades.filter(m => m.anio === anio)
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {ANIOS_ACTIVOS.map(anio => {
+        const meses = porAnio(anio)
+        const pagadas   = meses.filter(m => m.estado === 'pagada').length
+        const pendientes = meses.filter(m => m.estado === 'pendiente').length
+        const exentos   = meses.filter(m => m.estado === 'exento').length
+        const totalPagado   = meses.filter(m => m.estado === 'pagada').reduce((s, m) => s + Number(m.monto), 0)
+        const totalPendiente = meses.filter(m => m.estado === 'pendiente').reduce((s, m) => s + Number(m.monto), 0)
+
+        return (
+          <div key={anio} className="card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+              <div style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600 }}>
+                Mensualidades {anio}
+              </div>
+              <div style={{ display: 'flex', gap: 16, fontSize: 12 }}>
+                <span style={{ color: 'var(--accent-light)' }}>✓ {pagadas} pagadas</span>
+                {pendientes > 0 && <span style={{ color: 'var(--danger)' }}>✕ {pendientes} pendientes</span>}
+                {exentos > 0  && <span style={{ color: 'var(--text-muted)' }}>— {exentos} exentos</span>}
+              </div>
+            </div>
+
+            {meses.length === 0 ? (
+              <div style={{ color: 'var(--text-muted)', fontSize: 12, fontStyle: 'italic' }}>
+                Sin registros para {anio}.
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8 }}>
+                {Array.from({ length: 12 }, (_, i) => i + 1).map(mes => {
+                  const m = meses.find(x => x.mes === mes)
+                  if (!m) return (
+                    <div key={mes} style={{ padding: '10px 8px', borderRadius: 4, textAlign: 'center', background: 'rgba(30,30,30,0.5)', border: '1px solid #1a1a1a', opacity: 0.4 }}>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{MESES[mes]}</div>
+                      <div style={{ fontSize: 11, color: '#333' }}>—</div>
+                    </div>
+                  )
+                  const e = m.estado
+                  return (
+                    <div key={mes} style={{
+                      padding: '10px 8px', borderRadius: 4, textAlign: 'center',
+                      background: e === 'pagada' ? 'rgba(61,122,61,0.22)' : e === 'exento' ? 'rgba(150,150,150,0.10)' : 'rgba(204,34,34,0.14)',
+                      border: `1px solid ${e === 'pagada' ? 'rgba(61,122,61,0.45)' : e === 'exento' ? 'rgba(150,150,150,0.22)' : 'rgba(204,34,34,0.35)'}`,
+                    }}>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>{MESES[mes]}</div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: e === 'pagada' ? 'var(--accent-light)' : e === 'exento' ? 'var(--text-muted)' : 'var(--danger)' }}>
+                        {e === 'pagada' ? '✓' : e === 'exento' ? '—' : '✕'}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            {(pagadas > 0 || pendientes > 0) && (
+              <div style={{ display: 'flex', gap: 20, marginTop: 12, paddingTop: 12, borderTop: '1px solid #1e1e1e', fontSize: 12 }}>
+                <span style={{ color: 'var(--text-muted)' }}>
+                  Pagado: <strong style={{ color: 'var(--accent-light)' }}>${totalPagado.toLocaleString('es-CL')}</strong>
+                </span>
+                {totalPendiente > 0 && (
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    Adeudado: <strong style={{ color: 'var(--danger)' }}>${totalPendiente.toLocaleString('es-CL')}</strong>
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function ReincorporacionTab({ id, integrante }) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -215,7 +276,6 @@ function ReincorporacionTab({ id, integrante }) {
   if (!data) return null
 
   const puede = data.puede_reincorporarse
-  const estadoColor = puede ? '#d4a017' : '#9e9e9e'
 
   return (
     <div className="card">
@@ -235,7 +295,7 @@ function ReincorporacionTab({ id, integrante }) {
           </div>
         </div>
         <div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Cuotas pendientes</div>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Cuotas pendientes (hasta 2025-12)</div>
           <div style={{ fontSize: 24, fontWeight: 800, marginTop: 4, color: data.cuotas_pendientes > 0 ? '#e74c3c' : '#6abf6a' }}>
             {data.cuotas_pendientes}
           </div>

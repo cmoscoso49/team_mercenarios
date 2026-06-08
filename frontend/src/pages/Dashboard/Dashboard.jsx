@@ -35,18 +35,30 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       {tieneAccesoFinanciero ? (
-        <div className="grid-stats">
-          <StatCard label="Saldo Actual" value={data.saldo_actual} prefix="$" color="green" />
-          <StatCard label="Ingresos del Mes" value={data.ingresos_mes} prefix="$" color="green" />
-          <StatCard label="Egresos del Mes" value={data.egresos_mes} prefix="$" color="red" />
-          <StatCard label="Deudas Pendientes" value={data.deudas_total} prefix="$" color="yellow" />
-          <StatCard label="Integrantes Activos" value={data.integrantes_activos} color="green" />
-          <StatCard label="Integrantes Inactivos" value={data.integrantes_inactivos} />
-        </div>
+        <>
+          <div className="grid-stats">
+            <StatCard label="Saldo Actual" value={data.saldo_actual} prefix="$" color="green" />
+            <StatCard label="Ingresos del Mes" value={data.ingresos_mes} prefix="$" color="green" />
+            <StatCard label="Egresos del Mes" value={data.egresos_mes} prefix="$" color="red" />
+            <StatCard label="Deudas Pendientes" value={data.deudas_total} prefix="$" color="yellow" />
+            <StatCard label="Integrantes Activos" value={data.integrantes_activos} color="green" />
+            <StatCard label="Integrantes Inactivos" value={data.integrantes_inactivos} />
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, marginTop: 4 }}>
+            Cuotas 2024–2025
+          </div>
+          <div className="grid-stats" style={{ marginBottom: 0 }}>
+            <StatCard label="Al día" value={data.integrantes_al_dia ?? '—'} color="green" />
+            <StatCard label="Con deuda" value={data.integrantes_con_deuda ?? '—'} color="red" />
+            <StatCard label="Deuda total cuotas" value={data.deuda_mensualidades ?? 0} prefix="$" color="yellow" />
+          </div>
+        </>
       ) : (
         <div className="grid-stats">
           <StatCard label="Integrantes Activos" value={data.integrantes_activos} color="green" />
           <StatCard label="Integrantes Inactivos" value={data.integrantes_inactivos} />
+          <StatCard label="Al día en cuotas" value={data.integrantes_al_dia ?? '—'} color="green" />
+          <StatCard label="Con deuda" value={data.integrantes_con_deuda ?? '—'} color="red" />
         </div>
       )}
 
