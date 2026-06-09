@@ -28,6 +28,7 @@ import MisCuotas from './pages/Portal/MisCuotas'
 import MisEventos from './pages/Portal/MisEventos'
 import MiPerfil from './pages/Portal/MiPerfil'
 import CambiarPassword from './pages/Portal/CambiarPassword'
+import PagoResultado from './pages/Portal/PagoResultado'
 import Instagram from './pages/Instagram/Instagram'
 import InstagramForm from './pages/Instagram/InstagramForm'
 
@@ -76,6 +77,7 @@ function AppRoutes() {
         <Route path="mis-eventos" element={<MisEventos />} />
         <Route path="mi-perfil"        element={<MiPerfil />} />
         <Route path="cambiar-password" element={<CambiarPassword />} />
+        <Route path="pago-resultado"   element={<PagoResultado />} />
       </Route>
       <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
         <Route index element={<Dashboard />} />
