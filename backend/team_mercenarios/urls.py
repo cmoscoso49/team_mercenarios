@@ -40,4 +40,5 @@ urlpatterns = [
     path('api/v1/portal/mis-eventos/', portal_mis_eventos),
     path('api/v1/portal/eventos/<int:evento_id>/confirmar/', portal_confirmar_asistencia),
     path('api/v1/portal/cambiar-password/',                 portal_cambiar_password),
+    path('api/v1/', include('apps.pagos.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

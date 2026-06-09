@@ -3,6 +3,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import logoImg from '../../assets/logo/logo_mercenarios.png'
 import './Publica.css'
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api/v1'
+
 export default function NoticiaPublica() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -11,7 +13,7 @@ export default function NoticiaPublica() {
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
-    fetch(`/api/v1/public/noticias/${id}/`)
+    fetch(`${API_BASE}/public/noticias/${id}/`)
       .then(r => {
         if (!r.ok) throw new Error('not found')
         return r.json()

@@ -61,9 +61,10 @@ Al iniciar una nueva sesión:
 
 ## Stack
 
-- Backend: Python + Django 4.2 + Django REST Framework + SQLite
+- Backend: Python + Django 4.2 + Django REST Framework + SQLite (dev) / PostgreSQL 15 (VPS)
 - Frontend: React 18 + Vite + React Router v6 + Axios
 - Auth: JWT via `djangorestframework-simplejwt`
+- Pagos: Flow (flow.cl) — CLP nativo, webhook confirmación, SDK Python
 - Herramientas: CodeGraph · Ruflo · Prompt Master · frontend-design
 
 ## Proyecto Team Mercenarios — Objetivo permanente
@@ -161,6 +162,15 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 - Estadísticas públicas ampliadas (campeonatos, años)
 - Foto perfil en sidebar
 
+### SPRINT 6 — VPS + Pagos Online (8-12 días) ← PRÓXIMA ETAPA
+- Agregar a requirements.txt: `gunicorn`, `psycopg2-binary`, `dj-database-url`, `django-ratelimit`
+- Actualizar `settings.py`: DATABASES leer de DATABASE_URL (fallback SQLite dev)
+- Nueva app `pagos`: modelo `PagoOnline` + endpoints + integración Flow
+- Frontend: selector cuotas en MisCuotas.jsx + PagoResultado.jsx
+- VPS: Ubuntu 22.04 + Gunicorn + Nginx + PostgreSQL 15 + Let's Encrypt
+- Migrar datos: dumpdata local → loaddata VPS
+- Plan completo: `PROJECT_CONTEXT.md` → "Migración VPS + Pagos Online"
+
 ## Endpoints públicos (AllowAny — sin auth)
 
 - `GET /api/v1/public/stats/` → `{ integrantes_activos, eventos_proximos }`
@@ -245,6 +255,36 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 - La API queda en `mercenarios.pythonanywhere.com/api/v1`
 - Para usar `api.mercenarios.cl`: Plan Hacker ($5/mes) O Cloudflare Worker proxy
 - Detalles: `docs/DEPLOY_GRATIS.md`
+
+### VPS — Arquitectura objetivo (decisión 2026-06-08)
+
+Migración a VPS para habilitar pagos online. Stack: **Django + Gunicorn + Nginx + PostgreSQL 15**.
+
+```
+Internet → Nginx (SSL Let's Encrypt) → Gunicorn (3 workers) → Django → PostgreSQL
+                                                                      → Flow API (pagos)
+```
+
+**Proveedor pagos: Flow** — nativo CLP, sin contrato, sandbox disponible, SDK Python.
+Ver plan completo en `PROJECT_CONTEXT.md` → "Migración VPS + Pagos Online".
+
+**Cambios pendientes en requirements.txt:** agregar `gunicorn==21.2.0`, `psycopg2-binary==2.9.9`, `dj-database-url==2.2.0`, `django-ratelimit==4.1.0`
+
+**Nueva app:** `backend/apps/pagos/` — modelo `PagoOnline` + endpoints + integración Flow
+
+**Endpoints nuevos:**
+- `POST /api/v1/portal/pagos/crear/` — IsIntegrante — inicia pago en Flow
+- `GET /api/v1/portal/pagos/` — IsIntegrante — historial de pagos propios
+- `GET /api/v1/portal/pagos/{orden_id}/estado/` — IsIntegrante — polling de estado
+- `POST /api/v1/public/pagos/confirmar/` — AllowAny — webhook Flow (verificar firma HMAC antes de actuar)
+
+**Vars de entorno adicionales para VPS + pagos:**
+- `DATABASE_URL=postgres://user:pass@localhost:5432/team_mercenarios`
+- `FLOW_API_KEY=` — ⚠️ NUNCA en código ni git
+- `FLOW_SECRET_KEY=` — ⚠️ NUNCA en código ni git
+- `FLOW_API_URL=https://www.flow.cl/api` (sandbox: `https://sandbox.flow.cl/api`)
+- `FLOW_RETURN_URL=https://mercenarios.cl/portal/pago-resultado/`
+- `FLOW_CONFIRM_URL=https://api.mercenarios.cl/api/v1/public/pagos/confirmar/`
 
 ### ⚠️ Bugs críticos de producción detectados (auditoría 2026-06-08)
 1. **Public API hardcoded**: `Home.jsx`, `NoticiaPublica.jsx`, `EventoPublico.jsx`, `Postulacion.jsx` usan `fetch('/api/v1/...')` sin `VITE_API_BASE_URL` → toda la web pública rota en Cloudflare Pages. Fix: reemplazar con `import.meta.env.VITE_API_BASE_URL || '/api/v1'`
@@ -333,6 +373,10 @@ npm run dev
 - `.env` en backend con SECRET_KEY y DEBUG
 - NO guardar credenciales bancarias ni tokens de Instagram en código
 - CORS permitido para `localhost:3000` y `localhost:5173`
+- `FLOW_API_KEY` y `FLOW_SECRET_KEY`: NUNCA en código, NUNCA en git, NUNCA en CLAUDE.md/PROJECT_CONTEXT.md — solo en `.env` del servidor VPS con `chmod 600`
+- Webhook Flow: verificar firma HMAC-SHA256 ANTES de cualquier acción en BD
+- PagoOnline: usar `select_for_update()` + `@transaction.atomic` para evitar doble registro
+- Rate limiting en `/pagos/crear/`: max 10/min por IP, 5/min por usuario (django-ratelimit)
 
 ## Diseño UI
 

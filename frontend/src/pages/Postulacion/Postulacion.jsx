@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import client from '../../api/client';
 import './Postulacion.css';
 
 const INITIAL = {
@@ -28,7 +28,7 @@ export default function Postulacion() {
     setGlobalError('');
     setErrors({});
     try {
-      await axios.post('/api/v1/public/postulacion/', {
+      await client.post('/public/postulacion/', {
         ...form,
         edad: Number(form.edad),
       });

@@ -21,6 +21,8 @@ const REQUISITOS = [
   'Espíritu competitivo y trabajo en equipo',
 ]
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api/v1'
+
 export default function Home() {
   const [menuOpen,  setMenuOpen]  = useState(false)
   const [eventos,      setEventos]      = useState([])
@@ -32,19 +34,19 @@ export default function Home() {
   // Fetch data once on mount, then refresh every 60s
   useEffect(() => {
     const cargar = () => {
-      fetch('/api/v1/public/stats/')
+      fetch(`${API_BASE}/public/stats/`)
         .then(r => r.ok ? r.json() : null)
         .then(d => { if (d) setStats(d) })
         .catch(() => {})
-      fetch('/api/v1/public/eventos/')
+      fetch(`${API_BASE}/public/eventos/`)
         .then(r => r.ok ? r.json() : [])
         .then(d => { if (Array.isArray(d)) setEventos(d) })
         .catch(() => {})
-      fetch('/api/v1/public/noticias/')
+      fetch(`${API_BASE}/public/noticias/`)
         .then(r => r.ok ? r.json() : [])
         .then(d => { if (Array.isArray(d)) setNoticias(d) })
         .catch(() => {})
-      fetch('/api/v1/public/instagram/')
+      fetch(`${API_BASE}/public/instagram/`)
         .then(r => r.ok ? r.json() : [])
         .then(d => { if (Array.isArray(d)) setInstagram(d) })
         .catch(() => {})

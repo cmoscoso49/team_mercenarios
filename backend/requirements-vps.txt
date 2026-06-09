@@ -1,0 +1,4 @@
+# VPS-only packages (Ubuntu 22.04 + Python 3.12)
+# Install on server: pip install -r requirements.txt -r requirements-vps.txt
+gunicorn==21.2.0
+psycopg2-binary==2.9.9

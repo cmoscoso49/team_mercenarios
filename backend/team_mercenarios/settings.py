@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import timedelta
 from decouple import config
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -17,6 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'django_filters',
     'apps.usuarios',
@@ -27,6 +29,7 @@ INSTALLED_APPS = [
     'apps.galeria',
     'apps.reportes',
     'apps.reclutamiento',
+    'apps.pagos',
 ]
 
 MIDDLEWARE = [
@@ -61,12 +64,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'team_mercenarios.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+_DATABASE_URL = config('DATABASE_URL', default='')
+if _DATABASE_URL:
+    DATABASES = {'default': dj_database_url.parse(_DATABASE_URL, conn_max_age=600)}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -108,12 +115,19 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=8),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': False,
+    'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+# Flow payment gateway — keys MUST be set via .env, NEVER hardcode here
+FLOW_API_KEY = config('FLOW_API_KEY', default='')
+FLOW_SECRET_KEY = config('FLOW_SECRET_KEY', default='')
+FLOW_API_URL = config('FLOW_API_URL', default='https://sandbox.flow.cl/api')
+FLOW_RETURN_URL = config('FLOW_RETURN_URL', default='http://localhost:5173/portal/pago-resultado/')
+FLOW_CONFIRM_URL = config('FLOW_CONFIRM_URL', default='http://localhost:8001/api/v1/public/pagos/confirmar/')
 
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',

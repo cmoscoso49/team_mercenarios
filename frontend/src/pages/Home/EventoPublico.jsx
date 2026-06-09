@@ -18,6 +18,8 @@ const ESTADO_LABELS = {
   cancelado:  'CANCELADO',
 }
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api/v1'
+
 export default function EventoPublico() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -26,7 +28,7 @@ export default function EventoPublico() {
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
-    fetch(`/api/v1/public/eventos/${id}/`)
+    fetch(`${API_BASE}/public/eventos/${id}/`)
       .then(r => {
         if (!r.ok) throw new Error('not found')
         return r.json()

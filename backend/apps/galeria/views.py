@@ -23,6 +23,7 @@ class AlbumViewSet(viewsets.ModelViewSet):
 class FotoViewSet(viewsets.ModelViewSet):
     queryset = Foto.objects.all()
     serializer_class = FotoSerializer
+    permission_classes = [IsLiderazgo]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['album', 'destacada']
     ordering = ['-fecha_subida']

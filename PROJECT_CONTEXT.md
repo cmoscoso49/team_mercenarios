@@ -205,6 +205,277 @@ Para activar portal: Admin Django → Integrante → campo "Usuario del sistema"
 - Credenciales bancarias: NUNCA guardar en código ni .env
 - Instagram tokens: pendiente para Etapa futura — si la cuenta se convierte a Business/Creator, se puede integrar Instagram Graph API (token en variable de entorno INSTAGRAM_ACCESS_TOKEN). La arquitectura actual (PublicacionInstagram + endpoint público) ya es compatible con esa integración sin cambios de modelo.
 
+## Migración VPS + Pagos Online — Plan técnico (2026-06-08)
+
+**Decisión confirmada:** migrar de PythonAnywhere a VPS propio para habilitar pagos online de cuotas.
+**Proveedor de pagos elegido:** Flow (flow.cl) — nativo CLP, SDK Python, sandbox, sin contrato previo.
+
+### 1. Auditoría VPS-readiness — estado actual
+
+**Listo (sin cambios):**
+- `python-decouple` ya en uso — todas las vars de entorno parametrizadas
+- `whitenoise` en requirements — staticfiles manejados en código
+- `ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`, `CSRF_TRUSTED_ORIGINS` configurables via .env
+- Todos los modelos usan Django ORM estándar — 100% compatibles con PostgreSQL sin cambios de código
+- Sin queries raw SQL dependientes de SQLite
+- Security headers ya presentes en settings.py (`SECURE_BROWSER_XSS_FILTER`, `X_FRAME_OPTIONS`)
+
+**Falta — acciones requeridas antes del VPS:**
+- `gunicorn` ausente en requirements.txt (servidor WSGI para VPS — reemplaza mod_wsgi de PA)
+- `psycopg2-binary` ausente (adaptador PostgreSQL)
+- `dj-database-url` ausente (opcional; permite `DATABASE_URL=postgres://...` en .env)
+- `django-ratelimit` ausente (throttling para endpoints AllowAny + pagos)
+- `DATABASES` en settings.py hardcodeado a SQLite — debe leer de env var con fallback SQLite para dev
+- `BLACKLIST_AFTER_ROTATION=False` — tokens rotados siguen válidos; cambiar a True + agregar `rest_framework_simplejwt.token_blacklist` a INSTALLED_APPS
+- Sin app `pagos` (modelo PagoOnline no existe aún)
+
+### 2. Arquitectura VPS recomendada
+
+```
+Internet → Nginx (SSL/TLS vía Let's Encrypt)
+              ↓
+         Gunicorn (3-4 workers, socket Unix)
+              ↓
+         Django 4.2 + DRF
+              ↓
+         PostgreSQL 15 (mismo VPS)
+              ↓
+         Flow API (checkout externo)
+```
+
+| Capa | Servicio | Referencia |
+|------|----------|------------|
+| OS | Ubuntu 22.04 LTS | — |
+| WSGI | Gunicorn 21.x | `gunicorn team_mercenarios.wsgi:application -w 3 --bind unix:/run/gunicorn.sock` |
+| Proxy | Nginx 1.24 | proxy_pass al socket + location /media/ + location /static/ |
+| BD | PostgreSQL 15 | mismo servidor; migrar a BD gestionada en futuro |
+| SSL | Let's Encrypt via certbot | `certbot --nginx -d api.mercenarios.cl` |
+| Proceso | systemd | `gunicorn_mercenarios.service` — restart on failure |
+| Static | Whitenoise (ya activo) | collectstatic → /staticfiles/ |
+| Media | Nginx `/media/` → `MEDIA_ROOT` | futuro: Cloudflare R2 |
+
+**VPS mínimo recomendado:** 2 vCPU, 2 GB RAM, 40 GB SSD (~$5-12/mes: Contabo, DigitalOcean, Hostinger VPS)
+
+### 3. Impacto SQLite → PostgreSQL
+
+**Sin impacto (sin cambios de código):**
+- Django ORM genera SQL estándar — todos los modelos, migraciones y queries son compatibles
+- `CharField`, `DecimalField`, `DateField`, `BooleanField`, `JSONField` — tipos universales
+- `select_related`, `prefetch_related`, `update_or_create`, `get_or_create` — iguales
+- SearchFilter de DRF usa `ILIKE` internamente — funciona igual en PostgreSQL
+
+**Requiere verificación post-migración:**
+- `icontains` en queries manuales: PostgreSQL es case-sensitive en `LIKE` (pero `icontains` usa `ILIKE` automáticamente — OK)
+- Unicode en nicks (ñ, tildes): verificar con `reimportar_mensualidades --dry-run` tras loaddata
+- `USE_TZ=True` en settings (ya el default Django): PostgreSQL es timezone-aware nativo — verificar fechas de mensualidades/movimientos con `python manage.py shell`
+
+**Proceso de migración de datos:**
+```bash
+# Local (dump):
+python manage.py dumpdata --natural-foreign --natural-primary -e contenttypes -e auth.Permission > data_full.json
+
+# VPS (carga):
+python manage.py migrate          # crea schema vacío en PostgreSQL
+python manage.py loaddata data_full.json
+python manage.py crear_admin --username=admin --password=CLAVE_SEGURA
+
+# Verificar conteos esperados:
+# Integrante: 52 | Mensualidad: 1091 | Movimiento: 151 | Participacion: 41
+```
+
+**Alternativa sin Django:** `pgloader sqlite:///db.sqlite3 postgresql://user:pass@localhost/team_mercenarios` — una línea, migra datos y tipos automáticamente.
+
+### 4. Modelos involucrados — cuotas, finanzas y pagos
+
+**Existentes (`apps/finanzas/models.py`):**
+| Modelo | Campos clave | Rol en pagos |
+|--------|-------------|--------------|
+| `Mensualidad` | anio, mes, monto, estado (pagado/pendiente/exento), fecha_pago, integrante FK | Se marca `pagado` al confirmar pago online |
+| `Movimiento` | tipo (ingreso/egreso), monto, descripcion, categoria FK, integrante FK, fecha | Se crea ingreso automáticamente al confirmar pago |
+| `Deuda` | monto_total, monto_pagado, estado (pendiente/parcial/pagado), integrante FK | Futura: saldar deudas via pago online |
+| `ConfiguracionCuota` | valor_cuota, moneda, vigencia_desde, activa | Determina el monto a cobrar por cuota |
+| `Categoria` | nombre, tipo | FK de Movimiento — se usará categoría "Mensualidad online" |
+
+**Nuevo modelo — `apps/pagos/models.py` (por crear):**
+```python
+class PagoOnline(models.Model):
+    ESTADOS = [
+        ('pendiente', 'Pendiente'),('completado', 'Completado'),
+        ('fallido', 'Fallido'),('expirado', 'Expirado'),('cancelado', 'Cancelado')
+    ]
+    integrante     = FK → Integrante
+    mensualidades  = ManyToManyField(Mensualidad, blank=True)  # cuotas que cubre
+    monto          = DecimalField(max_digits=10, decimal_places=0)
+    proveedor      = CharField(max_length=20, default='flow')
+    estado         = CharField(max_length=20, choices=ESTADOS, default='pendiente')
+    orden_id       = CharField(max_length=100, unique=True)    # ID interno único (uuid4)
+    token_proveedor= CharField(max_length=200, blank=True)     # token de Flow
+    url_pago       = URLField(blank=True)                      # URL checkout de Flow
+    fecha_creacion = DateTimeField(auto_now_add=True)
+    fecha_expiracion = DateTimeField()                         # ~10 min desde creación
+    fecha_confirmacion = DateTimeField(null=True, blank=True)
+    datos_respuesta = JSONField(default=dict)                  # respuesta completa Flow
+    movimiento     = FK → Movimiento (null=True)               # creado al confirmar
+```
+
+### 5. Proveedor de pagos: Flow (decisión 2026-06-08)
+
+**Comparación:**
+| Proveedor | Comisión | SDK Python | Sandbox | Contrato | CLP nativo |
+|-----------|---------|------------|---------|----------|------------|
+| **Flow** ✅ | ~1.95%+IVA | Sí (oficial) | Sí (sandbox.flow.cl) | No | Sí |
+| Transbank Webpay | ~1.45%+IVA | Sí (`transbank-sdk`) | Sí | Sí (proceso largo) | Sí |
+| MercadoPago | 1.99-3.49% | Sí (oficial) | Sí | No | Sí (conversión interna) |
+
+**Por qué Flow:** chileno, sin contrato, sandbox completo, API REST simple, SDK Python, integración en 1-2 días. Para Webpay: requiere afiliación a Transbank (semanas) y firma de contrato — viable como alternativa si el team prefiere la marca Webpay en el checkout.
+
+**Integración Flow:** `pip install pyflow` o llamadas directas a `https://sandbox.flow.cl/api` con `FLOW_API_KEY` + firma HMAC-SHA256 de los parámetros.
+
+### 6. Flujo de pago seguro
+
+```
+PLAYER (browser)          BACKEND (Django)              FLOW API
+      |                         |                           |
+      | POST /portal/pagos/crear|                           |
+      | {mensualidades:[1,2,3]} |                           |
+      |                         | Verificar estado != pagado|
+      |                         | PagoOnline(pendiente)     |
+      |                         |─── createPayment ────────>|
+      |                         |<── {token, paymentURL} ──|
+      |<── {url_pago: "..."} ─ |                           |
+      |                         |                           |
+      |─── REDIRECT → Flow ───>                            |
+      |        [usuario paga con tarjeta en Flow]           |
+      |                         |                           |
+      |                         |<── POST /public/pagos/confirmar/ (confirmURL)
+      |                         | 1. Verificar firma HMAC   |
+      |                         | 2. flow.getStatus(token)  |
+      |                         | 3. Si status=1 (éxito):   |
+      |                         |    transaction atómica:   |
+      |                         |    - PagoOnline.estado=completado
+      |                         |    - Mensualidad.estado=pagado
+      |                         |    - Movimiento(tipo=ingreso) crear
+      |<── REDIRECT returnURL  |                           |
+      |                         |                           |
+      | GET /portal/pagos/{id}/estado                       |
+      |<── {estado: "completado", mensualidades: [...]} ─  |
+```
+
+**Endpoints requeridos (nuevos):**
+- `POST /api/v1/portal/pagos/crear/` — `IsIntegrante` — crea PagoOnline, llama Flow, devuelve url_pago
+- `GET /api/v1/portal/pagos/` — `IsIntegrante` — historial de pagos propios
+- `GET /api/v1/portal/pagos/{orden_id}/estado/` — `IsIntegrante` — polling post-redirección
+- `POST /api/v1/public/pagos/confirmar/` — `AllowAny` — webhook de Flow (verificar firma antes de actuar)
+
+**Regla crítica:** NUNCA marcar como pagado solo por el webhook. Siempre re-verificar con `flow.getPaymentStatus(token)` antes de cualquier actualización en BD. Usar `select_for_update()` + transacción atómica para evitar race conditions.
+
+### 7. Variables de entorno requeridas (VPS)
+
+```bash
+# BASE
+SECRET_KEY=               # mínimo 50 chars random
+DEBUG=False
+ALLOWED_HOSTS=api.mercenarios.cl
+
+# BASE DE DATOS
+DATABASE_URL=postgres://tm_user:PASSWORD@localhost:5432/team_mercenarios
+
+# CORS / CSRF (actualizar cuando el dominio esté activo)
+CORS_ALLOWED_ORIGINS=https://mercenarios.cl,https://www.mercenarios.cl,https://team-mercenarios.pages.dev
+CSRF_TRUSTED_ORIGINS=https://api.mercenarios.cl,https://mercenarios.cl,https://www.mercenarios.cl
+
+# PAGOS — FLOW (obtener en flow.cl → Mi cuenta → Credenciales)
+FLOW_API_KEY=             # ⚠️ NUNCA en código ni git
+FLOW_SECRET_KEY=          # ⚠️ NUNCA en código ni git
+FLOW_API_URL=https://www.flow.cl/api       # producción
+# FLOW_API_URL=https://sandbox.flow.cl/api # desarrollo/testing
+FLOW_RETURN_URL=https://mercenarios.cl/portal/pago-resultado/
+FLOW_CONFIRM_URL=https://api.mercenarios.cl/api/v1/public/pagos/confirmar/
+
+# FRONTEND (Cloudflare Pages dashboard)
+VITE_API_BASE_URL=https://api.mercenarios.cl/api/v1
+```
+
+**Regla absoluta:** `FLOW_API_KEY` y `FLOW_SECRET_KEY` NUNCA en código, NUNCA en git, NUNCA en este archivo. Solo en el .env del servidor VPS con permisos `chmod 600`.
+
+### 8. Riesgos de seguridad
+
+| Riesgo | Nivel | Mitigación |
+|--------|-------|-----------|
+| Webhook sin verificar firma HMAC | ALTO | `hmac.compare_digest(firma_recibida, calcular_firma(body))` antes de cualquier acción |
+| Race condition doble-pago | ALTO | `select_for_update()` en Mensualidad + transacción atómica `@transaction.atomic` |
+| Token Flow reutilizado | ALTO | Campo `fecha_expiracion` en PagoOnline; verificar siempre con Flow API el estado real |
+| FLOW_API_KEY expuesto en logs | ALTO | Nunca loguear headers de requests; usar `logging.getLogger` con nivel WARNING en producción |
+| Double-spend (dos pagos mismas cuotas) | MEDIO | Verificar `mensualidad.estado != 'pagado'` al crear PagoOnline |
+| Sin rate limiting en /pagos/crear/ | MEDIO | `django-ratelimit`: 10/min por IP, 5/min por usuario autenticado |
+| BLACKLIST_AFTER_ROTATION=False | MEDIO | Cambiar a True + `rest_framework_simplejwt.token_blacklist` en INSTALLED_APPS |
+| ACCESS_TOKEN_LIFETIME=8h | BAJO | Reducir a 2h en VPS |
+| MEDIA sin CDN/backup | BAJO | Configurar backup manual o Cloudflare R2 |
+| Unicode en nicks PostgreSQL | BAJO | Verificar con `reimportar_mensualidades --dry-run` tras loaddata |
+
+### 9. Plan de implementación step-by-step
+
+**FASE 0 — Preparación local (1-2 días) — sin deploy**
+1. Agregar a `requirements.txt`: `gunicorn==21.2.0`, `psycopg2-binary==2.9.9`, `dj-database-url==2.2.0`, `django-ratelimit==4.1.0`
+2. Actualizar `settings.py`: `DATABASES` leer de `DATABASE_URL` con fallback a SQLite (`dj_database_url.config(default='sqlite:///db.sqlite3')`)
+3. Cambiar `BLACKLIST_AFTER_ROTATION=True` + agregar `rest_framework_simplejwt.token_blacklist` a INSTALLED_APPS
+4. Reducir `ACCESS_TOKEN_LIFETIME` de 8h a 2h
+5. Crear app `pagos`: `python manage.py startapp pagos` → agregar a INSTALLED_APPS + urls.py
+6. Definir modelo `PagoOnline` + migración inicial
+7. Crear `apps/pagos/services.py` con funciones Flow: `crear_pago(orden_id, monto, integrante)`, `verificar_pago(token)`
+8. Implementar los 4 endpoints de pagos
+9. Probar con sandbox.flow.cl — registrar `FLOW_CONFIRM_URL` en dashboard de Flow sandbox
+10. Corregir los 7 URLs hardcodeados (Home.jsx, NoticiaPublica.jsx, EventoPublico.jsx, Postulacion.jsx)
+11. Agregar `FotoViewSet.permission_classes = [IsLiderazgo]`
+
+**FASE 1 — Contratar VPS (1 día)**
+12. Contratar VPS: 2 vCPU / 2 GB RAM / 40 GB SSD (Contabo ~$5/mes, DigitalOcean ~$12/mes)
+13. OS: Ubuntu 22.04 LTS
+14. Apuntar DNS `api.mercenarios.cl → IP_VPS` (si se tiene el dominio, sino usar IP directa)
+
+**FASE 2 — Configurar servidor (1 día)**
+15. `apt update && apt upgrade -y`
+16. `apt install python3.12 python3.12-venv postgresql-15 nginx certbot python3-certbot-nginx -y`
+17. PostgreSQL: `sudo -u postgres createdb team_mercenarios && createuser tm_user` + contraseña
+18. `git clone https://github.com/cmoscoso49/team_mercenarios.git`
+19. `python3.12 -m venv venv && source venv/bin/activate && pip install -r requirements.txt`
+20. Crear `backend/.env` con todas las variables de la Sección 7
+21. `python manage.py migrate && python manage.py collectstatic --noinput`
+
+**FASE 3 — Gunicorn + Nginx (1 día)**
+22. Crear `/etc/systemd/system/gunicorn_mercenarios.service` (WorkingDirectory, ExecStart, socket unix, User www-data)
+23. `systemctl enable --now gunicorn_mercenarios`
+24. Crear `/etc/nginx/sites-available/mercenarios` con proxy_pass al socket + locations para /media/ y /static/
+25. `certbot --nginx -d api.mercenarios.cl` — SSL automático
+26. `nginx -t && systemctl reload nginx`
+
+**FASE 4 — Migrar datos (2 horas)**
+27. Local: `python manage.py dumpdata --natural-foreign --natural-primary -e contenttypes -e auth.Permission > data_full.json`
+28. `scp data_full.json user@IP_VPS:~/team_mercenarios/backend/`
+29. VPS: `python manage.py loaddata data_full.json`
+30. VPS: `python manage.py crear_admin --username=admin --password=CLAVE_SEGURA`
+31. Verificar conteos: 52 integrantes, 1091 mensualidades, 151 movimientos
+
+**FASE 5 — Configurar pagos (2-3 días)**
+32. Crear cuenta en flow.cl → sandbox → obtener `FLOW_API_KEY` y `FLOW_SECRET_KEY`
+33. Registrar `FLOW_RETURN_URL` y `FLOW_CONFIRM_URL` en dashboard Flow sandbox
+34. Agregar las claves al `.env` del VPS (sin commitear)
+35. Probar flujo completo sandbox: crear pago → pagar con tarjeta de prueba → webhook → verificar mensualidad `pagado` + movimiento `ingreso` creado
+36. Revisar logs Nginx para confirmar que `confirmURL` llega correctamente (`tail -f /var/log/nginx/access.log`)
+37. Activar cuenta Flow producción (requiere RUT y datos bancarios del team)
+
+**FASE 6 — Frontend pagos (1-2 días)**
+38. Agregar selector de cuotas + botón "Pagar en línea" en `MisCuotas.jsx`
+39. Crear `PagoResultado.jsx` en `/portal/pago-resultado/` — muestra resultado tras redirect de Flow
+40. Actualizar `VITE_API_BASE_URL` en Cloudflare Pages dashboard → URL del VPS
+
+**FASE 7 — DNS + smoke test (1 día)**
+41. Actualizar CORS_ALLOWED_ORIGINS y CSRF_TRUSTED_ORIGINS en VPS .env si cambia dominio
+42. Rebuild Cloudflare Pages
+43. Smoke test completo: login → portal → mis-cuotas → pago sandbox → verificar BD
+
+**Resumen de tiempo estimado:** 8-12 días incluyendo cuenta Flow y configuración VPS.
+
 ## Modelo de datos (relaciones clave)
 ```
 Usuario (AUTH_USER_MODEL)
