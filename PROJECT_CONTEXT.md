@@ -4,7 +4,7 @@
 Fecha: 2026-06-01 | Migración: 2026-06-01 | Deploy: 2026-06-08
 
 ### Auditoría producción 2026-06-08 — Pendientes críticos
-1. **PUBLIC API hardcoded** — `Home.jsx`, `NoticiaPublica.jsx`, `EventoPublico.jsx`, `Postulacion.jsx` usan `fetch('/api/v1/...')` o `axios.post('/api/v1/...')` sin `VITE_API_BASE_URL`. En Cloudflare Pages toda la web pública (stats, eventos, noticias, instagram, formulario postulacion) apunta al CDN en lugar de PythonAnywhere → **ROTO en producción**.
+1. ~~**PUBLIC API hardcoded**~~ → ✅ **Corregido (2026-06-08)** — Home.jsx, NoticiaPublica.jsx, EventoPublico.jsx, Postulacion.jsx usan `VITE_API_BASE_URL`. Requiere rebuild en Cloudflare Pages.
 2. **SECRET_KEY default inseguro** — `settings.py:7` tiene fallback `'django-insecure-dev-key-...'`. Si el `.env` de PA no lo sobreescribe, todos los JWT son vulnerables.
 3. **MEDIA files no servidos** — `urls.py:43` usa `static()` que Django desactiva con `DEBUG=False`. Fotos subidas (perfil, galería, Instagram) no son accesibles en producción.
 
@@ -39,6 +39,7 @@ Fecha: 2026-06-01 | Migración: 2026-06-01 | Deploy: 2026-06-08
 | Importación Excel | ✅ | ⚠️ | Backend OK, UI pendiente |
 | Instagram | ✅ | ✅ | Grid público en /inicio y /galeria + CRUD admin en /instagram |
 | Reclutamiento | ✅ | ✅ | Formulario público /postulacion + admin /postulaciones |
+| **Pagos Online** | ✅ base | — | App pagos: modelo PagoOnline + 4 endpoints + integración Flow (pendiente claves sandbox) |
 
 ## Migración histórica (completada 2026-06-01) + Sincronización 2025 (2026-06-06)
 Comando histórico: `python manage.py importar_excel_historico`

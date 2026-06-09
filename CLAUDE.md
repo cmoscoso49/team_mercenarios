@@ -162,13 +162,22 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 - Estadísticas públicas ampliadas (campeonatos, años)
 - Foto perfil en sidebar
 
-### SPRINT 6 — VPS + Pagos Online (8-12 días) ← PRÓXIMA ETAPA
-- Agregar a requirements.txt: `gunicorn`, `psycopg2-binary`, `dj-database-url`, `django-ratelimit`
-- Actualizar `settings.py`: DATABASES leer de DATABASE_URL (fallback SQLite dev)
-- Nueva app `pagos`: modelo `PagoOnline` + endpoints + integración Flow
-- Frontend: selector cuotas en MisCuotas.jsx + PagoResultado.jsx
-- VPS: Ubuntu 22.04 + Gunicorn + Nginx + PostgreSQL 15 + Let's Encrypt
-- Migrar datos: dumpdata local → loaddata VPS
+### SPRINT 6 — VPS + Pagos Online (8-12 días) ← EN PROGRESO
+
+**Fase 0 completada (2026-06-08):**
+- [x] requirements.txt: `dj-database-url`, `django-ratelimit`, `requests`
+- [x] requirements-vps.txt: `gunicorn`, `psycopg2-binary` (Linux VPS only)
+- [x] settings.py: DATABASES desde DATABASE_URL (fallback SQLite), token_blacklist, BLACKLIST_AFTER_ROTATION=True, ACCESS_TOKEN_LIFETIME=2h, Flow env vars
+- [x] Frontend: 7 URLs hardcodeadas corregidas (Home.jsx, NoticiaPublica.jsx, EventoPublico.jsx, Postulacion.jsx)
+- [x] galeria/views.py: FotoViewSet.permission_classes = [IsLiderazgo]
+- [x] App `pagos`: modelo PagoOnline + serializer + services Flow (HMAC) + 4 endpoints + admin + migración
+- [x] urls.py: `include('apps.pagos.urls')` en `api/v1/`
+
+**Pendiente:**
+- [ ] Contratar VPS + configurar Ubuntu/Nginx/Gunicorn/PostgreSQL
+- [ ] Frontend: selector cuotas en MisCuotas.jsx + PagoResultado.jsx
+- [ ] Registrar en flow.cl sandbox → obtener FLOW_API_KEY + FLOW_SECRET_KEY → agregar a .env local
+- [ ] Migrar datos: dumpdata local → loaddata VPS
 - Plan completo: `PROJECT_CONTEXT.md` → "Migración VPS + Pagos Online"
 
 ## Endpoints públicos (AllowAny — sin auth)
@@ -194,7 +203,7 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 - Frontend: `frontend/` — React/Vite app
 - Django settings: `backend/team_mercenarios/settings.py`
 - Django URLs root: `backend/team_mercenarios/urls.py`
-- Apps: `backend/apps/{usuarios,integrantes,finanzas,eventos,noticias,galeria,reportes}/`
+- Apps: `backend/apps/{usuarios,integrantes,finanzas,eventos,noticias,galeria,reportes,reclutamiento,pagos}/`
 - Permisos: `apps/usuarios/permissions.py`
 - Frontend API: `frontend/src/api/`
 - Frontend pages: `frontend/src/pages/`
