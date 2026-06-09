@@ -207,12 +207,30 @@ PythonAnywhere también ofrece "Backups" en el dashboard (opción de cuenta).
 
 ---
 
-## Createsuperuser (si necesitas acceso al admin Django)
+## Crear usuario administrador
+
+> ⚠️ **NO usar `createsuperuser`** — el campo `rol` queda en `'player'` (valor por defecto del modelo) y el usuario es redirigido al portal en lugar del panel admin.
+
+Usar el comando personalizado:
 
 ```bash
 cd ~/team_mercenarios/backend
 source venv/bin/activate
-python manage.py createsuperuser
+python manage.py crear_admin --username=admin --password=TU_CLAVE_SEGURA
 ```
 
-Acceder en: `https://TU_USUARIO.pythonanywhere.com/admin/`
+Esto crea o actualiza el usuario con `rol=admin`, `is_superuser=True`, `is_staff=True`.
+
+**Si ya existe un usuario creado con `createsuperuser` y está atascado en el portal:**
+
+```bash
+python manage.py shell -c "
+from apps.usuarios.models import Usuario
+u = Usuario.objects.get(username='admin')
+u.rol = 'admin'
+u.save()
+print('OK:', u.username, u.rol)
+"
+```
+
+Acceder al admin Django en: `https://mercenarios.pythonanywhere.com/admin/`

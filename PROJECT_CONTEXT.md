@@ -11,6 +11,7 @@ Fecha: 2026-06-01 | Migración: 2026-06-01
 - Dashboard en un solo endpoint para minimizar requests al cargar
 - Todos los modelos tienen `fecha_creacion` automático
 - `Integrante.rut` es nullable y unique (permite importar datos sin RUT)
+- `Usuario.rol` tiene `default='player'` — Django `createsuperuser` no pide el campo y el usuario queda atrapado en el portal. Usar `python manage.py crear_admin --username=admin --password=CLAVE` para crear el superusuario con rol correcto
 
 ## Módulos implementados
 | Módulo | Backend | Frontend | Estado |

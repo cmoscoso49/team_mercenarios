@@ -97,6 +97,7 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 - Liderazgo: panel admin + "Mi Cuenta" en sidebar + boton Panel en portal
 - Todos los roles pagan cuotas y ven su estado de cuenta en el portal personal
 - Usuarios de prueba: `tesorero1/tesorero2026`, `integrante1/integrante2026`, `style/mercenarios2026@` (TL), `corvo/mercenarios2026@` (player)
+- ⚠️ `createsuperuser` crea usuarios con `rol='player'` (default del modelo) → quedan atrapados en el portal. Usar siempre `crear_admin` para el usuario administrador
 
 ## Arquitectura v2 — Decisiones clave (2026-06-07)
 
@@ -267,7 +268,7 @@ python -m venv venv
 venv\Scripts\activate        # Windows
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py createsuperuser
+python manage.py crear_admin --username=admin --password=CLAVE  # ⚠️ NO usar createsuperuser — rol queda en 'player'
 python manage.py seed_data   # datos de prueba
 python manage.py runserver 8001  # puerto 8001 (8000 ocupado por otro proyecto)
 python manage.py sincronizar_integrantes_2025  # sincroniza integrantes desde MENSUALIDADES 2025
