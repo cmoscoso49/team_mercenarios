@@ -7,26 +7,26 @@
 }
 
 :root {
-  --bg-primary:     #111413;
-  --bg-secondary:   #161b19;
-  --bg-card:        #1b201e;
-  --bg-hover:       #222925;
-  --bg-input:       #1e2422;
+  --bg-primary:     #111111;
+  --bg-secondary:   #1a1212;
+  --bg-card:        #1d1515;
+  --bg-hover:       #261c1c;
+  --bg-input:       #201717;
 
-  --accent-primary:   #16a34a;
-  --accent-secondary: #166534;
-  --accent-light:     #4ade80;
+  --accent-primary:   #cc2222;
+  --accent-secondary: #991b1b;
+  --accent-light:     #ef4444;
   --accent-red:       #cc2222;
   --accent-red-light: #e63333;
   --accent-gold:      #d4a030;
   --accent-graphite:  #3a3a3a;
 
   --text-primary:   #ffffff;
-  --text-secondary: #9ca3af;
-  --text-muted:     #4b5563;
+  --text-secondary: #d1d5db;
+  --text-muted:     #6b7280;
 
-  --border-color:  #252f2b;
-  --border-accent: #166534;
+  --border-color:  #2a1e1e;
+  --border-accent: #991b1b;
 
   --success: #16a34a;
   --danger:  #cc2222;
@@ -35,8 +35,8 @@
 
   --shadow:    0 2px 12px rgba(0,0,0,0.7);
   --shadow-lg: 0 6px 28px rgba(0,0,0,0.85);
-  --glow-green: 0 0 24px rgba(74,222,128,0.18);
-  --glow-red:   0 0 24px rgba(204,34,34,0.18);
+  --glow-green: 0 0 24px rgba(204,34,34,0.2);
+  --glow-red:   0 0 24px rgba(204,34,34,0.2);
 
   --radius:    2px;
   --radius-lg: 4px;
@@ -79,5 +79,5 @@ input, select, textarea {
 
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg-secondary); }
-::-webkit-scrollbar-thumb { background: #2d3a35; border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: #3a2020; border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }

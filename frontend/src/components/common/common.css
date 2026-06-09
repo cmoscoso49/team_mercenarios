@@ -111,7 +111,7 @@
 .stat-card:hover {
   border-top-color: var(--accent-light);
   box-shadow: var(--glow-green);
-  background: #1e2521;
+  background: #211a1a;
 }
 
 .stat-card:hover::before,
@@ -152,7 +152,7 @@
   letter-spacing: 0.8px;
 }
 
-.badge-green  { background: rgba(22,163,74,0.18);  color: #4ade80; border: 1px solid rgba(22,163,74,0.35); }
+.badge-green  { background: rgba(204,34,34,0.18);  color: #4ade80; border: 1px solid rgba(204,34,34,0.35); }
 .badge-red    { background: rgba(204,34,34,0.18);  color: #f87171; border: 1px solid rgba(204,34,34,0.35); }
 .badge-yellow { background: rgba(212,160,48,0.18); color: #fbbf24; border: 1px solid rgba(212,160,48,0.35); }
 .badge-blue   { background: rgba(41,128,185,0.18); color: #60a5fa; border: 1px solid rgba(41,128,185,0.35); }
@@ -169,7 +169,7 @@ table {
 }
 
 thead th {
-  background: #131a17;
+  background: #1a1313;
   color: var(--text-muted);
   font-family: var(--font-display);
   font-size: 10px;
@@ -182,7 +182,7 @@ thead th {
 }
 
 tbody tr {
-  border-bottom: 1px solid #1e2722;
+  border-bottom: 1px solid #221e1e;
   transition: background 0.12s;
 }
 
@@ -190,7 +190,7 @@ tbody tr:nth-child(even) {
   background: rgba(255,255,255,0.018);
 }
 
-tbody tr:hover { background: rgba(74,222,128,0.04); }
+tbody tr:hover { background: rgba(204,34,34,0.04); }
 
 tbody td {
   padding: 10px 14px;
@@ -229,7 +229,7 @@ tbody td {
 .form-control:focus {
   outline: none;
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 2px rgba(22,163,74,0.1);
+  box-shadow: 0 0 0 2px rgba(204,34,34,0.1);
 }
 
 .form-control::placeholder { color: var(--text-muted); }
@@ -261,7 +261,7 @@ select.form-control option  { background: var(--bg-card); }
   padding: 10px 14px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-left: 2px solid rgba(74,222,128,0.3);
+  border-left: 2px solid rgba(204,34,34,0.3);
 }
 
 /* ── States ────────────────────────────────────────────────────── */
