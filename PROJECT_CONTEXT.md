@@ -42,14 +42,22 @@ Comando reimportar 2024-2025: `python manage.py reimportar_mensualidades` (unico
 Excel: `datos team Actualizada 2022-2025 REVISADO POR ESTEBAN TL (4).xlsx`
 Fuente oficial de integrantes actuales: hoja **MENSUALIDADES 2025** (col C=nombre, D=nick, E=estado)
 Estado pos_natal agregado a ESTADO_CHOICES (migración 0002_add_pos_natal_estado)
+⚠️ **Todos los importadores tienen EXCEL_PATH hardcodeado a ruta Windows local — no ejecutables en PythonAnywhere.**
 
-| Dato | Cantidad |
-|------|----------|
-| Integrantes en BD | 52 (21 activos, 15 inactivos, resto pos natal/otros) |
-| Mensualidades 2022-2025 | 1091 registros (548 pagadas, 517 pendientes, 26 exentos — 2026 excluidos) |
-| Movimientos financieros | 151 (de H.CONTABLE + GASTOS Y CAJA CHIK) |
-| Participaciones | 41 (partidas + campeonato + reunión) |
-| Errores nicks 2024 (exintegrantes) | 9 — Thelmo/Walls/Arkaess/Y tu/Caronte/Ron/F.B.I/hugo/Shalox |
+| Dato | Local (auditado 2026-06-08) | Producción |
+|------|-----------------------------|------------|
+| Integrantes | 52 (21 activos, 15 inactivos, resto pos natal/otros) | ⚠️ 0 |
+| Mensualidades 2022-2025 | 1091 (551 pagadas, 385 pendientes, 155 exentos) | ⚠️ 0 |
+| Movimientos financieros | 151 (de H.CONTABLE + GASTOS Y CAJA CHIK) | ⚠️ 0 |
+| Participaciones | 41 (partidas + campeonato + reunión) | ⚠️ 0 |
+| Eventos | 5 | ⚠️ 0 |
+| Noticias | 3 publicadas | ⚠️ 0 |
+| Instagram posts | 3 publicadas | ⚠️ 0 |
+| Usuarios | 5 | 1 (admin) |
+| db.sqlite3 | 428 KB | ~50 KB |
+| Errores nicks 2024 (exintegrantes) | 9 — Thelmo/Walls/Arkaess/Y tu/Caronte/Ron/F.B.I/hugo/Shalox | — |
+
+**Para dejar producción con los datos reales:** subir `db.sqlite3` local via SCP a `~/team_mercenarios/backend/db.sqlite3` en PythonAnywhere, luego `python manage.py migrate` + `python manage.py crear_admin --password=CLAVE` + reload web app.
 
 **Regla de negocio 2026:** Mensualidades 2026 NO se generan ni importan. El año base máximo es 2025. El importador histórico fue actualizado para excluir la hoja MENSUALIDADES 2026.
 

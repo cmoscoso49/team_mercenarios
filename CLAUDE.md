@@ -246,18 +246,33 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 - Para usar `api.mercenarios.cl`: Plan Hacker ($5/mes) O Cloudflare Worker proxy
 - Detalles: `docs/DEPLOY_GRATIS.md`
 
-## Datos reales (migración completada)
+## Datos reales — BD local (auditada 2026-06-08)
 
-- 52 integrantes en BD (sincronizados desde MENSUALIDADES 2025 + histórico)
+| Modelo | Local | Producción (PA) |
+|--------|-------|-----------------|
+| Integrantes | 52 (21 activos) | ⚠️ 0 — vacío |
+| Mensualidades | 1091 (551 pag / 385 pend / 155 exento), 2022-2025 | ⚠️ 0 |
+| Movimientos financieros | 151 | ⚠️ 0 |
+| Eventos | 5 | ⚠️ 0 |
+| Participaciones | 41 | ⚠️ 0 |
+| Noticias | 3 publicadas | ⚠️ 0 |
+| Instagram posts | 3 publicadas | ⚠️ 0 |
+| Usuarios | 5 | 1 (admin) |
+| db.sqlite3 | 428 KB | ~50 KB (solo schema + admin) |
+
 - Fuente oficial de integrantes actuales: hoja "MENSUALIDADES 2025" del Excel
-- 1310 mensualidades 2022-2026
-- 151 movimientos financieros históricos
-- Re-importar datos históricos: `python manage.py importar_excel_historico`
-- Sincronizar integrantes actuales: `python manage.py sincronizar_integrantes_2025`
-- Re-importar conciliacion: `python manage.py importar_conciliacion`
 - Saldo real Excel: $310.176 (formula: P7+P10-P13+L47+M2023.S34+RIFA.N36+M2024.S41+M2025.S35)
 - Dashboard usa saldo_excel como valor principal; saldo_sistema disponible como campo separado
 - Excel fuente: `C:\Users\cmoscoso\OneDrive - INACAP\Descargas\2025\Mercenarios\datos team Actualizada 2022-2025 REVISADO POR ESTEBAN TL (4).xlsx`
+
+### ⚠️ Importadores Excel NO funcionan en PythonAnywhere
+`EXCEL_PATH` hardcodeado a ruta Windows local en: `importar_excel_historico`, `reimportar_mensualidades`, `sincronizar_integrantes_2025`, `importar_conciliacion`. Para llevar datos a producción: **subir `db.sqlite3` via SCP** (ver `docs/PYTHONANYWHERE.md` paso 6). Después de subir: `python manage.py crear_admin --username=admin --password=CLAVE` para resetear la contraseña del admin.
+
+### Comandos importación (solo válidos en local)
+- `python manage.py importar_excel_historico` — movimientos + mensualidades históricas
+- `python manage.py sincronizar_integrantes_2025` — integrantes actuales
+- `python manage.py reimportar_mensualidades` — re-importa 2024-2025 con unicode-norm
+- `python manage.py importar_conciliacion` — saldo real del Excel
 
 ## Comandos de desarrollo
 
