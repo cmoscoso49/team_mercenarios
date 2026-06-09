@@ -116,7 +116,7 @@ export default function Dashboard() {
                     <div className="dashboard-event-date">{e.fecha}</div>
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 600 }}>{e.titulo}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{e.lugar}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{e.lugar}</div>
                     </div>
                   </li>
                 ))}
@@ -132,11 +132,11 @@ export default function Dashboard() {
             {data.ultimas_noticias?.length > 0 ? (
               <ul className="dashboard-list">
                 {data.ultimas_noticias.map((n) => (
-                  <li key={n.id} className="dashboard-list-item">
+                  <li key={n.id} className="dashboard-list-item" style={{ flexDirection: 'column', gap: 4 }}>
                     <div style={{ fontSize: 13, fontWeight: 600 }}>{n.titulo}</div>
                     {n.resumen && (
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-                        {n.resumen.slice(0, 80)}
+                      <div style={{ fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                        {n.resumen.slice(0, 90)}
                       </div>
                     )}
                   </li>
