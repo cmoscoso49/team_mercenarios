@@ -12,12 +12,14 @@
 
 .dashboard-section-title {
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 2.5px;
   margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .dashboard-list {
@@ -32,7 +34,7 @@
   gap: 12px;
   align-items: flex-start;
   padding-bottom: 10px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid #1e2722;
 }
 
 .dashboard-list-item:last-child {
@@ -41,11 +43,12 @@
 }
 
 .dashboard-event-date {
+  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--accent-light);
-  font-weight: 600;
   min-width: 80px;
   padding-top: 2px;
+  opacity: 0.9;
 }
 
 @media (max-width: 1100px) {
