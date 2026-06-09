@@ -246,6 +246,13 @@ Identidad visual: dark theme táctico, orientado a Airsoft competitivo y clubes 
 - Para usar `api.mercenarios.cl`: Plan Hacker ($5/mes) O Cloudflare Worker proxy
 - Detalles: `docs/DEPLOY_GRATIS.md`
 
+### ⚠️ Bugs críticos de producción detectados (auditoría 2026-06-08)
+1. **Public API hardcoded**: `Home.jsx`, `NoticiaPublica.jsx`, `EventoPublico.jsx`, `Postulacion.jsx` usan `fetch('/api/v1/...')` sin `VITE_API_BASE_URL` → toda la web pública rota en Cloudflare Pages. Fix: reemplazar con `import.meta.env.VITE_API_BASE_URL || '/api/v1'`
+2. **MEDIA no servido en producción**: `urls.py:43` usa `static()` — inactivo con `DEBUG=False`. Fix: configurar `/media/` en Static Files de PythonAnywhere dashboard
+3. **SECRET_KEY insecuro**: `settings.py:7` tiene fallback hardcodeado. Fix: verificar que `.env` en PA tiene `SECRET_KEY` real
+4. **FotoViewSet sin permission_classes**: hereda `IsAuthenticated` global → players pueden escribir en galería. Fix: agregar `permission_classes = [IsLiderazgo]`
+5. **Sin rate limiting**: endpoints `AllowAny` (postulacion, stats, noticias) no tienen throttling
+
 ## Datos reales — BD local (auditada 2026-06-08)
 
 | Modelo | Local | Producción (PA) |

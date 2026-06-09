@@ -1,7 +1,12 @@
 # PROJECT_CONTEXT.md — Team Mercenarios
 
-## Estado del proyecto: Etapa 1 Completada + Migración Histórica
-Fecha: 2026-06-01 | Migración: 2026-06-01
+## Estado del proyecto: Producción operativa (auditoría 2026-06-08)
+Fecha: 2026-06-01 | Migración: 2026-06-01 | Deploy: 2026-06-08
+
+### Auditoría producción 2026-06-08 — Pendientes críticos
+1. **PUBLIC API hardcoded** — `Home.jsx`, `NoticiaPublica.jsx`, `EventoPublico.jsx`, `Postulacion.jsx` usan `fetch('/api/v1/...')` o `axios.post('/api/v1/...')` sin `VITE_API_BASE_URL`. En Cloudflare Pages toda la web pública (stats, eventos, noticias, instagram, formulario postulacion) apunta al CDN en lugar de PythonAnywhere → **ROTO en producción**.
+2. **SECRET_KEY default inseguro** — `settings.py:7` tiene fallback `'django-insecure-dev-key-...'`. Si el `.env` de PA no lo sobreescribe, todos los JWT son vulnerables.
+3. **MEDIA files no servidos** — `urls.py:43` usa `static()` que Django desactiva con `DEBUG=False`. Fotos subidas (perfil, galería, Instagram) no son accesibles en producción.
 
 ## Decisiones arquitectónicas
 - SQLite para desarrollo; preparado para migrar a PostgreSQL cambiando `DATABASES` en settings.py
