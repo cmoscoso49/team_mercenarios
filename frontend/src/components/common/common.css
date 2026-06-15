@@ -71,26 +71,26 @@
 .stat-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-top: 2px solid transparent;
+  border-top: 3px solid var(--hud-accent, #2a2a2a);
   border-radius: var(--radius-lg);
-  padding: 20px 22px 18px;
+  padding: 18px 20px 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-height: 108px;
+  gap: 6px;
+  min-height: 100px;
   position: relative;
-  transition: border-top-color 0.25s, box-shadow 0.25s, background 0.2s;
+  transition: box-shadow 0.25s, background 0.2s, border-color 0.2s;
 }
 
 /* HUD corner — top-left */
 .stat-card::before {
   content: '';
   position: absolute;
-  top: 0; left: 0;
-  width: 12px; height: 12px;
-  border-top: 1px solid var(--accent-primary);
-  border-left: 1px solid var(--accent-primary);
-  opacity: 0;
+  top: -1px; left: -1px;
+  width: 14px; height: 14px;
+  border-top: 2px solid var(--hud-accent, #333);
+  border-left: 2px solid var(--hud-accent, #333);
+  opacity: 0.35;
   transition: opacity 0.25s;
   pointer-events: none;
 }
@@ -99,24 +99,43 @@
 .stat-card::after {
   content: '';
   position: absolute;
-  bottom: 0; right: 0;
-  width: 12px; height: 12px;
-  border-bottom: 1px solid var(--accent-primary);
-  border-right: 1px solid var(--accent-primary);
-  opacity: 0;
+  bottom: -1px; right: -1px;
+  width: 14px; height: 14px;
+  border-bottom: 2px solid var(--hud-accent, #333);
+  border-right: 2px solid var(--hud-accent, #333);
+  opacity: 0.35;
   transition: opacity 0.25s;
   pointer-events: none;
 }
 
 .stat-card:hover {
-  border-top-color: var(--accent-light);
-  box-shadow: var(--glow-green);
-  background: #211a1a;
+  box-shadow: 0 0 18px rgba(0,0,0,0.6), 0 0 8px color-mix(in srgb, var(--hud-accent, #cc2222) 20%, transparent);
+  background: #201818;
 }
 
 .stat-card:hover::before,
 .stat-card:hover::after {
-  opacity: 0.7;
+  opacity: 0.85;
+}
+
+/* Barra de acento superior (dentro del card, encima del border) */
+.stat-card-top-bar {
+  display: none;
+}
+
+/* Label row con dot */
+.stat-card-label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-card-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 4px currentColor;
 }
 
 .stat-card-label {
@@ -129,16 +148,17 @@
 
 .stat-card-value {
   font-family: var(--font-mono);
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 400;
   color: var(--text-primary);
-  letter-spacing: -0.5px;
+  letter-spacing: -1px;
   line-height: 1;
+  margin-top: 4px;
 }
 
-.stat-card-value.green { color: var(--accent-light); }
-.stat-card-value.red   { color: var(--danger); }
-.stat-card-value.yellow{ color: var(--warning); }
+.stat-card-value.green { color: #4ade80; }
+.stat-card-value.red   { color: #f87171; }
+.stat-card-value.yellow{ color: var(--accent-gold); }
 
 /* ── Badges ────────────────────────────────────────────────────── */
 .badge {

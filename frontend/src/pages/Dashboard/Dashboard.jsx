@@ -48,10 +48,15 @@ export default function Dashboard() {
   if (error) return <div className="error-msg">{error}</div>
   if (!data) return null
 
+  const alDia      = data.integrantes_al_dia  ?? 0
+  const activos    = data.integrantes_activos ?? 0
+  const pct        = activos > 0 ? Math.round((alDia / activos) * 100) : 0
+
   return (
     <div className="dashboard">
       {tieneAccesoFinanciero ? (
         <>
+          <h3 className="hud-section-title">Situación financiera</h3>
           <div className="grid-stats">
             <StatCard label="Saldo Actual" value={data.saldo_actual} prefix="$" color="green" />
             <StatCard label="Ingresos del Mes" value={data.ingresos_mes} prefix="$" color="green" />
@@ -60,34 +65,53 @@ export default function Dashboard() {
             <StatCard label="Integrantes Activos" value={data.integrantes_activos} color="green" />
             <StatCard label="Integrantes Inactivos" value={data.integrantes_inactivos} />
           </div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, marginTop: 4 }}>
-            Cuotas 2024–2025
-          </div>
+          <h3 className="hud-section-title" style={{ marginTop: 22 }}>Cuotas 2024–2026</h3>
           <div className="grid-stats" style={{ marginBottom: 0 }}>
             <StatCard label="Al día" value={data.integrantes_al_dia ?? '—'} color="green" />
             <StatCard label="Con deuda" value={data.integrantes_con_deuda ?? '—'} color="red" />
             <StatCard label="Deuda total cuotas" value={data.deuda_mensualidades ?? 0} prefix="$" color="yellow" />
           </div>
+          <div className="hud-progress">
+            <div className="hud-progress-label">
+              <span>Cumplimiento cuotas — activos</span>
+              <span className="hud-progress-pct">{pct}%</span>
+            </div>
+            <div className="hud-progress-track">
+              <div className="hud-progress-fill" style={{ width: `${pct}%` }} />
+            </div>
+          </div>
         </>
       ) : (
-        <div className="grid-stats">
-          <StatCard label="Integrantes Activos" value={data.integrantes_activos} color="green" />
-          <StatCard label="Integrantes Inactivos" value={data.integrantes_inactivos} />
-          <StatCard label="Al día en cuotas" value={data.integrantes_al_dia ?? '—'} color="green" />
-          <StatCard label="Con deuda" value={data.integrantes_con_deuda ?? '—'} color="red" />
-        </div>
+        <>
+          <h3 className="hud-section-title">Estado del Team</h3>
+          <div className="grid-stats">
+            <StatCard label="Integrantes Activos" value={data.integrantes_activos} color="green" />
+            <StatCard label="Integrantes Inactivos" value={data.integrantes_inactivos} />
+            <StatCard label="Al día en cuotas" value={data.integrantes_al_dia ?? '—'} color="green" />
+            <StatCard label="Con deuda" value={data.integrantes_con_deuda ?? '—'} color="red" />
+          </div>
+          <div className="hud-progress">
+            <div className="hud-progress-label">
+              <span>Cumplimiento cuotas — activos</span>
+              <span className="hud-progress-pct">{pct}%</span>
+            </div>
+            <div className="hud-progress-track">
+              <div className="hud-progress-fill" style={{ width: `${pct}%` }} />
+            </div>
+          </div>
+        </>
       )}
 
       {!tieneAccesoFinanciero && (
-        <div style={{ padding: '10px 14px', marginBottom: 16, background: 'rgba(74,124,74,0.1)', border: '1px solid rgba(74,124,74,0.3)', borderRadius: 4, fontSize: 13, color: 'var(--text-secondary)' }}>
-          No tienes permisos para ver la informacion financiera del Team.
+        <div style={{ padding: '10px 14px', marginBottom: 16, marginTop: 12, background: 'rgba(74,124,74,0.08)', border: '1px solid rgba(74,124,74,0.2)', borderLeft: '2px solid rgba(74,124,74,0.4)', fontSize: 13, color: 'var(--text-secondary)' }}>
+          No tienes permisos para ver la información financiera del Team.
         </div>
       )}
 
-      <div className="dashboard-grid">
+      <div className="dashboard-grid" style={{ marginTop: 22 }}>
         {tieneAccesoFinanciero && (
         <div className="card">
-          <h3 className="dashboard-section-title">Ultimos Movimientos</h3>
+          <h3 className="hud-section-title">Últimos Movimientos</h3>
           {data.ultimos_movimientos?.length > 0 ? (
             <div className="table-container">
               <table>
@@ -124,7 +148,7 @@ export default function Dashboard() {
 
         <div className="dashboard-side">
           <div className="card">
-            <h3 className="dashboard-section-title">Próximos Eventos</h3>
+            <h3 className="hud-section-title">Próximos Eventos</h3>
             {data.proximos_eventos?.length > 0 ? (
               <ul className="dashboard-list">
                 {data.proximos_eventos.map((e) => (
@@ -144,7 +168,7 @@ export default function Dashboard() {
           </div>
 
           <div className="card">
-            <h3 className="dashboard-section-title">Últimas Noticias</h3>
+            <h3 className="hud-section-title">Últimas Noticias</h3>
             {data.ultimas_noticias?.length > 0 ? (
               <ul className="dashboard-list">
                 {data.ultimas_noticias.map((n) => (

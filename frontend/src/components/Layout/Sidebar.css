@@ -86,17 +86,18 @@
 }
 
 .sidebar-link-active {
-  background: rgba(204,34,34,0.1);
-  color: var(--accent-light);
-  border-left-color: var(--accent-light);
+  background: rgba(204,34,34,0.12);
+  color: #ef4444;
+  border-left-color: #cc2222;
   border-left-width: 3px;
-  box-shadow: inset 4px 0 12px rgba(204,34,34,0.06);
+  box-shadow: inset 6px 0 18px rgba(204,34,34,0.1), 0 0 1px rgba(204,34,34,0.15);
+  text-shadow: 0 0 12px rgba(239,68,68,0.25);
 }
 
 .sidebar-link-active:hover {
-  color: var(--accent-light);
-  border-left-color: var(--accent-light);
-  background: rgba(204,34,34,0.13);
+  color: #ef4444;
+  border-left-color: #cc2222;
+  background: rgba(204,34,34,0.16);
 }
 
 .sidebar-link-portal {
