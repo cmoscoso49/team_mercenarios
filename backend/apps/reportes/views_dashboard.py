@@ -1,13 +1,14 @@
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Sum
 from django.utils import timezone
-from apps.usuarios.permissions import IsAdminOrTesorero, ROLES_FINANCIEROS
+from apps.usuarios.permissions import CanAccessModulo, ROLES_FINANCIEROS
+
+_PermDashboard = CanAccessModulo('dashboard')
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([_PermDashboard])
 def dashboard(request):
     from apps.integrantes.models import Integrante
     from apps.finanzas.models import Movimiento, Deuda

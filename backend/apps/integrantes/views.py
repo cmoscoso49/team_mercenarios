@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from apps.usuarios.permissions import IsAdmin, IsRolCompleto, IsCapitanOrAdmin
+from apps.usuarios.permissions import IsAdmin, CanAccessModulo
 from .models import Integrante
 from .serializers import IntegranteSerializer, IntegranteListSerializer
 
@@ -18,12 +18,7 @@ class IntegranteViewSet(viewsets.ModelViewSet):
     ordering_fields = ['nombre', 'fecha_ingreso', 'estado']
     ordering = ['nombre']
 
-    def get_permissions(self):
-        if self.request.method in ('GET', 'HEAD', 'OPTIONS'):
-            return [IsRolCompleto()]
-        if self.request.method == 'PATCH':
-            return [IsCapitanOrAdmin()]
-        return [IsAdmin()]
+    permission_classes = [CanAccessModulo('integrantes')]
 
     def destroy(self, request, *args, **kwargs):
         return Response(

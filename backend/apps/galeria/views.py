@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from .models import Album, Foto, PublicacionInstagram
 from .serializers import AlbumSerializer, AlbumListSerializer, FotoSerializer, PublicacionInstagramSerializer
-from apps.usuarios.permissions import IsLiderazgo
+from apps.usuarios.permissions import CanAccessModulo
 
 
 class AlbumViewSet(viewsets.ModelViewSet):
@@ -23,7 +23,7 @@ class AlbumViewSet(viewsets.ModelViewSet):
 class FotoViewSet(viewsets.ModelViewSet):
     queryset = Foto.objects.all()
     serializer_class = FotoSerializer
-    permission_classes = [IsLiderazgo]
+    permission_classes = [CanAccessModulo('instagram')]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['album', 'destacada']
     ordering = ['-fecha_subida']
@@ -32,7 +32,7 @@ class FotoViewSet(viewsets.ModelViewSet):
 class PublicacionInstagramViewSet(viewsets.ModelViewSet):
     queryset = PublicacionInstagram.objects.all()
     serializer_class = PublicacionInstagramSerializer
-    permission_classes = [IsLiderazgo]
+    permission_classes = [CanAccessModulo('instagram')]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['estado', 'destacado']
     ordering_fields = ['destacado', 'fecha_creacion', 'titulo']

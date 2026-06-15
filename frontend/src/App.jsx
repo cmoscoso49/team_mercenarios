@@ -32,6 +32,7 @@ import PagoResultado from './pages/Portal/PagoResultado'
 import MisPagos from './pages/Portal/MisPagos'
 import Instagram from './pages/Instagram/Instagram'
 import InstagramForm from './pages/Instagram/InstagramForm'
+import Permisos from './pages/Admin/Permisos'
 
 function PortalRoute({ children }) {
   const { user, loading } = useAuth()
@@ -101,6 +102,7 @@ function AppRoutes() {
         <Route path="instagram/:id/editar" element={<InstagramForm />} />
         <Route path="reportes" element={<Reportes />} />
         <Route path="postulaciones" element={<Postulaciones />} />
+        <Route path="permisos" element={<Permisos />} />
       </Route>
       <Route path="*" element={<Navigate to="/inicio" replace />} />
     </Routes>

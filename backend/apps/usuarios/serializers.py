@@ -1,12 +1,21 @@
 from rest_framework import serializers
 from .models import Usuario
+from .permissions import get_modulos_acceso
 
 
 class UsuarioSerializer(serializers.ModelSerializer):
+    modulos_acceso = serializers.SerializerMethodField()
+
+    def get_modulos_acceso(self, obj):
+        rol = getattr(obj, 'rol', None)
+        if not rol or rol == 'player':
+            return []
+        return get_modulos_acceso(rol)
+
     class Meta:
         model = Usuario
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'rol', 'telefono', 'is_staff']
-        read_only_fields = ['id']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'rol', 'telefono', 'is_staff', 'modulos_acceso']
+        read_only_fields = ['id', 'modulos_acceso']
 
 
 class UsuarioCreateSerializer(serializers.ModelSerializer):

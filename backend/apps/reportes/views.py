@@ -1,13 +1,15 @@
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
 from datetime import datetime, timedelta
+from apps.usuarios.permissions import CanAccessModulo
+
+_PermReportes = CanAccessModulo('reportes')
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([_PermReportes])
 def reporte_financiero(request):
     from apps.finanzas.models import Movimiento, Mensualidad, Deuda, Categoria
     from apps.finanzas.serializers import MovimientoSerializer
@@ -53,7 +55,7 @@ def reporte_financiero(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([_PermReportes])
 def reporte_integrantes(request):
     from apps.integrantes.models import Integrante
     from apps.finanzas.models import Mensualidad, Deuda
@@ -96,7 +98,7 @@ def reporte_integrantes(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([_PermReportes])
 def reporte_participaciones(request):
     from apps.integrantes.models import Integrante
     from apps.eventos.models import Evento, Participacion
@@ -134,7 +136,7 @@ def reporte_participaciones(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([_PermReportes])
 def reporte_conciliacion(request):
     from apps.finanzas.models import Movimiento, ConciliacionExcel
 

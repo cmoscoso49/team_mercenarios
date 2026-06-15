@@ -11,7 +11,9 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from django.db import transaction
 from django.db.models import Sum
 from django.utils import timezone
-from apps.usuarios.permissions import IsAdminOrTesorero
+from apps.usuarios.permissions import CanAccessModulo
+
+IsAdminOrTesorero = CanAccessModulo('finanzas')
 from .models import Categoria, Movimiento, Mensualidad, Deuda, CuentaBanco, ImportacionArchivo, ConciliacionExcel, ConfiguracionCuota, ExtractoMovimiento
 from .serializers import (
     CategoriaSerializer, MovimientoSerializer, MensualidadSerializer,

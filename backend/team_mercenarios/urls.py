@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework_simplejwt.views import TokenRefreshView
-from apps.usuarios.views import LoginView, MeView
+from apps.usuarios.views import LoginView, MeView, permisos_view
 from apps.reportes.views_public import (
     public_stats, public_eventos, public_noticias,
     public_noticia_detail, public_evento_detail, public_instagram,
@@ -26,6 +26,7 @@ urlpatterns = [
     path('api/v1/auth/login/', LoginView.as_view(), name='login'),
     path('api/v1/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/v1/auth/me/', MeView.as_view(), name='me'),
+    path('api/v1/admin/permisos/', permisos_view, name='permisos'),
     path('api/v1/integrantes/', include('apps.integrantes.urls')),
     path('api/v1/finanzas/', include('apps.finanzas.urls')),
     path('api/v1/eventos/', include('apps.eventos.urls')),

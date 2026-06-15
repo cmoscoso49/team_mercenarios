@@ -6,24 +6,33 @@ import './Sidebar.css'
 
 const LIDERAZGO = ['admin', 'TL', 'presidente', 'vice', 'secretario', 'tesorero']
 
-const ALL_NAV = [
-  { to: '/',                label: 'Dashboard',      icon: '◈', exact: true, roles: LIDERAZGO },
-  { to: '/integrantes',     label: 'Integrantes',    icon: '◉',              roles: LIDERAZGO },
-  { to: '/finanzas',        label: 'Finanzas',       icon: '◆',              roles: LIDERAZGO },
-  { to: '/eventos',         label: 'Eventos',        icon: '◎',              roles: LIDERAZGO },
-  { to: '/participaciones', label: 'Participaciones',icon: '◇',              roles: LIDERAZGO },
-  { to: '/noticias',        label: 'Noticias',       icon: '▣',              roles: LIDERAZGO },
-  { to: '/galeria',         label: 'Galería',        icon: '▤',              roles: LIDERAZGO },
-  { to: '/instagram',       label: 'Instagram',      icon: '◉',              roles: LIDERAZGO },
-  { to: '/reportes',        label: 'Reportes',       icon: '▦',              roles: LIDERAZGO },
-  { to: '/postulaciones',   label: 'Postulaciones',  icon: '◈',              roles: ['admin'] },
+// Módulo → ruta(s) del sidebar
+const MODULO_NAV = [
+  { modulo: 'dashboard',     to: '/',                label: 'Dashboard',       icon: '◈', exact: true },
+  { modulo: 'integrantes',   to: '/integrantes',     label: 'Integrantes',     icon: '◉' },
+  { modulo: 'finanzas',      to: '/finanzas',        label: 'Finanzas',        icon: '◆' },
+  { modulo: 'eventos',       to: '/eventos',         label: 'Eventos',         icon: '◎' },
+  { modulo: 'eventos',       to: '/participaciones', label: 'Participaciones', icon: '◇' },
+  { modulo: 'noticias',      to: '/noticias',        label: 'Noticias',        icon: '▣' },
+  { modulo: 'instagram',     to: '/galeria',         label: 'Galería',         icon: '▤' },
+  { modulo: 'instagram',     to: '/instagram',       label: 'Instagram',       icon: '◉' },
+  { modulo: 'reportes',      to: '/reportes',        label: 'Reportes',        icon: '▦' },
+  { modulo: 'reclutamiento', to: '/postulaciones',   label: 'Postulaciones',   icon: '◈' },
+]
+
+// Ítem exclusivo del admin (gestión de permisos)
+const ADMIN_ONLY = [
+  { to: '/permisos', label: 'Permisos', icon: '⊕' },
 ]
 
 export default function Sidebar({ collapsed, mobileOpen, onClose }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const rol = user?.rol || ''
-  const navItems = ALL_NAV.filter(item => item.roles.includes(rol))
+  const modulos = user?.modulos_acceso || []
+
+  const navItems = MODULO_NAV.filter(item => modulos.includes(item.modulo))
+  const adminItems = rol === 'admin' ? ADMIN_ONLY : []
 
   const handleLogout = () => {
     logout()
@@ -54,7 +63,22 @@ export default function Sidebar({ collapsed, mobileOpen, onClose }) {
           </NavLink>
         ))}
 
-        {/* Mi Cuenta — acceso al portal personal para todos los roles de liderazgo */}
+        {adminItems.map(item => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            onClick={onClose}
+            className={({ isActive }) =>
+              `sidebar-link ${isActive ? 'sidebar-link-active' : ''}`
+            }
+            title={collapsed ? item.label : undefined}
+          >
+            <span className="sidebar-icon">{item.icon}</span>
+            {!collapsed && <span className="sidebar-label">{item.label}</span>}
+          </NavLink>
+        ))}
+
+        {/* Mi Cuenta — todos los roles de liderazgo */}
         {LIDERAZGO.includes(rol) && (
           <Link
             to="/portal"

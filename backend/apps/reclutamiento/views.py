@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 
-from apps.usuarios.permissions import IsAdmin
+from apps.usuarios.permissions import CanAccessModulo
 from .models import Postulacion
 from .serializers import PostulacionPublicaSerializer, PostulacionAdminSerializer
 
@@ -25,7 +25,7 @@ def postulacion_publica(request):
 class PostulacionViewSet(viewsets.ModelViewSet):
     queryset = Postulacion.objects.all()
     serializer_class = PostulacionAdminSerializer
-    permission_classes = [IsAdmin]
+    permission_classes = [CanAccessModulo('reclutamiento')]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['estado']
     search_fields = ['nombre', 'nick', 'ciudad', 'email']
