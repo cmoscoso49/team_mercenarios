@@ -11,6 +11,7 @@ from .serializers import IntegranteSerializer, IntegranteListSerializer
 class IntegranteViewSet(viewsets.ModelViewSet):
     queryset = Integrante.objects.all()
     serializer_class = IntegranteSerializer
+    pagination_class = None
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['estado', 'rol', 'talla_polera']
     search_fields = ['nombre', 'nick', 'rut', 'email']
