@@ -22,3 +22,13 @@ export const importarExcel = (formData) =>
   client.post('/importacion/excel/', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   })
+
+export const getCuentasBanco = () => client.get('/finanzas/cuentas/')
+
+export const importarExtractoBanco = (formData) =>
+  client.post('/finanzas/banco/importar/', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+
+export const getExtractoBanco = (params) =>
+  client.get('/finanzas/banco/extracto/', { params })

@@ -44,8 +44,20 @@
   background-attachment: fixed;
 }
 
+.sidebar-backdrop {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .layout-content {
-    padding: 16px;
+    padding: 16px 12px;
+  }
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 299;
+    backdrop-filter: blur(2px);
   }
 }

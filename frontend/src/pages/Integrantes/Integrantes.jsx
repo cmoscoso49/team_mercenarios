@@ -20,6 +20,7 @@ export default function Integrantes() {
     if (filters.search) params.search = filters.search
     if (filters.estado) params.estado = filters.estado
     if (filters.rol)    params.rol    = filters.rol
+    params.page_size = 200
     getIntegrantes(params)
       .then((r) => setIntegrantes(r.data.results || r.data))
       .catch(() => setError('Error al cargar integrantes'))

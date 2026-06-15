@@ -221,6 +221,172 @@
 }
 @media (max-width: 640px) { .portal-grid-2 { grid-template-columns: 1fr; } }
 
+/* NAV LINKS wrapper */
+.portal-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex: 1;
+}
+
+/* Right side: user + logout + hamburger */
+.portal-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.portal-nav-hamburger {
+  display: none;
+  background: none;
+  border: 1px solid #252525;
+  color: #666;
+  font-size: 1rem;
+  padding: 0 13px;
+  height: 36px;
+  min-width: 44px;
+  cursor: pointer;
+  line-height: 1;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  letter-spacing: 0.05em;
+}
+
+.portal-nav-hamburger-open {
+  border-color: rgba(204,34,34,0.55);
+  color: #cc2222;
+  background: rgba(204,34,34,0.07);
+}
+
+/* Mobile-only items inside dropdown */
+.portal-nav-user-mobile,
+.portal-nav-logout-mobile { display: none; }
+
+/* Animations for mobile menu */
+@keyframes portal-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes portal-menu-drop {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Backdrop for mobile menu */
+.portal-nav-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 98;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(2px);
+}
+
+@media (max-width: 768px) {
+  .portal-nav-inner {
+    gap: 0;
+    padding: 0 16px;
+  }
+
+  /* Hamburger visible, desktop user/logout hidden */
+  .portal-nav-hamburger { display: flex; align-items: center; }
+  .portal-nav-hamburger:hover { border-color: rgba(204,34,34,0.4); color: #cc2222; }
+  .portal-nav-user:not(.portal-nav-user-mobile) { display: none; }
+  .portal-nav-logout:not(.portal-nav-logout-mobile) { display: none; }
+
+  /* Links collapse into dropdown */
+  .portal-nav-links {
+    display: none;
+    position: absolute;
+    top: 56px;
+    left: 0;
+    right: 0;
+    background: rgba(8,8,8,0.99);
+    border-top: 1px solid rgba(204,34,34,0.3);
+    border-bottom: 1px solid #1a1a1a;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    z-index: 99;
+    padding: 4px 0 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  }
+  .portal-nav-links-open {
+    display: flex;
+    animation: portal-menu-drop 0.2s ease both;
+  }
+
+  .portal-nav-link {
+    padding: 13px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 0.88rem;
+    border-left: 3px solid transparent;
+    transition: background 0.15s, border-left-color 0.15s, color 0.15s;
+  }
+  .portal-nav-link:hover {
+    color: #d0d0d0;
+    background: rgba(255,255,255,0.04);
+    border-left-color: rgba(204,34,34,0.3);
+  }
+  .portal-nav-link.active {
+    border-left-color: #cc2222;
+    border-bottom-color: rgba(255,255,255,0.03);
+    background: rgba(204,34,34,0.08);
+    color: #cc2222;
+  }
+
+  /* Mobile user + logout at bottom of dropdown */
+  .portal-nav-user-mobile {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 20px 4px;
+    border-top: 1px solid rgba(204,34,34,0.15);
+    margin-top: 6px;
+    gap: 3px;
+  }
+  .portal-nav-logout-mobile {
+    display: block;
+    background: rgba(204,34,34,0.06);
+    border: 1px solid rgba(204,34,34,0.2);
+    color: #cc2222;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 9px 20px;
+    margin: 4px 16px 4px;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.2s, border-color 0.2s;
+    width: calc(100% - 32px);
+  }
+  .portal-nav-logout-mobile:hover {
+    background: rgba(204,34,34,0.12);
+    border-color: rgba(204,34,34,0.4);
+  }
+  .portal-nav-backdrop {
+    display: block;
+    animation: portal-backdrop-in 0.2s ease both;
+  }
+
+  .portal-main {
+    padding: 20px 16px 40px;
+  }
+
+  .portal-page-title { font-size: 1.3rem; }
+  .portal-card { padding: 16px; }
+  .portal-stats-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+  .portal-stat-num { font-size: 1.6rem; }
+}
+
+@media (max-width: 480px) {
+  .portal-stats-grid { grid-template-columns: 1fr 1fr; }
+}
+
 /* LOADING */
 .portal-loading {
   text-align: center;

@@ -49,7 +49,8 @@ export default function MisCuotas() {
     }
   };
 
-  const anios = [2025, 2024, 2023, 2022];
+  const ANIO_MIN = 2022;
+  const anios = Array.from({ length: ANIO_MAX - ANIO_MIN + 1 }, (_, i) => ANIO_MAX - i);
 
   if (loading) return <div className="portal-loading">Cargando cuotas...</div>;
 

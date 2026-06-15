@@ -19,7 +19,7 @@ const ALL_NAV = [
   { to: '/postulaciones',   label: 'Postulaciones',  icon: '◈',              roles: ['admin'] },
 ]
 
-export default function Sidebar({ collapsed }) {
+export default function Sidebar({ collapsed, mobileOpen, onClose }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const rol = user?.rol || ''
@@ -31,7 +31,7 @@ export default function Sidebar({ collapsed }) {
   }
 
   return (
-    <aside className={`sidebar ${collapsed ? 'sidebar-collapsed' : ''}`}>
+    <aside className={`sidebar ${collapsed ? 'sidebar-collapsed' : ''} ${mobileOpen ? 'sidebar-mobile-open' : ''}`}>
       <NavLink to="/" end className="sidebar-brand" title="Ir al inicio">
         <CrosshairLogo size={26} className="sidebar-logo-svg" />
         {!collapsed && <span className="sidebar-title">MERCENARIOS</span>}
@@ -43,6 +43,7 @@ export default function Sidebar({ collapsed }) {
             key={item.to}
             to={item.to}
             end={item.exact}
+            onClick={onClose}
             className={({ isActive }) =>
               `sidebar-link ${isActive ? 'sidebar-link-active' : ''}`
             }

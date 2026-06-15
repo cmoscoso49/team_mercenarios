@@ -7,6 +7,7 @@ import Badge from '../../components/common/Badge'
 import StatCard from '../../components/common/StatCard'
 import { useToast } from '../../components/common/ToastProvider'
 import { useConfirm } from '../../components/common/ConfirmModal'
+import BancoTab from './BancoTab'
 import '../../components/common/common.css'
 
 function MovimientosTab() {
@@ -250,7 +251,7 @@ export default function Finanzas() {
       )}
 
       <div className="tabs">
-        {[['movimientos', 'Movimientos'], ['mensualidades', 'Mensualidades'], ['deudas', 'Deudas']].map(([k, l]) => (
+        {[['movimientos', 'Movimientos'], ['mensualidades', 'Mensualidades'], ['deudas', 'Deudas'], ['banco', 'Banco COOPEUCH']].map(([k, l]) => (
           <button key={k} className={`tab ${tab === k ? 'tab-active' : ''}`} onClick={() => setTab(k)}>{l}</button>
         ))}
       </div>
@@ -258,6 +259,7 @@ export default function Finanzas() {
       {tab === 'movimientos' && <MovimientosTab />}
       {tab === 'mensualidades' && <MensualidadesTab />}
       {tab === 'deudas' && <DeudasTab />}
+      {tab === 'banco' && <BancoTab />}
     </div>
   )
 }

@@ -4,7 +4,7 @@ import apiClient from '../../api/client';
 
 const MESES = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
-const MAX_INTENTOS = 15; // 15 × 2 seg = 30 seg
+const MAX_INTENTOS = 45; // 45 × 2 seg = 90 seg
 
 export default function PagoResultado() {
   const [fase, setFase] = useState('polling'); // polling | completado | fallido | timeout

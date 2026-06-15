@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Categoria, Movimiento, Mensualidad, Deuda, CuentaBanco, ImportacionArchivo, ConciliacionExcel, ConfiguracionCuota
+from .models import Categoria, Movimiento, Mensualidad, Deuda, CuentaBanco, ImportacionArchivo, ConciliacionExcel, ConfiguracionCuota, ExtractoMovimiento
 
 
 @admin.register(Categoria)
@@ -55,3 +55,13 @@ class ConciliacionExcelAdmin(admin.ModelAdmin):
 class ConfiguracionCuotaAdmin(admin.ModelAdmin):
     list_display = ['valor_cuota', 'moneda', 'vigencia_desde', 'activa', 'fecha_creacion']
     list_filter = ['activa']
+
+
+@admin.register(ExtractoMovimiento)
+class ExtractoMovimientoAdmin(admin.ModelAdmin):
+    list_display = ['fecha', 'descripcion', 'cargo', 'abono', 'saldo', 'estado_conciliacion', 'cuenta']
+    list_filter = ['estado_conciliacion', 'cuenta', 'fecha']
+    search_fields = ['descripcion']
+    ordering = ['-fecha']
+    date_hierarchy = 'fecha'
+    readonly_fields = ['referencia_hash', 'fecha_importacion', 'importacion']

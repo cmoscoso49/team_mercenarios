@@ -2,7 +2,8 @@ from rest_framework.routers import DefaultRouter
 from django.urls import path
 from .views import (
     CategoriaViewSet, MovimientoViewSet, MensualidadViewSet,
-    DeudaViewSet, CuentaBancoViewSet, ConfiguracionCuotaViewSet, resumen_financiero,
+    DeudaViewSet, CuentaBancoViewSet, ConfiguracionCuotaViewSet,
+    resumen_financiero, importar_extracto_banco, listar_extracto_banco,
 )
 
 router = DefaultRouter()
@@ -15,4 +16,6 @@ router.register(r'configuracion-cuota', ConfiguracionCuotaViewSet, basename='con
 
 urlpatterns = router.urls + [
     path('resumen/', resumen_financiero, name='resumen-financiero'),
+    path('banco/importar/', importar_extracto_banco, name='importar-extracto-banco'),
+    path('banco/extracto/', listar_extracto_banco, name='listar-extracto-banco'),
 ]

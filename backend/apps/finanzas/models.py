@@ -185,6 +185,41 @@ class ConfiguracionCuota(models.Model):
         return obj.valor_cuota if obj else 5000
 
 
+class ExtractoMovimiento(models.Model):
+    """Fila de extracto bancario importado desde COOPEUCH (u otro banco)."""
+    ESTADO_CHOICES = [
+        ('sin_conciliar', 'Sin conciliar'),
+        ('conciliado', 'Conciliado'),
+        ('ignorado', 'Ignorado'),
+    ]
+
+    cuenta = models.ForeignKey(CuentaBanco, on_delete=models.CASCADE, related_name='extracto')
+    fecha = models.DateField()
+    descripcion = models.CharField(max_length=500)
+    cargo = models.DecimalField(max_digits=12, decimal_places=0, null=True, blank=True)
+    abono = models.DecimalField(max_digits=12, decimal_places=0, null=True, blank=True)
+    saldo = models.DecimalField(max_digits=12, decimal_places=0, null=True, blank=True)
+    referencia_hash = models.CharField(max_length=64, unique=True, db_index=True)
+    estado_conciliacion = models.CharField(max_length=15, choices=ESTADO_CHOICES, default='sin_conciliar')
+    movimiento = models.ForeignKey(
+        Movimiento, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='extracto_origen'
+    )
+    importacion = models.ForeignKey(
+        ImportacionArchivo, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    fecha_importacion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Extracto Bancario'
+        verbose_name_plural = 'Extractos Bancarios'
+        ordering = ['-fecha', '-fecha_importacion']
+
+    def __str__(self):
+        tipo = f'+${self.abono}' if self.abono else f'-${self.cargo}'
+        return f"{self.fecha} {tipo} — {self.descripcion[:50]}"
+
+
 class ConciliacionExcel(models.Model):
     """Almacena los valores calculados directamente desde el Excel histórico."""
     fecha_importacion = models.DateTimeField(auto_now_add=True)

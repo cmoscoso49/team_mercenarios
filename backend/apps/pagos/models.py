@@ -24,7 +24,7 @@ class PagoOnline(models.Model):
     proveedor = models.CharField(max_length=20, default='flow')
     estado = models.CharField(max_length=20, choices=ESTADOS, default='pendiente')
     orden_id = models.CharField(max_length=100, unique=True)
-    token_proveedor = models.CharField(max_length=255, blank=True)
+    token_proveedor = models.CharField(max_length=255, blank=True, db_index=True)
     url_pago = models.URLField(max_length=500, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_expiracion = models.DateTimeField()

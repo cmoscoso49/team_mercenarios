@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Categoria, Movimiento, Mensualidad, Deuda, CuentaBanco, ImportacionArchivo, ConfiguracionCuota
+from .models import Categoria, Movimiento, Mensualidad, Deuda, CuentaBanco, ImportacionArchivo, ConfiguracionCuota, ExtractoMovimiento
 
 
 class CategoriaSerializer(serializers.ModelSerializer):
@@ -58,3 +58,13 @@ class ImportacionArchivoSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['estado', 'mensaje', 'registros_procesados', 'registros_con_error',
                             'fecha_importacion', 'importado_por']
+
+
+class ExtractoMovimientoSerializer(serializers.ModelSerializer):
+    cuenta_nombre = serializers.CharField(source='cuenta.nombre', read_only=True)
+    estado_display = serializers.CharField(source='get_estado_conciliacion_display', read_only=True)
+
+    class Meta:
+        model = ExtractoMovimiento
+        fields = '__all__'
+        read_only_fields = ['referencia_hash', 'fecha_importacion', 'importacion']

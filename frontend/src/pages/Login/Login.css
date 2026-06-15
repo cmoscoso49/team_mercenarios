@@ -128,7 +128,7 @@
 
 .login-subtitle {
   font-size: 11px;
-  color: #3a3a3a;
+  color: #888;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
@@ -136,7 +136,11 @@
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 16px;
+}
+
+.login-form .form-control::placeholder {
+  color: #888;
 }
 
 /* Input focus — red */
@@ -179,11 +183,12 @@
 }
 
 .login-back-link {
-  font-size: 11px;
-  color: #3a3a3a;
+  font-size: 12px;
+  color: #999;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   transition: color 0.15s;
+  text-decoration: none;
 }
 
 .login-back-link:hover {
