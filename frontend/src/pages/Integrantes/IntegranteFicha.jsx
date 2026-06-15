@@ -13,7 +13,7 @@ import '../../components/common/common.css'
 
 const MESES = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
 const MESES_LARGO = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-const ANIOS_ACTIVOS = [2025, 2024]
+const ANIOS_ACTIVOS = [2026, 2025, 2024]
 const ROLES_EDITAR_CUOTAS = ['admin', 'tesorero']
 
 export default function IntegranteFicha() {
@@ -35,7 +35,7 @@ export default function IntegranteFicha() {
     Promise.all([getMensualidadesIntegrante(id), getResumenIntegrante(id)])
       .then(([ms, rs]) => {
         const todas = ms.data.results || ms.data
-        setMensualidades(todas.filter(m => m.anio <= 2025))
+        setMensualidades(todas.filter(m => m.anio <= 2026))
         setResumen(rs.data)
       })
 
@@ -49,7 +49,7 @@ export default function IntegranteFicha() {
     ]).then(([ig, ms, ps, ds, rs]) => {
       setIntegrante(ig.data)
       const todas = ms.data.results || ms.data
-      setMensualidades(todas.filter(m => m.anio <= 2025))
+      setMensualidades(todas.filter(m => m.anio <= 2026))
       setParticipaciones(ps.data.results || ps.data)
       setDeudas(ds.data.results || ds.data)
       setResumen(rs.data)
@@ -123,7 +123,7 @@ export default function IntegranteFicha() {
           {resumen && (
             <div className="card">
               <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
-                Resumen histórico 2024-2025
+                Resumen histórico 2024-2026
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 13 }}>
                 <ResumenRow label="Cuotas pagadas"   value={resumen.cuotas_pagadas}   color="var(--accent-light)" />
