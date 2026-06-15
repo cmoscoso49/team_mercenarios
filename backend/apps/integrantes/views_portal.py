@@ -49,7 +49,7 @@ def portal_mis_cuotas(request):
             status=status.HTTP_404_NOT_FOUND
         )
 
-    ANIO_MAX = 2025
+    ANIO_MAX = 2026
     anio = request.query_params.get('anio', ANIO_MAX)
     try:
         anio = min(int(anio), ANIO_MAX)

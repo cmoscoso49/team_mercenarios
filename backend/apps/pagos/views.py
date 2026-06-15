@@ -40,7 +40,7 @@ def crear_pago(request):
     if not mensualidad_ids:
         return Response({'error': 'Selecciona al menos una mensualidad.'}, status=400)
 
-    ANIO_MAX = 2025
+    ANIO_MAX = 2026
     mensualidades = Mensualidad.objects.filter(
         id__in=mensualidad_ids,
         integrante=integrante,

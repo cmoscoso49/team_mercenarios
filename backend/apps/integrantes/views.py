@@ -86,7 +86,7 @@ class IntegranteViewSet(viewsets.ModelViewSet):
         from apps.finanzas.models import Mensualidad, Deuda
         from apps.eventos.models import Participacion
         from django.db.models import Sum
-        ANIO_MAX = 2025
+        ANIO_MAX = 2026
         integrante = self.get_object()
 
         mens = Mensualidad.objects.filter(integrante=integrante, anio__lte=ANIO_MAX)
@@ -130,7 +130,7 @@ class IntegranteViewSet(viewsets.ModelViewSet):
         )
 
         valor_cuota = int(ConfiguracionCuota.valor_vigente())
-        ANIO_CAP, MES_CAP = 2025, 12  # no cobrar 2026
+        ANIO_CAP, MES_CAP = 2026, 12  # no cobrar 2027
 
         if not ultima_pagada:
             cuotas_pendientes = 0

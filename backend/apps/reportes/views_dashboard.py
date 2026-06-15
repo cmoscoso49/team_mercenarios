@@ -59,7 +59,7 @@ def dashboard(request):
     # KPIs de cuotas 2024-2025: solo integrantes activos, solo años recientes
     from apps.finanzas.models import Mensualidad
     from django.db.models import Sum as DSum
-    ANIO_MIN, ANIO_MAX = 2024, 2025
+    ANIO_MIN, ANIO_MAX = 2024, 2026
     integrantes_con_deuda = (
         Mensualidad.objects
         .filter(anio__gte=ANIO_MIN, anio__lte=ANIO_MAX, estado='pendiente',
