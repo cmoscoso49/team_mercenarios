@@ -66,7 +66,7 @@
   align-items: center;
   gap: 10px;
   padding: 10px 13px;
-  color: var(--text-muted);
+  color: #8a9099;
   text-decoration: none;
   font-family: var(--font-display);
   font-size: 12px;
@@ -80,7 +80,7 @@
 
 .sidebar-link:hover {
   background: rgba(204,34,34,0.05);
-  color: var(--text-secondary);
+  color: #c8cdd6;
   text-decoration: none;
   border-left-color: rgba(204,34,34,0.25);
 }

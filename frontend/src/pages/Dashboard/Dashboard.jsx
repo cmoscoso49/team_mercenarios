@@ -7,18 +7,34 @@ import Badge from '../../components/common/Badge'
 import '../../components/common/common.css'
 import './Dashboard.css'
 
-const ROLES_LIDERAZGO   = ['admin', 'TL', 'presidente', 'vice', 'secretario', 'tesorero']
 const ROLES_PORTAL_ONLY = ['player']
+
+const MODULO_ROUTE = {
+  integrantes:   '/integrantes',
+  finanzas:      '/finanzas',
+  reportes:      '/reportes',
+  eventos:       '/eventos',
+  noticias:      '/noticias',
+  instagram:     '/instagram',
+  reclutamiento: '/postulaciones',
+}
 
 export default function Dashboard() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const { user } = useAuth()
-  const tieneAccesoFinanciero = ROLES_LIDERAZGO.includes(user?.rol)
+  const modulos = user?.modulos_acceso || []
+  const tieneAccesoFinanciero = modulos.includes('finanzas')
 
   if (ROLES_PORTAL_ONLY.includes(user?.rol)) {
     return <Navigate to="/portal" replace />
+  }
+
+  // Roles sin acceso al dashboard → redirigir al primer módulo disponible
+  if (user && !modulos.includes('dashboard')) {
+    const primer = modulos.find(m => m !== 'dashboard')
+    return <Navigate to={MODULO_ROUTE[primer] || '/portal'} replace />
   }
 
   useEffect(() => {
