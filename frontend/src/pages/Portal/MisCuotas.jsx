@@ -87,8 +87,8 @@ export default function MisCuotas() {
           value={anio}
           onChange={e => setAnio(Number(e.target.value))}
           style={{
-            background: '#131313', border: '1px solid #2a2a2a', color: '#d0d0d0',
-            fontFamily: 'Rajdhani, sans-serif', fontSize: '0.9rem',
+            background: 'var(--bg-card)', border: '1px solid var(--border-color)', color: 'var(--text-primary)',
+            fontFamily: 'var(--font)', fontSize: '0.9rem',
             padding: '6px 12px', outline: 'none',
           }}
         >
@@ -99,11 +99,11 @@ export default function MisCuotas() {
       {/* Resumen */}
       <div className="portal-stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))' }}>
         <div className="portal-stat-card">
-          <span className="portal-stat-num" style={{ color: '#52a852' }}>{resumen.pagadas ?? 0}</span>
+          <span className="portal-stat-num" style={{ color: '#3fb950' }}>{resumen.pagadas ?? 0}</span>
           <span className="portal-stat-label">Pagadas</span>
         </div>
         <div className="portal-stat-card">
-          <span className="portal-stat-num" style={{ color: resumen.pendientes > 0 ? '#b8952a' : '#52a852' }}>{resumen.pendientes ?? 0}</span>
+          <span className="portal-stat-num" style={{ color: resumen.pendientes > 0 ? '#e3b341' : '#3fb950' }}>{resumen.pendientes ?? 0}</span>
           <span className="portal-stat-label">Pendientes</span>
         </div>
         <div className="portal-stat-card">
@@ -117,14 +117,14 @@ export default function MisCuotas() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
           <div className="portal-card-title" style={{ marginBottom: 0 }}>Estado mensual — {anio}</div>
           {pendientesCount > 0 && (
-            <span style={{ fontFamily: 'Oswald, sans-serif', fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: '#4b5563' }}>
+            <span style={{ fontFamily: 'Oswald, sans-serif', fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
               Selecciona cuotas para pagar
             </span>
           )}
         </div>
 
         {mensualidades.length === 0 ? (
-          <p style={{ color: '#555', fontSize: '0.9rem', margin: 0 }}>Sin registros para {anio}.</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>Sin registros para {anio}.</p>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 10 }}>
             {mensualidades.map(m => {
@@ -135,7 +135,7 @@ export default function MisCuotas() {
                   key={m.id}
                   onClick={() => isPendiente && toggleId(m.id)}
                   style={{
-                    background: isSelected ? 'rgba(204,34,34,0.07)' : '#0d0d0d',
+                    background: isSelected ? 'rgba(204,34,34,0.07)' : 'var(--bg-primary)',
                     border: `1px solid ${
                       isSelected        ? 'rgba(204,34,34,0.7)' :
                       m.estado === 'pagada'  ? 'rgba(61,122,61,0.35)' :
@@ -161,7 +161,7 @@ export default function MisCuotas() {
                     }}>✓</div>
                   )}
 
-                  <div style={{ fontFamily: 'Oswald, sans-serif', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.1em', color: '#555', textTransform: 'uppercase', marginBottom: 6 }}>
+                  <div style={{ fontFamily: 'Oswald, sans-serif', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
                     {MESES[m.mes]} {anio}
                   </div>
                   <div style={{ marginBottom: 6 }}>
@@ -169,11 +169,11 @@ export default function MisCuotas() {
                       {m.estado_display}
                     </span>
                   </div>
-                  <div style={{ fontFamily: 'Oswald, sans-serif', fontSize: '1rem', fontWeight: 700, color: m.estado === 'pagada' ? '#52a852' : m.estado === 'exento' ? '#666' : '#b8952a' }}>
+                  <div style={{ fontFamily: 'Oswald, sans-serif', fontSize: '1rem', fontWeight: 700, color: m.estado === 'pagada' ? '#3fb950' : m.estado === 'exento' ? 'var(--text-muted)' : '#e3b341' }}>
                     ${Number(m.monto).toLocaleString('es-CL')}
                   </div>
                   {m.fecha_pago && (
-                    <div style={{ fontSize: '0.72rem', color: '#555', marginTop: 4 }}>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 4 }}>
                       {new Date(m.fecha_pago).toLocaleDateString('es-CL')}
                     </div>
                   )}
@@ -200,7 +200,7 @@ export default function MisCuotas() {
             backdropFilter: 'blur(6px)',
           }}>
             <div>
-              <span style={{ fontFamily: 'Oswald, sans-serif', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1.5, color: '#6b7280' }}>
+              <span style={{ fontFamily: 'Oswald, sans-serif', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1.5, color: 'var(--text-muted)' }}>
                 {selectedIds.size} cuota{selectedIds.size !== 1 ? 's' : ''} —
               </span>
               <span style={{ fontFamily: "'Share Tech Mono', 'Courier New', monospace", fontSize: 15, fontWeight: 700, color: '#ef4444', marginLeft: 8 }}>
@@ -210,7 +210,7 @@ export default function MisCuotas() {
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 onClick={() => setSelectedIds(new Set())}
-                style={{ background: 'none', border: '1px solid #2a1e1e', color: '#6b7280', fontFamily: 'Oswald, sans-serif', fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', padding: '7px 14px', cursor: 'pointer' }}
+                style={{ background: 'none', border: '1px solid var(--border-color)', color: 'var(--text-muted)', fontFamily: 'Oswald, sans-serif', fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', padding: '7px 14px', cursor: 'pointer' }}
               >
                 Cancelar
               </button>
@@ -245,23 +245,23 @@ export default function MisCuotas() {
           <div className="portal-card-title" style={{ color: '#cc2222' }}>Deudas pendientes</div>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid #1e1e1e' }}>
+              <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
                 {['Descripción', 'Total', 'Pagado', 'Pendiente', 'Estado', 'Vencimiento'].map(h => (
-                  <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontFamily: 'Oswald, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#555' }}>{h}</th>
+                  <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontFamily: 'Oswald, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {deudas.map(d => (
-                <tr key={d.id} style={{ borderBottom: '1px solid #111' }}>
-                  <td style={{ padding: '10px 12px', fontSize: '0.9rem', color: '#d0d0d0' }}>{d.descripcion}</td>
-                  <td style={{ padding: '10px 12px', fontSize: '0.9rem', color: '#aaa' }}>${Number(d.monto_total).toLocaleString('es-CL')}</td>
-                  <td style={{ padding: '10px 12px', fontSize: '0.9rem', color: '#52a852' }}>${Number(d.monto_pagado).toLocaleString('es-CL')}</td>
+                <tr key={d.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                  <td style={{ padding: '10px 12px', fontSize: '0.9rem', color: 'var(--text-primary)' }}>{d.descripcion}</td>
+                  <td style={{ padding: '10px 12px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>${Number(d.monto_total).toLocaleString('es-CL')}</td>
+                  <td style={{ padding: '10px 12px', fontSize: '0.9rem', color: '#3fb950' }}>${Number(d.monto_pagado).toLocaleString('es-CL')}</td>
                   <td style={{ padding: '10px 12px', fontSize: '0.95rem', fontWeight: 700, color: '#cc2222' }}>${Number(d.monto_pendiente).toLocaleString('es-CL')}</td>
                   <td style={{ padding: '10px 12px' }}>
                     <span className="portal-badge portal-badge-pendiente">{d.estado_display}</span>
                   </td>
-                  <td style={{ padding: '10px 12px', fontSize: '0.82rem', color: '#666' }}>
+                  <td style={{ padding: '10px 12px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
                     {d.fecha_vencimiento ? new Date(d.fecha_vencimiento).toLocaleDateString('es-CL') : '—'}
                   </td>
                 </tr>

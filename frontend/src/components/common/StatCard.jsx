@@ -1,25 +1,24 @@
 import React from 'react'
 
-const ACCENT = {
-  green:  'var(--accent-light)',
-  red:    'var(--danger)',
-  yellow: 'var(--accent-gold)',
+const TOP = {
+  green:  '#3fb950',
+  red:    '#f85149',
+  yellow: '#e3b341',
 }
 
 const DOT = {
-  green:  '#4ade80',
-  red:    '#f87171',
-  yellow: '#fbbf24',
+  green:  '#3fb950',
+  red:    '#f85149',
+  yellow: '#e3b341',
 }
 
 export default function StatCard({ label, value, color, prefix = '' }) {
-  const accentColor = ACCENT[color] || '#2a2a2a'
-  const dotColor    = DOT[color]
+  const topColor = TOP[color] || 'var(--border-color)'
+  const dotColor = DOT[color]
 
   return (
-    <div className={`stat-card stat-card--hud ${color ? `stat-card--${color}` : ''}`}
-         style={{ '--hud-accent': accentColor }}>
-      <div className="stat-card-top-bar" />
+    <div className={`stat-card ${color ? `stat-card--${color}` : ''}`}
+         style={{ '--top-c': topColor }}>
       <div className="stat-card-label-row">
         {dotColor && <span className="stat-card-dot" style={{ background: dotColor }} />}
         <span className="stat-card-label">{label}</span>

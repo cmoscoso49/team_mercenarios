@@ -75,7 +75,7 @@ export default function MisEventos() {
       <div className="portal-card">
         <div className="portal-card-title">Próximos eventos — confirma tu asistencia</div>
         {proximos.length === 0 ? (
-          <p style={{ color: '#555', fontSize: '0.9rem', margin: 0 }}>Sin eventos programados próximamente.</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>Sin eventos programados próximamente.</p>
         ) : (
           proximos.map(ev => (
             <EventoProximo
@@ -92,7 +92,7 @@ export default function MisEventos() {
       <div className="portal-card">
         <div className="portal-card-title">Historial de participación</div>
         {historial.length === 0 ? (
-          <p style={{ color: '#555', fontSize: '0.9rem', margin: 0 }}>Sin historial de eventos.</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>Sin historial de eventos.</p>
         ) : (
           historial.map(ev => <EventoHistorial key={ev.id} ev={ev} />)
         )}
@@ -106,14 +106,14 @@ function EventoProximo({ ev, cargando, onConfirmar }) {
   const confirmado = ev.confirmado;
 
   return (
-    <div style={{ display: 'flex', gap: 14, padding: '14px 0', borderBottom: '1px solid #111', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+    <div style={{ display: 'flex', gap: 14, padding: '14px 0', borderBottom: '1px solid var(--border-color)', alignItems: 'flex-start', flexWrap: 'wrap' }}>
       <FechaBox fecha={ev.fecha} color={color} />
       <div style={{ flex: 1, minWidth: 180 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
-          <span style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '0.98rem', fontWeight: 600, color: '#e0e0e0' }}>{ev.titulo}</span>
+          <span style={{ fontFamily: 'var(--font)', fontSize: '0.98rem', fontWeight: 600, color: 'var(--text-primary)' }}>{ev.titulo}</span>
           <TipoBadge tipo={ev.tipo} label={ev.tipo_display} color={color} />
         </div>
-        <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: 10 }}>
+        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 10 }}>
           {ev.lugar && <span>{ev.lugar}</span>}
           {ev.hora && <span style={{ marginLeft: 8 }}>· {ev.hora.slice(0, 5)}</span>}
         </div>
@@ -121,7 +121,7 @@ function EventoProximo({ ev, cargando, onConfirmar }) {
         {/* Botones de confirmación */}
         {confirmado === true ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ color: '#52a852', fontSize: '0.85rem', fontWeight: 600 }}>✓ Confirmado</span>
+            <span style={{ color: '#3fb950', fontSize: '0.85rem', fontWeight: 600 }}>✓ Confirmado</span>
             <button
               onClick={() => onConfirmar(false)}
               disabled={cargando}
@@ -147,9 +147,9 @@ function EventoProximo({ ev, cargando, onConfirmar }) {
               onClick={() => onConfirmar(true)}
               disabled={cargando}
               style={{
-                fontFamily: 'Rajdhani, sans-serif', fontSize: '0.8rem', fontWeight: 600,
+                fontFamily: 'var(--font)', fontSize: '0.8rem', fontWeight: 600,
                 letterSpacing: '0.08em', textTransform: 'uppercase',
-                background: 'rgba(61,122,61,0.15)', color: '#52a852',
+                background: 'rgba(61,122,61,0.15)', color: '#3fb950',
                 border: '1px solid rgba(61,122,61,0.35)',
                 padding: '5px 14px', cursor: cargando ? 'not-allowed' : 'pointer',
                 transition: 'background 0.2s',
@@ -161,7 +161,7 @@ function EventoProximo({ ev, cargando, onConfirmar }) {
               onClick={() => onConfirmar(false)}
               disabled={cargando}
               style={{
-                fontFamily: 'Rajdhani, sans-serif', fontSize: '0.8rem', fontWeight: 600,
+                fontFamily: 'var(--font)', fontSize: '0.8rem', fontWeight: 600,
                 letterSpacing: '0.08em', textTransform: 'uppercase',
                 background: 'rgba(204,34,34,0.1)', color: '#cc6666',
                 border: '1px solid rgba(204,34,34,0.25)',
@@ -181,22 +181,22 @@ function EventoProximo({ ev, cargando, onConfirmar }) {
 function EventoHistorial({ ev }) {
   const color = TIPO_COLOR[ev.tipo] || '#666';
   return (
-    <div style={{ display: 'flex', gap: 14, padding: '10px 0', borderBottom: '1px solid #111', alignItems: 'center' }}>
+    <div style={{ display: 'flex', gap: 14, padding: '10px 0', borderBottom: '1px solid var(--border-color)', alignItems: 'center' }}>
       <FechaBox fecha={ev.fecha} color={color} />
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-          <span style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '0.95rem', fontWeight: 600, color: '#ccc' }}>{ev.titulo}</span>
+          <span style={{ fontFamily: 'var(--font)', fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-secondary)' }}>{ev.titulo}</span>
           <TipoBadge tipo={ev.tipo} label={ev.tipo_display} color={color} />
         </div>
-        <div style={{ fontSize: '0.78rem', color: '#555' }}>
+        <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
           {ev.lugar && <span>{ev.lugar}</span>}
           {ev.estado !== 'realizado' && <span style={{ marginLeft: 8, color: '#cc2222' }}>· {ev.estado_display}</span>}
         </div>
       </div>
       <div style={{ textAlign: 'right', minWidth: 80 }}>
-        {ev.asistio === true  && <span style={{ color: '#52a852', fontSize: '0.82rem', fontWeight: 600 }}>✓ Asistió</span>}
+        {ev.asistio === true  && <span style={{ color: '#3fb950', fontSize: '0.82rem', fontWeight: 600 }}>✓ Asistió</span>}
         {ev.asistio === false && <span style={{ color: '#cc2222', fontSize: '0.82rem', fontWeight: 600 }}>✗ No asistió</span>}
-        {ev.asistio === null  && <span style={{ color: '#555', fontSize: '0.82rem' }}>—</span>}
+        {ev.asistio === null  && <span style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>—</span>}
       </div>
     </div>
   );
@@ -206,13 +206,13 @@ function FechaBox({ fecha, color }) {
   const d = new Date(fecha + 'T12:00:00');
   return (
     <div style={{
-      minWidth: 44, textAlign: 'center', background: '#0d0d0d',
+      minWidth: 44, textAlign: 'center', background: 'var(--bg-card)',
       border: `1px solid ${color}44`, padding: '6px 4px', flexShrink: 0,
     }}>
       <div style={{ fontFamily: 'Oswald, sans-serif', fontSize: '1.1rem', fontWeight: 700, color, lineHeight: 1 }}>
         {d.getDate()}
       </div>
-      <div style={{ fontFamily: 'Oswald, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#555' }}>
+      <div style={{ fontFamily: 'Oswald, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
         {d.toLocaleDateString('es-CL', { month: 'short' })}
       </div>
     </div>
@@ -232,8 +232,8 @@ function TipoBadge({ tipo, label, color }) {
 }
 
 const btnGhostStyle = {
-  fontFamily: 'Rajdhani, sans-serif', fontSize: '0.78rem', fontWeight: 600,
+  fontFamily: 'var(--font)', fontSize: '0.78rem', fontWeight: 600,
   letterSpacing: '0.08em', textTransform: 'uppercase',
-  background: 'none', border: '1px solid #2a2a2a', color: '#666',
+  background: 'none', border: '1px solid var(--border-color)', color: 'var(--text-muted)',
   padding: '4px 10px', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s',
 };

@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #050505;
+  background: var(--bg-primary);
   position: relative;
   overflow: hidden;
 }
@@ -34,8 +34,8 @@
 .login-card {
   width: 100%;
   max-width: 420px;
-  background: #0d0d0d;
-  border: 1px solid #1e1e1e;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-top: none;
   position: relative;
   z-index: 1;
@@ -128,7 +128,7 @@
 
 .login-subtitle {
   font-size: 11px;
-  color: #888;
+  color: var(--text-muted);
   letter-spacing: 2px;
   text-transform: uppercase;
 }
@@ -140,7 +140,7 @@
 }
 
 .login-form .form-control::placeholder {
-  color: #888;
+  color: var(--text-muted);
 }
 
 /* Input focus — red */
@@ -184,7 +184,7 @@
 
 .login-back-link {
   font-size: 12px;
-  color: #999;
+  color: var(--text-secondary);
   letter-spacing: 1.5px;
   text-transform: uppercase;
   transition: color 0.15s;

@@ -28,63 +28,65 @@
   align-items: center;
   gap: 8px;
   font-family: var(--font-display);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 2.5px;
+  letter-spacing: 2px;
   margin-bottom: 14px;
 }
 .hud-section-title::before {
   content: '◈';
   color: var(--accent-primary);
   font-size: 11px;
-  opacity: 0.75;
+  opacity: 0.8;
   flex-shrink: 0;
 }
 .hud-section-title::after {
   content: '';
   flex: 1;
   height: 1px;
-  background: linear-gradient(to right, #2a1e1e, transparent);
+  background: linear-gradient(to right, var(--border-color), transparent);
 }
 
 /* Cuotas progress bar */
 .hud-progress {
-  margin-top: 14px;
-  padding: 12px 14px;
-  background: rgba(0,0,0,0.2);
-  border: 1px solid #1e1414;
-  border-left: 2px solid rgba(74,222,128,0.25);
+  margin-top: 16px;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
 }
 .hud-progress-label {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  font-family: var(--font-display);
-  font-size: 10px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 7px;
+  align-items: center;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
 }
 .hud-progress-pct {
-  font-family: var(--font-mono);
   font-size: 13px;
-  color: #4ade80;
+  font-weight: 700;
+  color: #3fb950;
+  background: rgba(63,185,80,0.12);
+  padding: 2px 10px;
+  border-radius: 99px;
+  border: 1px solid rgba(63,185,80,0.2);
 }
 .hud-progress-track {
-  height: 5px;
-  background: #2a1414;
-  border-radius: 1px;
+  height: 8px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 99px;
   overflow: hidden;
 }
 .hud-progress-fill {
   height: 100%;
-  border-radius: 1px;
+  border-radius: 99px;
   transition: width 0.6s ease;
-  background: linear-gradient(to right, #16a34a, #4ade80);
-  box-shadow: 0 0 6px rgba(74,222,128,0.3);
+  background: linear-gradient(to right, #238636, #3fb950);
 }
 
 .dashboard-list {
@@ -110,10 +112,9 @@
 .dashboard-event-date {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--accent-light);
+  color: var(--text-muted);
   min-width: 80px;
   padding-top: 2px;
-  opacity: 0.9;
 }
 
 @media (max-width: 1100px) {

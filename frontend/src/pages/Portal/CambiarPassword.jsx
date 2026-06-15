@@ -101,8 +101,8 @@ export default function CambiarPassword() {
                 fontWeight: 700,
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                background: saving ? '#222' : '#cc2222',
-                color: saving ? '#555' : '#fff',
+                background: saving ? 'var(--bg-hover)' : '#cc2222',
+                color: saving ? 'var(--text-muted)' : '#fff',
                 border: 'none',
                 padding: '10px 32px',
                 cursor: saving ? 'not-allowed' : 'pointer',
@@ -127,7 +127,7 @@ function Field({ label, name, value, onChange, error, hint, autoComplete }) {
         fontSize: '0.7rem',
         fontWeight: 600,
         letterSpacing: '0.14em',
-        color: error ? '#cc2222' : '#555',
+        color: error ? '#cc2222' : 'var(--text-muted)',
         textTransform: 'uppercase',
         marginBottom: 6,
       }}>
@@ -141,26 +141,26 @@ function Field({ label, name, value, onChange, error, hint, autoComplete }) {
         autoComplete={autoComplete}
         style={{
           width: '100%',
-          background: '#0d0d0d',
-          border: `1px solid ${error ? '#cc2222' : '#222'}`,
-          color: '#e0e0e0',
+          background: 'var(--bg-input)',
+          border: `1px solid ${error ? '#cc2222' : 'var(--border-color)'}`,
+          color: 'var(--text-primary)',
           padding: '10px 12px',
-          fontFamily: 'Rajdhani, sans-serif',
+          fontFamily: 'var(--font)',
           fontSize: '0.95rem',
           outline: 'none',
           boxSizing: 'border-box',
           transition: 'border-color 0.2s',
         }}
         onFocus={e => { if (!error) e.target.style.borderColor = '#3d7a3d'; }}
-        onBlur={e => { if (!error) e.target.style.borderColor = '#222'; }}
+        onBlur={e => { if (!error) e.target.style.borderColor = 'var(--border-color)'; }}
       />
       {error && (
-        <span style={{ color: '#cc2222', fontSize: '0.78rem', fontFamily: 'Rajdhani, sans-serif', marginTop: 4, display: 'block' }}>
+        <span style={{ color: '#cc2222', fontSize: '0.78rem', fontFamily: 'var(--font)', marginTop: 4, display: 'block' }}>
           {error}
         </span>
       )}
       {hint && !error && (
-        <span style={{ color: '#444', fontSize: '0.75rem', fontFamily: 'Rajdhani, sans-serif', marginTop: 4, display: 'block' }}>
+        <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontFamily: 'var(--font)', marginTop: 4, display: 'block' }}>
           {hint}
         </span>
       )}

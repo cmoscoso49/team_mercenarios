@@ -76,7 +76,7 @@ export default function MiPerfil() {
           <InfoRow label="Rol en team" value={integrante?.rol_display || integrante?.rol} />
           <InfoRow label="Talla polera" value={integrante?.talla_polera || '—'} />
           <InfoRow label="Ingreso" value={integrante?.fecha_ingreso ? new Date(integrante.fecha_ingreso).toLocaleDateString('es-CL') : '—'} />
-          <p style={{ fontSize: '0.75rem', color: '#444', marginTop: 12, margin: '12px 0 0' }}>
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 12, margin: '12px 0 0' }}>
             Los campos marcados solo pueden ser modificados por el administrador.
           </p>
         </div>
@@ -86,7 +86,7 @@ export default function MiPerfil() {
           <div className="portal-card-title">Editar mis datos</div>
 
           {saved && (
-            <div style={{ background: 'rgba(61,122,61,0.1)', border: '1px solid rgba(61,122,61,0.3)', color: '#52a852', padding: '10px 14px', fontSize: '0.9rem', marginBottom: 16 }}>
+            <div style={{ background: 'rgba(61,122,61,0.1)', border: '1px solid rgba(61,122,61,0.3)', color: '#3fb950', padding: '10px 14px', fontSize: '0.9rem', marginBottom: 16 }}>
               ✓ Datos guardados correctamente.
             </div>
           )}
@@ -96,7 +96,7 @@ export default function MiPerfil() {
 
           <form onSubmit={submit}>
             <div style={{ marginBottom: 14 }}>
-              <label style={{ display: 'block', fontFamily: 'Rajdhani, sans-serif', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#666', marginBottom: 5 }}>
+              <label style={{ display: 'block', fontFamily: 'var(--font)', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 5 }}>
                 Nick / Alias
               </label>
               <input
@@ -107,17 +107,17 @@ export default function MiPerfil() {
                 placeholder="Tu nick de Airsoft"
                 style={{
                   width: '100%', boxSizing: 'border-box',
-                  background: '#0d0d0d', border: '1px solid #2a2a2a', color: '#d0d0d0',
-                  fontFamily: 'Rajdhani, sans-serif', fontSize: '0.95rem',
+                  background: 'var(--bg-input)', border: '1px solid var(--border-color)', color: 'var(--text-primary)',
+                  fontFamily: 'var(--font)', fontSize: '0.95rem',
                   padding: '9px 12px', outline: 'none', transition: 'border-color 0.2s',
                 }}
                 onFocus={e => e.target.style.borderColor = '#cc2222'}
-                onBlur={e => e.target.style.borderColor = '#2a2a2a'}
+                onBlur={e => e.target.style.borderColor = 'var(--border-color)'}
               />
             </div>
 
             <div style={{ marginBottom: 20 }}>
-              <label style={{ display: 'block', fontFamily: 'Rajdhani, sans-serif', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#666', marginBottom: 5 }}>
+              <label style={{ display: 'block', fontFamily: 'var(--font)', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 5 }}>
                 Teléfono
               </label>
               <input
@@ -128,12 +128,12 @@ export default function MiPerfil() {
                 placeholder="+56 9 XXXX XXXX"
                 style={{
                   width: '100%', boxSizing: 'border-box',
-                  background: '#0d0d0d', border: '1px solid #2a2a2a', color: '#d0d0d0',
-                  fontFamily: 'Rajdhani, sans-serif', fontSize: '0.95rem',
+                  background: 'var(--bg-input)', border: '1px solid var(--border-color)', color: 'var(--text-primary)',
+                  fontFamily: 'var(--font)', fontSize: '0.95rem',
                   padding: '9px 12px', outline: 'none', transition: 'border-color 0.2s',
                 }}
                 onFocus={e => e.target.style.borderColor = '#cc2222'}
-                onBlur={e => e.target.style.borderColor = '#2a2a2a'}
+                onBlur={e => e.target.style.borderColor = 'var(--border-color)'}
               />
             </div>
 
@@ -159,9 +159,9 @@ export default function MiPerfil() {
 
 function InfoRow({ label, value }) {
   return (
-    <div style={{ display: 'flex', gap: 12, padding: '5px 0', borderBottom: '1px solid #111' }}>
-      <span style={{ minWidth: 100, fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#555' }}>{label}</span>
-      <span style={{ fontSize: '0.9rem', color: '#aaa' }}>{value}</span>
+    <div style={{ display: 'flex', gap: 12, padding: '5px 0', borderBottom: '1px solid var(--border-color)' }}>
+      <span style={{ minWidth: 100, fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>{label}</span>
+      <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{value}</span>
     </div>
   );
 }

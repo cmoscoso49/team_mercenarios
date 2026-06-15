@@ -5,7 +5,7 @@ import apiClient from '../../api/client';
 const MESES = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
 const ESTADO_COLOR = {
-  completado: '#4ade80',
+  completado: '#3fb950',
   pendiente:  '#b8952a',
   fallido:    '#ef4444',
   expirado:   '#6b7280',
@@ -45,23 +45,23 @@ export default function MisPagos() {
         <div className="portal-card" style={{ padding: 0, overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid #1e1e1e' }}>
+              <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
                 {['Fecha', 'Cuotas', 'Monto', 'Estado', 'Orden'].map(h => (
                   <th key={h} style={{
                     padding: '10px 14px', textAlign: 'left',
                     fontFamily: 'Oswald, sans-serif', fontSize: '0.68rem',
                     fontWeight: 600, letterSpacing: '0.12em',
-                    textTransform: 'uppercase', color: '#555',
+                    textTransform: 'uppercase', color: 'var(--text-muted)',
                   }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {pagos.map(p => (
-                <tr key={p.id} style={{ borderBottom: '1px solid #111' }}>
-                  <td style={{ padding: '11px 14px', fontSize: '0.85rem', color: '#9ca3af', whiteSpace: 'nowrap' }}>
+                <tr key={p.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                  <td style={{ padding: '11px 14px', fontSize: '0.85rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
                     {new Date(p.fecha_creacion).toLocaleDateString('es-CL')}
-                    <div style={{ fontSize: '0.75rem', color: '#4b5563', marginTop: 2 }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 2 }}>
                       {new Date(p.fecha_creacion).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </td>
@@ -72,22 +72,22 @@ export default function MisPagos() {
                           <span key={m.id} style={{
                             fontFamily: 'Oswald, sans-serif', fontSize: '0.7rem',
                             letterSpacing: 1, textTransform: 'uppercase',
-                            background: '#131313', border: '1px solid #222',
-                            color: '#9ca3af', padding: '2px 6px',
+                            background: 'var(--bg-card)', border: '1px solid var(--border-color)',
+                            color: 'var(--text-secondary)', padding: '2px 6px',
                           }}>
                             {MESES[m.mes]} {m.anio}
                           </span>
                         ))}
                       </div>
                     ) : (
-                      <span style={{ color: '#4b5563', fontSize: '0.82rem' }}>—</span>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>—</span>
                     )}
                   </td>
                   <td style={{
                     padding: '11px 14px',
                     fontFamily: "'Share Tech Mono', 'Courier New', monospace",
                     fontSize: '0.92rem', fontWeight: 700,
-                    color: p.estado === 'completado' ? '#4ade80' : '#d1d5db',
+                    color: p.estado === 'completado' ? '#3fb950' : 'var(--text-primary)',
                     whiteSpace: 'nowrap',
                   }}>
                     ${Number(p.monto).toLocaleString('es-CL')} CLP
@@ -103,7 +103,7 @@ export default function MisPagos() {
                       {p.estado_display}
                     </span>
                   </td>
-                  <td style={{ padding: '11px 14px', fontSize: '0.72rem', color: '#4b5563', fontFamily: 'monospace' }}>
+                  <td style={{ padding: '11px 14px', fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
                     {p.orden_id.slice(0, 8)}…
                   </td>
                 </tr>

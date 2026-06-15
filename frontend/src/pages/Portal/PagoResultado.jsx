@@ -80,10 +80,10 @@ export default function PagoResultado() {
             borderRadius: '50%',
             animation: 'tm-spin 0.75s linear infinite',
           }} />
-          <div style={{ fontFamily: 'Oswald, sans-serif', fontSize: 16, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', color: '#d1d5db', marginBottom: 8 }}>
+          <div style={{ fontFamily: 'Oswald, sans-serif', fontSize: 16, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: 8 }}>
             Verificando tu pago
           </div>
-          <div style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: 13, color: '#4b5563' }}>
+          <div style={{ fontFamily: 'var(--font)', fontSize: 13, color: 'var(--text-muted)' }}>
             Confirmando con Flow... intento {intento + 1}/{MAX_INTENTOS}
           </div>
         </div>
@@ -98,10 +98,10 @@ export default function PagoResultado() {
             border: '2px solid rgba(22,163,74,0.5)',
             borderRadius: '50%',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 24, color: '#4ade80',
+            fontSize: 24, color: '#3fb950',
           }}>✓</div>
 
-          <div style={{ fontFamily: 'Oswald, sans-serif', fontSize: 20, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: '#4ade80', marginBottom: 6 }}>
+          <div style={{ fontFamily: 'Oswald, sans-serif', fontSize: 20, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: '#3fb950', marginBottom: 6 }}>
             ¡Pago Confirmado!
           </div>
           <div style={{ fontFamily: "'Share Tech Mono', 'Courier New', monospace", fontSize: 28, color: '#ffffff', marginBottom: 20 }}>
@@ -110,7 +110,7 @@ export default function PagoResultado() {
 
           {pago.mensualidades_detalle?.length > 0 && (
             <div style={{ maxWidth: 320, margin: '0 auto 24px', textAlign: 'left' }}>
-              <div style={{ fontFamily: 'Oswald, sans-serif', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: '#4b5563', marginBottom: 10 }}>
+              <div style={{ fontFamily: 'Oswald, sans-serif', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 10 }}>
                 Cuotas pagadas
               </div>
               {pago.mensualidades_detalle.map(m => (
@@ -121,10 +121,10 @@ export default function PagoResultado() {
                   background: 'rgba(22,163,74,0.06)',
                   border: '1px solid rgba(22,163,74,0.2)',
                 }}>
-                  <span style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: 13, color: '#d1d5db' }}>
+                  <span style={{ fontFamily: 'var(--font)', fontSize: 13, color: 'var(--text-secondary)' }}>
                     {MESES[m.mes]} {m.anio}
                   </span>
-                  <span style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: 13, color: '#4ade80' }}>
+                  <span style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: 13, color: '#3fb950' }}>
                     ${Number(m.monto).toLocaleString('es-CL')}
                   </span>
                 </div>
@@ -132,7 +132,7 @@ export default function PagoResultado() {
             </div>
           )}
 
-          <div style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: 11, color: '#4b5563', marginBottom: 24 }}>
+          <div style={{ fontFamily: 'var(--font)', fontSize: 11, color: 'var(--text-muted)', marginBottom: 24 }}>
             Orden: {pago.orden_id} · {pago.fecha_confirmacion ? new Date(pago.fecha_confirmacion).toLocaleString('es-CL') : ''}
           </div>
 
@@ -163,17 +163,17 @@ export default function PagoResultado() {
           <div style={{ fontFamily: 'Oswald, sans-serif', fontSize: 18, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: '#ef4444', marginBottom: 8 }}>
             Pago no completado
           </div>
-          <div style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: 13, color: '#6b7280', marginBottom: 24 }}>
+          <div style={{ fontFamily: 'var(--font)', fontSize: 13, color: 'var(--text-muted)', marginBottom: 24 }}>
             El pago fue {pago?.estado_display?.toLowerCase() || 'rechazado'}. No se realizó ningún cargo.
           </div>
 
           <Link to="/portal/mis-cuotas" style={{
             display: 'inline-block',
-            background: 'transparent', color: '#d1d5db',
+            background: 'transparent', color: 'var(--text-secondary)',
             fontFamily: 'Oswald, sans-serif', fontSize: 12,
             fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase',
             padding: '9px 22px', textDecoration: 'none',
-            border: '1px solid #2a1e1e',
+            border: '1px solid var(--border-color)',
           }}>
             Volver a Mis Cuotas
           </Link>
@@ -195,7 +195,7 @@ export default function PagoResultado() {
           <div style={{ fontFamily: 'Oswald, sans-serif', fontSize: 18, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: '#d4a030', marginBottom: 8 }}>
             Verificación en proceso
           </div>
-          <div style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: 14, color: '#9ca3af', maxWidth: 380, margin: '0 auto 24px', lineHeight: 1.6 }}>
+          <div style={{ fontFamily: 'var(--font)', fontSize: 14, color: 'var(--text-secondary)', maxWidth: 380, margin: '0 auto 24px', lineHeight: 1.6 }}>
             La confirmación de Flow puede tardar unos minutos.
             Revisa el estado de tus cuotas en unos instantes.
           </div>
