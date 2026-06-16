@@ -71,6 +71,7 @@ function MovimientosTab() {
           <select className="form-control" style={{ width: 150 }} value={filtros.tipo} onChange={e => setFiltros({ ...filtros, tipo: e.target.value })}>
             <option value="">Todos</option>
             <option value="ingreso">Ingresos</option>
+            <option value="donacion">Donaciones</option>
             <option value="egreso">Egresos</option>
           </select>
         </div>
