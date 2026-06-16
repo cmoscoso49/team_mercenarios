@@ -96,7 +96,7 @@ def dashboard(request):
 
     if es_financiero:
         respuesta.update({
-            'saldo_actual': saldo_excel if saldo_excel is not None else saldo_actual,
+            'saldo_actual': saldo_actual,
             'saldo_sistema': saldo_actual,
             'saldo_excel': saldo_excel,
             'ingresos_mes': ingresos_mes,
