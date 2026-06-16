@@ -80,15 +80,23 @@ class IntegranteViewSet(viewsets.ModelViewSet):
     def resumen(self, request, pk=None):
         from apps.finanzas.models import Mensualidad, Deuda
         from apps.eventos.models import Participacion
-        from django.db.models import Sum
+        from django.db.models import Sum, Q
+        from django.utils import timezone
         ANIO_MAX = 2026
         integrante = self.get_object()
 
+        hoy = timezone.now()
+        anio_actual, mes_actual = hoy.year, hoy.month
+
         mens = Mensualidad.objects.filter(integrante=integrante, anio__lte=ANIO_MAX)
-        cuotas_pagadas   = mens.filter(estado='pagada').count()
-        cuotas_pendientes = mens.filter(estado='pendiente').count()
-        total_pagado    = mens.filter(estado='pagada').aggregate(t=Sum('monto'))['t'] or 0
-        total_pendiente = mens.filter(estado='pendiente').aggregate(t=Sum('monto'))['t'] or 0
+        # Para pendientes: solo contar hasta el mes actual del año actual
+        filtro_periodo = Q(anio__lt=anio_actual) | Q(anio=anio_actual, mes__lte=mes_actual)
+        mens_periodo = mens.filter(filtro_periodo)
+
+        cuotas_pagadas    = mens.filter(estado='pagada').count()
+        cuotas_pendientes = mens_periodo.filter(estado='pendiente').count()
+        total_pagado      = mens.filter(estado='pagada').aggregate(t=Sum('monto'))['t'] or 0
+        total_pendiente   = mens_periodo.filter(estado='pendiente').aggregate(t=Sum('monto'))['t'] or 0
 
         ultima = mens.filter(estado='pagada').order_by('-anio', '-mes').first()
         ultimo_pago = f'{ultima.anio}-{ultima.mes:02d}' if ultima else None

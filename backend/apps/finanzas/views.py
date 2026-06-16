@@ -246,6 +246,20 @@ class MensualidadViewSet(viewsets.ModelViewSet):
     ordering_fields = ['anio', 'mes', 'integrante__nombre']
     ordering = ['-anio', '-mes']
 
+    def perform_update(self, serializer):
+        instance = self.get_object()
+        estado_anterior = instance.estado
+        updated = serializer.save()
+        if estado_anterior == 'pendiente' and updated.estado == 'pagada':
+            Movimiento.objects.create(
+                tipo='ingreso',
+                monto=updated.monto,
+                descripcion=f'Cuota {updated.get_mes_display()} {updated.anio} — {updated.integrante}',
+                fecha=updated.fecha_pago or timezone.now().date(),
+                integrante=updated.integrante,
+                creado_por=self.request.user,
+            )
+
 
 class DeudaViewSet(viewsets.ModelViewSet):
     queryset = Deuda.objects.select_related('integrante').all()
