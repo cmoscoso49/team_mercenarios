@@ -219,6 +219,9 @@ function ResumenRow({ label, value, color }) {
 
 function MensualidadesTab({ mensualidades, canEdit, onEdit }) {
   const porAnio = (anio) => mensualidades.filter(m => m.anio === anio)
+  const hoy = new Date()
+  const anioActual = hoy.getFullYear()
+  const mesActual = hoy.getMonth() + 1
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -230,10 +233,12 @@ function MensualidadesTab({ mensualidades, canEdit, onEdit }) {
       {ANIOS_ACTIVOS.map(anio => {
         const meses = porAnio(anio)
         const pagadas    = meses.filter(m => m.estado === 'pagada').length
-        const pendientes = meses.filter(m => m.estado === 'pendiente').length
+        // Solo contar como pendiente hasta el mes actual del año en curso
+        const esPeriodoVencido = (m) => anio < anioActual || (anio === anioActual && m.mes <= mesActual)
+        const pendientes = meses.filter(m => m.estado === 'pendiente' && esPeriodoVencido(m)).length
         const exentos    = meses.filter(m => m.estado === 'exento').length
         const totalPagado    = meses.filter(m => m.estado === 'pagada').reduce((s, m) => s + Number(m.monto), 0)
-        const totalPendiente = meses.filter(m => m.estado === 'pendiente').reduce((s, m) => s + Number(m.monto), 0)
+        const totalPendiente = meses.filter(m => m.estado === 'pendiente' && esPeriodoVencido(m)).reduce((s, m) => s + Number(m.monto), 0)
 
         return (
           <div key={anio} className="card">
