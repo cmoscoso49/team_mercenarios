@@ -298,9 +298,19 @@ def resumen_financiero(request):
         tipo='egreso', fecha__month=mes_actual, fecha__year=anio_actual
     ).aggregate(total=Sum('monto'))['total'] or 0
 
-    deudas_total = Deuda.objects.filter(
-        estado__in=['pendiente', 'parcial']
-    ).aggregate(total=Sum('monto_total'))['total'] or 0
+    # Deuda mensualidades: años anteriores completos + año actual hasta mes presente
+    from django.db.models import Q
+    from .models import Mensualidad
+    ANIO_MIN = 2024
+    filtro_periodo = (
+        Q(anio__gte=ANIO_MIN, anio__lt=anio_actual) |
+        Q(anio=anio_actual, mes__lte=mes_actual)
+    )
+    deudas_total = (
+        Mensualidad.objects
+        .filter(filtro_periodo, estado='pendiente', integrante__estado='activo')
+        .aggregate(total=Sum('monto'))['total'] or 0
+    )
 
     # Saldo real: base Excel + ajuste por movimientos ingresados después de la conciliación
     conc = ConciliacionExcel.objects.order_by('-fecha_importacion').first()
