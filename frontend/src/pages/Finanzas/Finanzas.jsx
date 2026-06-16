@@ -80,13 +80,16 @@ function MovimientosTab() {
       {showForm && (
         <div className="modal-overlay">
           <div className={`modal modal-${form.tipo}`}>
-            <div className="modal-title">{form.tipo === 'ingreso' ? '↑ Nuevo Ingreso' : '↓ Nuevo Egreso'}</div>
+            <div className="modal-title">
+              {form.tipo === 'ingreso' ? '↑ Nuevo Ingreso' : form.tipo === 'donacion' ? '♥ Nueva Donación' : '↓ Nuevo Egreso'}
+            </div>
             <form onSubmit={handleSubmit}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 16px' }}>
                 <div className="form-group">
                   <label className="form-label">Tipo *</label>
-                  <select name="tipo" className="form-control" value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value })}>
+                  <select name="tipo" className="form-control" value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value, categoria: '' })}>
                     <option value="ingreso">Ingreso</option>
+                    <option value="donacion">Donación</option>
                     <option value="egreso">Egreso</option>
                   </select>
                 </div>
@@ -133,7 +136,7 @@ function MovimientosTab() {
                   <tr key={m.id}>
                     <td>{m.fecha}</td>
                     <td><Badge value={m.tipo} label={m.tipo_display} /></td>
-                    <td style={{ fontWeight: 700, color: m.tipo === 'ingreso' ? 'var(--accent-light)' : 'var(--danger)' }}>
+                    <td style={{ fontWeight: 700, color: m.tipo === 'egreso' ? 'var(--danger)' : m.tipo === 'donacion' ? '#5b9bd5' : 'var(--accent-light)' }}>
                       ${Number(m.monto).toLocaleString('es-CL')}
                     </td>
                     <td style={{ color: 'var(--text-secondary)' }}>{m.descripcion}</td>

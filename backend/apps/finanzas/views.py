@@ -285,12 +285,13 @@ def resumen_financiero(request):
     mes_actual = now.month
     anio_actual = now.year
 
-    total_ingresos = Movimiento.objects.filter(tipo='ingreso').aggregate(total=Sum('monto'))['total'] or 0
+    from .models import TIPOS_INGRESO
+    total_ingresos = Movimiento.objects.filter(tipo__in=TIPOS_INGRESO).aggregate(total=Sum('monto'))['total'] or 0
     total_egresos = Movimiento.objects.filter(tipo='egreso').aggregate(total=Sum('monto'))['total'] or 0
     saldo = total_ingresos - total_egresos
 
     ingresos_mes = Movimiento.objects.filter(
-        tipo='ingreso', fecha__month=mes_actual, fecha__year=anio_actual
+        tipo__in=TIPOS_INGRESO, fecha__month=mes_actual, fecha__year=anio_actual
     ).aggregate(total=Sum('monto'))['total'] or 0
 
     egresos_mes = Movimiento.objects.filter(

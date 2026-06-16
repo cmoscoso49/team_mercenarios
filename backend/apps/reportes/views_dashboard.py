@@ -22,7 +22,8 @@ def dashboard(request):
     mes = now.month
     anio = now.year
 
-    total_ingresos = Movimiento.objects.filter(tipo='ingreso').aggregate(total=Sum('monto'))['total'] or 0
+    from apps.finanzas.models import TIPOS_INGRESO
+    total_ingresos = Movimiento.objects.filter(tipo__in=TIPOS_INGRESO).aggregate(total=Sum('monto'))['total'] or 0
     total_egresos = Movimiento.objects.filter(tipo='egreso').aggregate(total=Sum('monto'))['total'] or 0
     saldo_actual = total_ingresos - total_egresos
 

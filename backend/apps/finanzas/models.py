@@ -3,7 +3,7 @@ from django.conf import settings
 
 
 class Categoria(models.Model):
-    TIPO_CHOICES = [('ingreso', 'Ingreso'), ('egreso', 'Egreso')]
+    TIPO_CHOICES = [('ingreso', 'Ingreso'), ('egreso', 'Egreso'), ('donacion', 'Donación')]
     nombre = models.CharField(max_length=100)
     tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
     descripcion = models.TextField(blank=True)
@@ -17,8 +17,10 @@ class Categoria(models.Model):
         return f"{self.nombre} ({self.get_tipo_display()})"
 
 
+TIPOS_INGRESO = ['ingreso', 'donacion']
+
 class Movimiento(models.Model):
-    TIPO_CHOICES = [('ingreso', 'Ingreso'), ('egreso', 'Egreso')]
+    TIPO_CHOICES = [('ingreso', 'Ingreso'), ('egreso', 'Egreso'), ('donacion', 'Donación')]
 
     tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
     monto = models.DecimalField(max_digits=12, decimal_places=0)
