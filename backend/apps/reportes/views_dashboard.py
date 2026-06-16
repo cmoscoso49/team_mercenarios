@@ -22,14 +22,19 @@ def dashboard(request):
     mes = now.month
     anio = now.year
 
-    from apps.finanzas.models import TIPOS_INGRESO
+    from apps.finanzas.models import TIPOS_INGRESO, ConciliacionExcel
     total_ingresos = Movimiento.objects.filter(tipo__in=TIPOS_INGRESO).aggregate(total=Sum('monto'))['total'] or 0
     total_egresos = Movimiento.objects.filter(tipo='egreso').aggregate(total=Sum('monto'))['total'] or 0
     saldo_actual = total_ingresos - total_egresos
 
-    from apps.finanzas.models import ConciliacionExcel
     conc = ConciliacionExcel.objects.order_by('-fecha_importacion').first()
     saldo_excel = conc.saldo_excel if conc else None
+
+    if conc and saldo_excel is not None:
+        nuevos = Movimiento.objects.filter(fecha_creacion__gt=conc.fecha_importacion)
+        ajuste_ing = nuevos.filter(tipo__in=TIPOS_INGRESO).aggregate(t=Sum('monto'))['t'] or 0
+        ajuste_egr = nuevos.filter(tipo='egreso').aggregate(t=Sum('monto'))['t'] or 0
+        saldo_actual = saldo_excel + ajuste_ing - ajuste_egr
 
     ingresos_mes = Movimiento.objects.filter(
         tipo='ingreso', fecha__month=mes, fecha__year=anio

@@ -302,16 +302,22 @@ def resumen_financiero(request):
         estado__in=['pendiente', 'parcial']
     ).aggregate(total=Sum('monto_total'))['total'] or 0
 
-    # Saldo real desde Excel (si existe conciliación importada)
+    # Saldo real: base Excel + ajuste por movimientos ingresados después de la conciliación
     conc = ConciliacionExcel.objects.order_by('-fecha_importacion').first()
     saldo_excel = conc.saldo_excel if conc else None
-    diferencia = (saldo_excel - saldo) if saldo_excel is not None else None
+
+    if conc and saldo_excel is not None:
+        nuevos = Movimiento.objects.filter(fecha_creacion__gt=conc.fecha_importacion)
+        ajuste_ing = nuevos.filter(tipo__in=TIPOS_INGRESO).aggregate(t=Sum('monto'))['t'] or 0
+        ajuste_egr = nuevos.filter(tipo='egreso').aggregate(t=Sum('monto'))['t'] or 0
+        saldo_real = saldo_excel + ajuste_ing - ajuste_egr
+    else:
+        saldo_real = saldo
 
     return Response({
-        'saldo': saldo_excel if saldo_excel is not None else saldo,
+        'saldo': saldo_real,
         'saldo_sistema': saldo,
         'saldo_excel': saldo_excel,
-        'diferencia_excel_sistema': diferencia,
         'ingresos_mes': ingresos_mes,
         'egresos_mes': egresos_mes,
         'deudas_total': deudas_total,
