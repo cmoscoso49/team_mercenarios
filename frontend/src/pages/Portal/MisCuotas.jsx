@@ -5,7 +5,7 @@ import { useToast } from '../../components/common/ToastProvider';
 const MESES = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
 export default function MisCuotas() {
-  const ANIO_MAX = 2025;
+  const ANIO_MAX = 2026;
   const [anio, setAnio] = useState(ANIO_MAX);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);

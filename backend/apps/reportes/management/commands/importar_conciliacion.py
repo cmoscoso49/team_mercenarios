@@ -33,9 +33,10 @@ class Command(BaseCommand):
             except (ValueError, TypeError):
                 return 0
 
+        p16  = cell('H.CONTABLE', 'P16')   # saldo real — fuente de verdad
         p7   = cell('H.CONTABLE', 'P7')
         p10  = cell('H.CONTABLE', 'P10')
-        p13  = cell('H.CONTABLE', 'P13')
+        g142 = cell('H.CONTABLE', 'G142')  # total gastos históricos
         l47  = cell('H.CONTABLE', 'L47')
         m23  = cell('MENSUALIDADES 2023', 'S34')
         rifa = cell('RIFA', 'N36')
@@ -43,13 +44,12 @@ class Command(BaseCommand):
         m25  = cell('MENSUALIDADES 2025', 'S35')
         wb.close()
 
-        saldo = p7 + p10 - p13 + l47 + m23 + rifa + m24 + m25
-
         conc = ConciliacionExcel.objects.create(
             origen_archivo=EXCEL_PATH,
+            saldo_p16=p16,
             hcontable_caja_chica=p7,
             hcontable_donaciones=p10,
-            hcontable_gastos=p13,
+            hcontable_gastos=g142,
             hcontable_efectivo_extra=l47,
             mensualidades_2023=m23,
             rifa_total=rifa,
@@ -59,14 +59,14 @@ class Command(BaseCommand):
 
         lines = [
             f'Conciliacion guardada (id={conc.id})',
+            f'  P16 saldo real  : {p16}  (fuente de verdad)',
             f'  P7  caja+ms2022 : {p7}',
             f'  P10 donaciones  : {p10}',
-            f'  P13 gastos      : -{p13}',
+            f'  G142 gastos     : -{g142}',
             f'  L47 extras      : {l47}',
             f'  M2023 S34       : {m23}',
             f'  RIFA N36        : {rifa}',
             f'  M2024 S41       : {m24}',
             f'  M2025 S35       : {m25}',
-            f'  SALDO REAL EXCEL: {saldo}',
         ]
         self.stdout.write(self.style.SUCCESS('\n'.join(lines)))

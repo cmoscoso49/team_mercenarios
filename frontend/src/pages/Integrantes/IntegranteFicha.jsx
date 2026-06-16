@@ -427,7 +427,7 @@ function ReincorporacionTab({ id, integrante }) {
           </div>
         </div>
         <div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Cuotas pendientes (hasta 2025-12)</div>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Cuotas pendientes (hasta 2026-12)</div>
           <div style={{ fontSize: 24, fontWeight: 800, marginTop: 4, color: data.cuotas_pendientes > 0 ? '#e74c3c' : '#6abf6a' }}>
             {data.cuotas_pendientes}
           </div>

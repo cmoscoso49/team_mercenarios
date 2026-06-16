@@ -159,7 +159,7 @@ function ReporteParticipaciones({ anio }) {
 
 export default function Reportes() {
   const [tab, setTab] = useState('financiero')
-  const [anio, setAnio] = useState(2025)
+  const [anio, setAnio] = useState(2026)
 
   return (
     <div>

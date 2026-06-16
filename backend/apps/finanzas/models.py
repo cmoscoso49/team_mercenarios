@@ -225,13 +225,17 @@ class ConciliacionExcel(models.Model):
     fecha_importacion = models.DateTimeField(auto_now_add=True)
     origen_archivo = models.CharField(max_length=300)
 
-    # Componentes de la fórmula =P7+P10-P13+L47+M2023.S34+RIFA.N36+M2024.S41+M2025.S35
+    # Saldo directo desde H.CONTABLE!P16 — fuente de verdad
+    saldo_p16 = models.DecimalField(max_digits=12, decimal_places=0, default=0,
+                                    help_text='H.CONTABLE!P16 — Saldo real calculado por Excel')
+
+    # Componentes auditables
     hcontable_caja_chica = models.DecimalField(max_digits=12, decimal_places=0, default=0,
                                                 help_text='H.CONTABLE!P7 — Total caja chica + mensualidades 2022')
     hcontable_donaciones = models.DecimalField(max_digits=12, decimal_places=0, default=0,
                                                help_text='H.CONTABLE!P10 — Donaciones e ingresos')
     hcontable_gastos = models.DecimalField(max_digits=12, decimal_places=0, default=0,
-                                           help_text='H.CONTABLE!P13 — Total gastos históricos')
+                                           help_text='H.CONTABLE!G142 — Total gastos históricos')
     hcontable_efectivo_extra = models.DecimalField(max_digits=12, decimal_places=0, default=0,
                                                    help_text='H.CONTABLE!L47 — Efectivo adicional')
     mensualidades_2023 = models.DecimalField(max_digits=12, decimal_places=0, default=0,
@@ -245,6 +249,9 @@ class ConciliacionExcel(models.Model):
 
     @property
     def saldo_excel(self):
+        # Usa P16 directamente si está disponible; fallback a fórmula para registros antiguos
+        if self.saldo_p16:
+            return self.saldo_p16
         return (self.hcontable_caja_chica + self.hcontable_donaciones
                 - self.hcontable_gastos + self.hcontable_efectivo_extra
                 + self.mensualidades_2023 + self.rifa_total

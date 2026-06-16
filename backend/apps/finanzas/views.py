@@ -307,7 +307,8 @@ def resumen_financiero(request):
     diferencia = (saldo_excel - saldo) if saldo_excel is not None else None
 
     return Response({
-        'saldo': saldo,
+        'saldo': saldo_excel if saldo_excel is not None else saldo,
+        'saldo_sistema': saldo,
         'saldo_excel': saldo_excel,
         'diferencia_excel_sistema': diferencia,
         'ingresos_mes': ingresos_mes,
