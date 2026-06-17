@@ -246,19 +246,27 @@ class MensualidadViewSet(viewsets.ModelViewSet):
     ordering_fields = ['anio', 'mes', 'integrante__nombre']
     ordering = ['-anio', '-mes']
 
+    def _crear_movimiento_pago(self, mens, user=None):
+        Movimiento.objects.create(
+            tipo='ingreso',
+            monto=mens.monto,
+            descripcion=f'Cuota {mens.get_mes_display()} {mens.anio} — {mens.integrante}',
+            fecha=mens.fecha_pago or timezone.now().date(),
+            integrante=mens.integrante,
+            creado_por=user,
+        )
+
+    def perform_create(self, serializer):
+        saved = serializer.save()
+        if saved.estado == 'pagada':
+            self._crear_movimiento_pago(saved, self.request.user)
+
     def perform_update(self, serializer):
         instance = self.get_object()
         estado_anterior = instance.estado
         updated = serializer.save()
-        if estado_anterior == 'pendiente' and updated.estado == 'pagada':
-            Movimiento.objects.create(
-                tipo='ingreso',
-                monto=updated.monto,
-                descripcion=f'Cuota {updated.get_mes_display()} {updated.anio} — {updated.integrante}',
-                fecha=updated.fecha_pago or timezone.now().date(),
-                integrante=updated.integrante,
-                creado_por=self.request.user,
-            )
+        if estado_anterior != 'pagada' and updated.estado == 'pagada':
+            self._crear_movimiento_pago(updated, self.request.user)
 
 
 class DeudaViewSet(viewsets.ModelViewSet):
