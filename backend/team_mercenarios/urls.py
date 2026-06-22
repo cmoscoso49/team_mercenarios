@@ -9,6 +9,7 @@ from apps.reportes.views_public import (
     public_noticia_detail, public_evento_detail, public_instagram,
 )
 from apps.reclutamiento.views import postulacion_publica
+from apps.pagos.views import pago_retorno_html
 from apps.integrantes.views_portal import (
     portal_me, portal_mis_cuotas, portal_mis_eventos,
     portal_confirmar_asistencia, portal_cambiar_password,
@@ -42,4 +43,5 @@ urlpatterns = [
     path('api/v1/portal/eventos/<int:evento_id>/confirmar/', portal_confirmar_asistencia),
     path('api/v1/portal/cambiar-password/',                 portal_cambiar_password),
     path('api/v1/', include('apps.pagos.urls')),
+    path('pago-retorno/', pago_retorno_html),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

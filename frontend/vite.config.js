@@ -1,11 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 import { copyFileSync } from 'fs'
 import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [
     react(),
+    basicSsl(),
     {
       // Copia .htaccess al dist (Vite ignora dotfiles por defecto)
       name: 'copy-htaccess',
@@ -20,6 +22,8 @@ export default defineConfig({
     },
   ],
   server: {
+    host: '0.0.0.0',
+    https: true,
     port: 5173,
     proxy: {
       '/api': {

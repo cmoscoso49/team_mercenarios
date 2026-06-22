@@ -187,6 +187,207 @@ def confirmar_pago_webhook(request):
     return HttpResponse('OK')
 
 
+def _procesar_pago_si_completado(pago, estado_flow):
+    """Procesa el pago si Flow confirma status=2. Idempotente via select_for_update."""
+    if estado_flow.get('status') != 2:
+        PagoOnline.objects.filter(pk=pago.pk).update(
+            estado='fallido',
+            datos_respuesta=estado_flow,
+        )
+        return
+
+    with transaction.atomic():
+        pago_locked = PagoOnline.objects.select_for_update().get(pk=pago.pk)
+        if pago_locked.estado == 'completado':
+            return
+
+        today = timezone.now().date()
+        for mensualidad in pago_locked.mensualidades.filter(estado='pendiente'):
+            mensualidad.estado = 'pagada'
+            mensualidad.fecha_pago = today
+            mensualidad.save()
+
+        categoria, _ = Categoria.objects.get_or_create(
+            nombre='Mensualidad online',
+            defaults={'tipo': 'ingreso'},
+        )
+        movimiento = Movimiento.objects.create(
+            tipo='ingreso',
+            monto=pago_locked.monto,
+            descripcion=f'Pago online Flow - Orden {pago_locked.orden_id}',
+            categoria=categoria,
+            fecha=today,
+            integrante=pago_locked.integrante,
+        )
+        pago_locked.estado = 'completado'
+        pago_locked.fecha_confirmacion = timezone.now()
+        pago_locked.datos_respuesta = estado_flow
+        pago_locked.movimiento = movimiento
+        pago_locked.save()
+
+
+def pago_retorno_html(request):
+    """
+    FLOW_RETURN_URL handler — browser lands here after completing payment on Flow.
+    Also confirms the payment directly with Flow API as backup if webhook failed.
+    Serves a standalone dark-themed HTML page with the payment result.
+    """
+    token = request.GET.get('token', '')
+    portal_url = getattr(settings, 'FLOW_PORTAL_URL', 'http://127.0.0.1:5173/portal')
+
+    try:
+        pago = PagoOnline.objects.get(token_proveedor=token)
+    except PagoOnline.DoesNotExist:
+        estado = 'no_encontrado'
+        monto = 0
+        mensualidades = []
+        orden_id_display = token[:12] + '...' if token else '—'
+    else:
+        # Si el pago aún está pendiente, verificar con Flow directamente (backup del webhook)
+        if pago.estado == 'pendiente':
+            try:
+                estado_flow = services.verificar_pago(token)
+                _procesar_pago_si_completado(pago, estado_flow)
+                pago.refresh_from_db()
+            except Exception:
+                pass
+
+        estado = pago.estado
+        monto = pago.monto
+        orden_id_display = pago.orden_id[:16] + '...'
+        mensualidades = list(pago.mensualidades.all())
+
+    MESES = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+             'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+
+    if estado == 'completado':
+        icono = '✓'
+        titulo = 'Pago Confirmado'
+        color_titulo = '#52a852'
+        color_borde = '#3d7a3d'
+        detalle_items = ''.join(
+            f'<li>{MESES[m.mes]} {m.anio}</li>'
+            for m in mensualidades
+        )
+        detalle_html = f'<ul class="cuotas">{detalle_items}</ul>' if mensualidades else ''
+        monto_html = f'<p class="monto">Total pagado: <strong>${monto:,}</strong> CLP</p>'
+    elif estado == 'pendiente':
+        icono = '⏳'
+        titulo = 'Procesando Pago…'
+        color_titulo = '#f0a500'
+        color_borde = '#a07000'
+        detalle_html = '<p style="color:#aaa">Espera unos segundos, el pago está siendo confirmado.</p>'
+        monto_html = ''
+    elif estado == 'fallido':
+        icono = '✕'
+        titulo = 'Pago No Completado'
+        color_titulo = '#cc2222'
+        color_borde = '#881111'
+        detalle_html = '<p style="color:#aaa">El pago fue rechazado o cancelado. Puedes intentarlo nuevamente.</p>'
+        monto_html = ''
+    else:
+        icono = '?'
+        titulo = 'Estado Desconocido'
+        color_titulo = '#888'
+        color_borde = '#444'
+        detalle_html = '<p style="color:#aaa">No se pudo determinar el estado del pago.</p>'
+        monto_html = ''
+
+    refresh_meta = '<meta http-equiv="refresh" content="4">' if estado == 'pendiente' else ''
+
+    html = f"""<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {refresh_meta}
+  <title>Resultado de Pago — Team Mercenarios</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Rajdhani:wght@400;500;600&display=swap');
+    *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
+    body {{
+      background: #080808;
+      color: #e8e8e8;
+      font-family: 'Rajdhani', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }}
+    .card {{
+      background: #131313;
+      border: 1px solid {color_borde};
+      border-top: 3px solid {color_titulo};
+      padding: 2.5rem 3rem;
+      max-width: 480px;
+      width: 90%;
+      text-align: center;
+    }}
+    .icono {{
+      font-size: 3.5rem;
+      color: {color_titulo};
+      margin-bottom: .75rem;
+    }}
+    .titulo {{
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: {color_titulo};
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 1.25rem;
+    }}
+    .orden {{ color: #666; font-size: .85rem; margin-bottom: 1.25rem; }}
+    .monto {{ font-size: 1.2rem; margin-bottom: 1rem; }}
+    .monto strong {{ color: {color_titulo}; }}
+    .cuotas {{
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }}
+    .cuotas li {{
+      background: #1e1e1e;
+      border: 1px solid #333;
+      padding: .2rem .7rem;
+      font-size: .9rem;
+      color: #ccc;
+    }}
+    .btn {{
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: .75rem 2rem;
+      background: #cc2222;
+      color: #fff;
+      text-decoration: none;
+      font-family: 'Oswald', sans-serif;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }}
+    .btn:hover {{ background: #aa1a1a; }}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icono">{icono}</div>
+    <div class="titulo">{titulo}</div>
+    <p class="orden">Orden: {orden_id_display}</p>
+    {monto_html}
+    {detalle_html}
+    <a class="btn" href="{portal_url}/mis-cuotas">Ver mis cuotas</a>
+  </div>
+</body>
+</html>"""
+
+    return HttpResponse(html, content_type='text/html; charset=utf-8')
+
+
 def mock_confirmar_pago(request, orden_id):
     """DEV ONLY — simulates Flow confirmation and redirects to return URL."""
     if not settings.DEBUG:

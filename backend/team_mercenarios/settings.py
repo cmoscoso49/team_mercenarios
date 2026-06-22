@@ -128,6 +128,7 @@ FLOW_SECRET_KEY = config('FLOW_SECRET_KEY', default='')
 FLOW_API_URL = config('FLOW_API_URL', default='https://sandbox.flow.cl/api')
 FLOW_RETURN_URL = config('FLOW_RETURN_URL', default='http://localhost:5173/portal/pago-resultado/')
 FLOW_CONFIRM_URL = config('FLOW_CONFIRM_URL', default='http://localhost:8001/api/v1/public/pagos/confirmar/')
+FLOW_PORTAL_URL = config('FLOW_PORTAL_URL', default='http://localhost:5173/portal')
 
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
