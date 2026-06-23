@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect
+from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django_ratelimit.decorators import ratelimit
 from rest_framework.decorators import api_view, permission_classes
@@ -226,13 +227,15 @@ def _procesar_pago_si_completado(pago, estado_flow):
         pago_locked.save()
 
 
+@csrf_exempt
 def pago_retorno_html(request):
     """
     FLOW_RETURN_URL handler — browser lands here after completing payment on Flow.
+    Flow redirects via POST; token may be in POST or GET params.
     Also confirms the payment directly with Flow API as backup if webhook failed.
     Serves a standalone dark-themed HTML page with the payment result.
     """
-    token = request.GET.get('token', '')
+    token = request.POST.get('token', '') or request.GET.get('token', '')
     portal_url = getattr(settings, 'FLOW_PORTAL_URL', 'http://127.0.0.1:5173/portal')
 
     try:
