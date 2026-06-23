@@ -296,7 +296,7 @@ def pago_retorno_html(request):
         detalle_html = '<p style="color:#aaa">No se pudo determinar el estado del pago.</p>'
         monto_html = ''
 
-    refresh_meta = '<meta http-equiv="refresh" content="4">' if estado == 'pendiente' else ''
+    refresh_meta = f'<meta http-equiv="refresh" content="4;url=/pago-retorno/?token={token}">' if estado == 'pendiente' else ''
 
     html = f"""<!DOCTYPE html>
 <html lang="es">
