@@ -83,9 +83,9 @@ def verificar_pago(token: str) -> dict:
     }
     params['s'] = _sign(params)
 
-    resp = requests.post(
+    resp = requests.get(
         f'{settings.FLOW_API_URL}/payment/getStatus',
-        data=params,
+        params=params,
         timeout=45,
     )
     resp.raise_for_status()
