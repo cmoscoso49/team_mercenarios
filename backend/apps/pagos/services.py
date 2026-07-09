@@ -98,8 +98,7 @@ def verificar_firma_webhook(post_data: dict) -> bool:
     Returns True if valid (or if FLOW_SECRET_KEY not set — dev only).
     """
     if not settings.FLOW_SECRET_KEY:
-        logger.error('FLOW_SECRET_KEY no configurada — verificación HMAC deshabilitada. PELIGRO en producción.')
-        return True
+        raise ValueError('FLOW_SECRET_KEY no configurada — webhook rechazado por seguridad.')
 
     firma_recibida = post_data.get('s', '')
     params_sin_firma = {k: v for k, v in post_data.items() if k != 's'}
