@@ -39,6 +39,18 @@ class Command(BaseCommand):
                     self.stdout.write(f'  ✓ {integrante.nick} → creado: {username}')
                     creados += 1
 
+        # Resetear también usuarios de liderazgo sin integrante vinculado (ej: admin)
+        ROLES_LIDERAZGO = {'admin', 'TL', 'presidente', 'vice', 'secretario', 'tesorero'}
+        ids_con_integrante = set(
+            Integrante.objects.filter(usuario__isnull=False)
+            .values_list('usuario_id', flat=True)
+        )
+        for user in Usuario.objects.filter(rol__in=ROLES_LIDERAZGO).exclude(id__in=ids_con_integrante):
+            user.set_password('Mercenarios2026!')
+            user.save(update_fields=['password'])
+            self.stdout.write(f'  ~ {user.username} (liderazgo) → clave reseteada')
+            reseteados += 1
+
         self.stdout.write(self.style.SUCCESS(
             f'Listo — {creados} creados, {reseteados} reseteados. Clave: Mercenarios2026!'
         ))
