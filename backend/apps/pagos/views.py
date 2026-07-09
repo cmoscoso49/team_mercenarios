@@ -54,10 +54,11 @@ def crear_pago(request):
             status=400,
         )
 
-    # Bloquear si alguna mensualidad ya tiene un pago pendiente activo
+    # Bloquear si alguna mensualidad ya tiene un pago pendiente activo (no expirado)
     ya_en_pago = PagoOnline.objects.filter(
         mensualidades__in=mensualidades,
         estado='pendiente',
+        fecha_expiracion__gt=timezone.now(),
     ).first()
     if ya_en_pago:
         return Response(
