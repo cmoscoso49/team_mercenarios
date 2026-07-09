@@ -54,6 +54,17 @@ def crear_pago(request):
             status=400,
         )
 
+    # Bloquear si alguna mensualidad ya tiene un pago pendiente activo
+    ya_en_pago = PagoOnline.objects.filter(
+        mensualidades__in=mensualidades,
+        estado='pendiente',
+    ).first()
+    if ya_en_pago:
+        return Response(
+            {'error': 'Una o más cuotas ya tienen un pago pendiente. Completa o cancela el pago anterior.'},
+            status=400,
+        )
+
     monto_total = sum(int(m.monto) for m in mensualidades)
     orden_id = uuid.uuid4().hex
 
